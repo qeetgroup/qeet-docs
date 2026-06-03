@@ -1,91 +1,56 @@
 ---
-title: Enterprise SSO
-description: SAML 2.0 and OIDC. Connect Okta, Azure AD, OneLogin, Ping, or any compliant IdP.
+title: SSO overview
+description: How Qeet ID does enterprise SSO — SAML 2.0 (SP and IdP), SCIM provisioning, and LDAP — with pointers to the Enterprise section.
 icon: Building
 ---
 
-Enterprise SSO connects your customers' identity providers to Qeet ID. Once configured,
-their employees can sign in to your app with the credentials they already use everywhere
-else — and you get automatic provisioning, group sync, and centralized revocation.
+Qeet ID is **both an OIDC provider and a SAML provider**, and it consumes external
+IdPs too. That gives you the full enterprise federation story — **open-source and not
+behind an SSO tax**. This page is the map; the deep dives live in
+[Enterprise](/docs/enterprise) and [OIDC/OAuth provider](/docs/oidc).
 
-## Supported protocols
+## The two directions of SSO
 
-- **SAML 2.0** — the lingua franca of enterprise SSO. Works with Okta, Azure AD,
-  OneLogin, PingIdentity, ADFS, JumpCloud, and any compliant IdP.
-- **OIDC** — for modern providers that support OpenID Connect, including Auth0,
-  Google Workspace, Azure AD (OIDC mode), Okta (OIDC mode).
-- **SCIM 2.0** — for directory sync (provisioning, deprovisioning, group changes).
+<Cards>
+  <Card icon="LogIn" title="Consume external IdPs (SAML SP)" href="/docs/enterprise/saml-sp">
+    Let your customers' employees sign in with their own Okta / Entra ID / Google
+    Workspace via SAML, with JIT provisioning.
+  </Card>
+  <Card icon="LogOut" title="Be an SSO source (SAML IdP)" href="/docs/enterprise/saml-idp">
+    Qeet ID acts as the IdP: register downstream SPs, publish metadata, and serve
+    SP-initiated and IdP-initiated SSO from the hosted-login session.
+  </Card>
+  <Card icon="Network" title="OIDC provider" href="/docs/oidc">
+    Discovery, dynamic client registration, Authorization Code + PKCE, hosted login &
+    consent, and ES256 ID tokens.
+  </Card>
+</Cards>
 
-## Configure a connection
+## Provisioning & directories
 
-The fastest path is to send your customer to the **Connection Portal**:
+<Cards>
+  <Card icon="RefreshCw" title="SCIM 2.0 (Users + Groups)" href="/docs/enterprise/scim">
+    Okta/Entra-style provisioning, deprovisioning, and PatchOp group-membership sync,
+    with per-tenant bearer tokens.
+  </Card>
+  <Card icon="Server" title="LDAP / AD" href="/docs/enterprise/ldap">
+    Bind-based login plus connection CRUD and test-bind.
+  </Card>
+</Cards>
 
-```ts
-const portal = await qee.connections.createPortalLink({
-  tenant: "acme",
-  email: "admin@acme.com",
-  redirectTo: "https://app.acme.com/settings/sso?status=done",
-});
-
-// Send portal.url to your customer's admin.
-```
-
-They land on a guided UI that handles certificate exchange, attribute mapping, and
-test flows. When they finish, the connection is live.
-
-## Programmatic configuration
-
-For self-service flows where your customers configure SSO inside your own UI:
-
-```ts
-await qee.connections.create({
-  tenant: "acme",
-  type: "saml",
-  idpMetadataUrl: "https://acme.okta.com/app/exk.../sso/saml/metadata",
-  attributeMapping: {
-    email: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
-    displayName: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
-  },
-});
-```
-
-## Sign-in with SSO
-
-Your sign-in UI gets a new **"Sign in with SSO"** option that asks for the user's
-email, looks up the right IdP, and redirects.
-
-```tsx
-<QeetidSignIn methods={["passkey", "saml", "email"]} />
-```
-
-## Directory sync (SCIM)
-
-For larger customers, enable SCIM so users and groups are provisioned automatically:
-
-```ts
-await qee.connections.enableScim("acme", {
-  endpoint: "https://api.qeetid.com/scim/v2/tenant/acme",
-  // Token is returned once — store it in the IdP.
-});
-```
-
-Once enabled, SCIM-based IdPs can:
-
-- Create new users in Qeet ID when they're added to your customer's directory.
-- Update profile fields when they change in the IdP.
-- **Deprovision** users (revoke sessions and disable accounts) when they leave the
-  organization — instantly.
-- Sync groups to Qeet ID groups for RBAC.
-
-<Callout type="info">
-  SCIM is included on Enterprise plans. See [Pricing](https://qeetid.com/pricing) for details.
+<Callout type="tip" title="No SSO tax">
+  SAML (both directions), SCIM Users + Groups, and LDAP are part of the platform — not
+  paywalled behind an "enterprise" tier. Earlier docs implied SAML/SCIM weren't
+  available; both are fully implemented today.
 </Callout>
 
-## Troubleshooting
+## Where the pieces live
 
-| Symptom                                  | Likely cause                                        |
-| ---------------------------------------- | --------------------------------------------------- |
-| Loop redirecting between IdP and Qeet ID | Clock skew on IdP server. Check NTP.                |
-| `attribute_missing` error                | Attribute mapping doesn't match what the IdP sends. |
-| Users created but groups missing         | SCIM not configured, or group filter excludes them. |
-| Sign-in works but profile is blank       | `attributeMapping.displayName` not set.             |
+| Capability | Section |
+| --- | --- |
+| SAML SP (consume IdPs) | [Enterprise → SAML SP](/docs/enterprise/saml-sp) |
+| SAML IdP (be a source) | [Enterprise → SAML IdP](/docs/enterprise/saml-idp) |
+| SCIM Users + Groups | [Enterprise → SCIM](/docs/enterprise/scim) |
+| LDAP / AD | [Enterprise → LDAP](/docs/enterprise/ldap) |
+| OIDC/OAuth provider | [OIDC/OAuth provider](/docs/oidc) |
+| Org-level roles & groups | [Authorization → Group roles](/docs/authorization#group-level-roles) |

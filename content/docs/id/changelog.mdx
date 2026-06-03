@@ -1,58 +1,76 @@
 ---
 title: Changelog
-description: What we shipped, week by week.
+description: Shipped milestones on the road to GA — honest, drawn from the implementation status.
 icon: Package
 ---
 
-We ship every Tuesday. Major changes get a heads-up in this changelog; everything is in
-the [git log](https://github.com/qeetid/qeetid) if you want the firehose.
+Qeet ID is **pre-1.0**, targeting **July 2026 GA**. This changelog tracks the major
+capabilities that are implemented and tested today. Dates are approximate milestone
+markers, not release tags.
 
-## 2026-05-20 — SDK 1.4
+<Callout type="info">
+  Everything below is verified in source with unit + integration tests (testcontainers).
+  Items that depend on <em>your</em> cloud/domain (KMS key material, email/SMS
+  deliverability, conformance runs) are noted as external dependencies on the relevant
+  pages, not as missing code.
+</Callout>
 
-- **Passkeys conditional UI.** `<QeetidSignIn />` now uses WebAuthn conditional UI on
-  supported browsers — passkey suggestions appear inline next to the email field.
-- **Magic link cross-device flag.** New `crossDevice: boolean` option for opening links
-  on a different device than the one that requested them.
-- **Audit log streaming to Kafka.** New sink type. See [Audit](/docs/audit#streaming-export).
-- **Go SDK 1.4.0.** Adds context propagation for OTel spans. No breaking changes.
+## Be-a-provider milestone
 
-## 2026-05-13 — Edge regions
+- **OIDC/OAuth2 provider** — discovery, JWKS, **dynamic client registration**,
+  **Authorization Code + PKCE (S256)**, hosted login + consent, **ES256** ID tokens,
+  userinfo, refresh rotation, **RFC 7009 revoke**, **RFC 7662 introspect**, and
+  **RP-initiated logout**. See [OIDC](/docs/oidc).
+- **Device Authorization Grant (RFC 8628)** — for CLI/TV/IoT, including the hosted
+  `/device` approval page. See [Device grant](/docs/oidc/device-grant).
+- **`client_credentials` (M2M)** via service principals. See [M2M](/docs/oidc/m2m).
+- **Asymmetric signing** — ES256 (P-256), RFC 7638 `kid`, retired-key grace window,
+  alg-confusion guard.
 
-- **5 new regions.** `ap-southeast-2` (Sydney), `sa-east-1` (São Paulo), `me-south-1`
-  (Bahrain), `ca-central-1` (Montreal), and `af-south-1` (Cape Town).
-- **Sub-50 ms p99 sign-in** is now an SLA on Enterprise plans.
+## Enterprise federation
 
-## 2026-05-06 — RBAC bulk evaluation
+- **SAML 2.0 — both sides:** **SP** (consume external IdPs, JIT) and **IdP** (register
+  downstream SPs, IdP metadata, SP- and IdP-initiated SSO, RSA-SHA256 assertions). See
+  [Enterprise](/docs/enterprise).
+- **SCIM 2.0 — Users + Groups** with **PatchOp** membership sync and per-tenant bearer
+  tokens. See [SCIM](/docs/enterprise/scim).
+- **LDAP** — bind login + connection CRUD / test-bind. See [LDAP](/docs/enterprise/ldap).
 
-- New `/internal/permissions/evaluate/bulk` endpoint returns multiple decisions in one
-  round trip. Use it for UI rendering where you check several actions at once.
-- SDK shortcut: `qee.canAll({ user, resource, actions: [...] })`.
+## Authentication & MFA
 
-## 2026-04-29 — Tenant deletion grace period
+- **Passkeys / WebAuthn** — registration + passwordless login (previously stubbed; now
+  live). See [Passkeys](/docs/authentication/passkeys).
+- **Social login** — per-tenant OIDC-discovery providers with account linking
+  (previously stubbed; now live). See [Social login](/docs/authentication/social-providers).
+- **MFA** — TOTP + recovery codes, **email/SMS OTP factors**, **WebAuthn as a second
+  factor**, and **step-up MFA** gated by a recent-verification window. See [MFA](/docs/mfa).
+- **Sessions** — **refresh-token rotation + theft detection**, per-account lockout,
+  session list/revoke. See [Sessions](/docs/sessions).
+- **Breached-password rejection** via HIBP k-anonymity (off by default, fail-open).
 
-- Tenant `DELETE` now soft-deletes with a configurable grace period (default 30 days).
-  Restore with `POST /v1/organizations/{id}/restore`.
-- Old behavior available with `?purge=true` for GDPR right-to-erasure flows.
+## Authorization
 
-## 2026-04-22 — Step-up auth
+- **RBAC** with a single-call **`/check`**, **group-level roles**, and **explainable
+  authz** (`?explain=true` grant-path trace). **ABAC policy** per tenant. See
+  [Authorization](/docs/authorization).
 
-- New `useStepUp()` hook in `@qeetid/react`.
-- Server-side validation of step-up proofs via `qee.stepUp.validate(token)`.
-- See [MFA → Step-up auth](/docs/mfa#step-up-auth).
+## Platform, security & delivery
 
-## 2026-04-15 — SCIM 2.0 (Enterprise)
+- **Tamper-evident audit** — append-only, SHA-256 hash-chained, with `/verify`. See
+  [Audit](/docs/platform/audit).
+- **Webhooks** — HMAC-SHA256, transactional outbox, backoff retries, DLQ. See
+  [Webhooks](/docs/platform/webhooks).
+- **GDPR** — erasure (audit survives, PII redacted), export, retention auto-purge. See
+  [GDPR](/docs/platform/gdpr).
+- **Secrets vault** — per-tenant AES-256-GCM via a pluggable KeyProvider (AWS KMS drops
+  in). **Production boot-gate** refuses insecure defaults.
+- **Distributed rate limiting** (Redis token bucket), **Prometheus metrics +
+  OpenTelemetry tracing**, and a **Helm chart + DR runbook**.
+- **SDKs (5 targets)** — TypeScript, Next.js, React, Go, Python. See [SDKs](/docs/sdks).
+- **OpenAPI** — 142 paths / 184 operations, 100% route coverage guarded in CI.
 
-- Full SCIM 2.0 provisioning support for SAML/OIDC connections.
-- Tested with Okta, Azure AD, OneLogin, JumpCloud.
-- See [SSO → Directory sync](/docs/authentication/sso#directory-sync-scim).
+## On the roadmap (not yet shipped)
 
-## 2026-04-08 — Recovery codes UI
-
-- `<QeetidAccountSecurity />` now renders recovery codes inline with copy + download.
-- Programmatic generation: `qee.users.recoveryCodes.generate(userId, { count: 10 })`.
-
-## 2026-04-01 — Self-hosted GA
-
-- Self-host on Kubernetes with our official Terraform module.
-- Single-binary deployment for smaller workloads.
-- Available on Enterprise contracts.
+- Token-exchange (RFC 8693) / CIBA; adaptive/risk-based MFA and bot detection;
+  fine-grained / ReBAC authorization; externally-verifiable (Merkle) audit; prebuilt
+  React components and actions/hooks extensibility; Node/Rust/React-Native SDKs.

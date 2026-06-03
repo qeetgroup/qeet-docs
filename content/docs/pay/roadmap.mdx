@@ -1,0 +1,49 @@
+---
+title: Roadmap
+description: The phased plan for Qeet Pay — what ships first, and what comes after. Subject to change.
+icon: Wallet
+---
+
+<Callout type="warn" title="Planning artifact">
+  This roadmap reflects current planning and is not a commitment. Dates, scope, and ordering
+  will move as the product takes shape — and payments features depend on the relevant
+  regulatory approvals.
+</Callout>
+
+## Phase 1 — Foundation
+
+_Targeting H2 2026._ The goal is the first external merchants live, with every Qeet Group
+product billing and disbursing through Qeet Pay.
+
+- **Acceptance:** UPI (collect, intent, QR), cards (3DS 2.0 + RBI tokenization), net banking,
+  wallets, payment links, hosted checkout, and a JS + React SDK.
+- **Payouts:** UPI / IMPS / NEFT, single and bulk, with maker-checker approval and refunds.
+- **Billing:** subscription lifecycle and proration, flat / per-unit / tiered pricing, NACH &
+  UPI AutoPay mandates, and rule-based dunning.
+- **GST invoicing:** CGST/SGST/IGST auto-calculation, HSN/SAC lookup, credit & debit notes,
+  multi-currency invoices, and a GSTR-1 data export.
+- **Developer experience:** REST API v1, Go + TypeScript + Python + Java SDKs, an OpenAPI spec,
+  a sandbox with test rails, and a `qp` CLI.
+- **Compliance:** KYB onboarding, India data residency, and rule-based fraud scoring.
+
+## Phase 2 — Depth & intelligence
+
+_Targeting H1 2027._ E-invoicing, GST auto-filing, and AI throughout.
+
+- **Acceptance:** UPI 2.0 and AutoPay mandate management, e-NACH, virtual accounts, Bharat QR,
+  and mobile SDKs (Flutter, React Native, Android, iOS).
+- **AI features:** AI dunning to recover failed AutoPay, ML payment orchestration, an ML fraud
+  model, cash-flow forecasting, and HSN/SAC classification.
+- **GST & compliance:** IRN e-invoicing via the IRP, GSTR-1 auto-filing, TDS/TCS tracking, and
+  multi-GSTIN management.
+- **Billing:** usage-based and hybrid pricing, an MRR waterfall, and revenue recognition
+  (IndAS 115 / IFRS 15).
+- **WhatsApp & marketplace:** WhatsApp invoice delivery (combined e-invoice + UPI QR) and
+  marketplace split payments with per-seller GST attribution.
+
+## Phase 3 — Enterprise & global
+
+_Targeting H2 2027._ Embedded finance, cross-border payments, and enterprise treasury features
+as licensing and scale allow.
+
+<Card title="Back to overview" href="/pay" description="What Qeet Pay is, and where it fits." />

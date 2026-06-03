@@ -1,65 +1,55 @@
 ---
 title: SDKs
-description: Type-safe clients, server middleware, and UI components — generated from the same OpenAPI spec.
+description: Five first-party SDKs — TypeScript, Next.js, React, Go, and Python — all using ApiKey auth and local ES256 JWKS verification.
 icon: Package
 ---
 
-Qeet ID SDKs are first-class: same versioning, same release schedule, same support tier.
-All clients are generated from the OpenAPI spec, so the surface area is identical across
-languages.
+Qeet ID ships **five first-party SDKs**. The server SDKs authenticate with an API key
+(`Authorization: ApiKey qk_…`) and verify user access tokens locally against the
+public **ES256 JWKS**. The web SDKs run the hosted-login OAuth flow for you.
 
-## Pick your stack
+## Available now
 
 <Cards>
-  <Card title="TypeScript" href="/docs/sdks/typescript">
-    Universal client. Works in Node, Edge, Deno, Bun, browsers.
+  <Card title="TypeScript & Next.js" href="/docs/sdks/typescript" icon="Braces">
+    <code>@qeetid/sdk</code> (server) + <code>@qeetid/nextjs</code> (App Router
+    middleware, hosted-login flow, silent refresh).
   </Card>
-  <Card title="React" href="/docs/sdks/react">
-    Hooks + drop-in components for sign-in, MFA, and account pages.
+  <Card title="React" href="/docs/sdks/react" icon="Atom">
+    <code>@qeetid/react</code> — <code>&lt;SignedIn&gt;</code> /
+    <code>&lt;SignedOut&gt;</code>, <code>useUser()</code>, sign-in/out buttons.
   </Card>
-  <Card title="Next.js" href="/docs/sdks/nextjs">
-    App Router middleware, server actions, and route handlers.
+  <Card title="Go" href="/docs/sdks/go" icon="Cpu">
+    <code>github.com/qeetgroup/qeetid-go</code> — stdlib-only server SDK.
   </Card>
-  <Card title="React Native" href="/docs/sdks/react-native">
-    Native passkey support, secure storage, deep links.
-  </Card>
-  <Card title="Go" href="/docs/sdks/go">
-    Server SDK with context-aware methods and zero allocations on the hot path.
-  </Card>
-  <Card title="Python" href="/docs/sdks/python">
-    Sync and async clients, type-checked with pydantic.
-  </Card>
-  <Card title="Rust" href="/docs/sdks/rust">
-    Tokio-based async client with first-class observability.
-  </Card>
-  <Card title="Node.js" href="/docs/sdks/node">
-    Direct CommonJS support if you can't use TS yet.
+  <Card title="Python" href="/docs/sdks/python" icon="Cpu">
+    <code>qeetid</code> on PyPI — httpx + local ES256 verification.
   </Card>
 </Cards>
 
-## What you get in every SDK
+## What the server SDKs give you
 
-- **Type-safe API client** generated from OpenAPI
-- **Session validation** with edge caching
-- **Permission checks** (`can()`, `canAll()`)
-- **Webhook signature verification**
-- **OpenTelemetry traces and metrics**
-- **Idiomatic error types** (no `try { JSON.parse } catch`)
+- **Local session verification** — `verify(token)` checks the ES256 signature against
+  the cached JWKS, then expiry/issuer/audience. No per-request network call.
+- **Single-call authorization** — `can(...)` / `canAll(...)` over `GET /v1/check`.
+- **User & tenant management** — typed CRUD with cursor pagination.
+- **Typed errors** + automatic retry/backoff on `429` and idempotent `5xx`
+  (honoring `Retry-After`).
 
-## Versioning
-
-SDKs follow semver. Major versions track the Qeet ID platform major; minor and patch
-versions match the OpenAPI spec they were built from.
-
-```
-SDK 1.4.x  ↔  API v1.4.x
-SDK 2.x.x  ↔  API v2.x.x
+```ts title="the shape, across languages"
+const claims = await qeetid.sessions.verify(accessToken);
+const ok = await qeetid.can({ user: claims.userId, tenant: claims.tenantId!, permission: "billing:write" });
 ```
 
-Breaking changes are announced 90 days in advance via the [changelog](/docs/changelog)
-and the `Sunset` header on deprecated endpoints.
+<Callout type="warn" title="Server SDKs use ApiKey; never ship the key">
+  <code>@qeetid/sdk</code>, Go, and Python are <strong>server-side</strong> — they hold
+  a <code>qk_…</code> API key. For browsers, use <code>@qeetid/nextjs</code> +
+  <code>@qeetid/react</code>: the secret stays on the server and the session lives in an
+  encrypted HttpOnly cookie.
+</Callout>
 
-## Reporting issues
+## Planned
 
-Each SDK has its own GitHub repo under [github.com/qeetid](https://github.com/qeetid). File
-issues there. For platform-level bugs, [support@qeetid.com](mailto:support@qeetid.com).
+Node-only (CommonJS), Rust, and React Native SDKs are **planned** and not yet shipped.
+Until then, use `@qeetid/sdk` (it runs on Node ≥18, Bun, Deno, and edge runtimes via
+Web Crypto) or call the [REST API](/docs/api) directly.

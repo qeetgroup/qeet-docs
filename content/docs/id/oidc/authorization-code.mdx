@@ -1,0 +1,85 @@
+---
+title: Authorization Code + PKCE
+description: The browser login flow — authorize, hosted login & consent, callback, and code exchange — with PKCE (S256) required.
+---
+
+The Authorization Code flow with **PKCE (S256)** is the standard way browser and
+native apps sign users in through Qeet ID's **hosted login**. PKCE is required for
+public clients and recommended for all.
+
+## The flow
+
+<Steps>
+
+<Step>
+### Redirect to authorize
+
+Your app sends the user to the authorize endpoint with a `code_challenge`. If there's
+no SSO session, Qeet ID renders the **hosted login** (password + passkey + social),
+then a **consent** screen for the requested scopes.
+
+<APIEndpoint method="GET" path="/v1/oauth/authorize" title="Start the flow" />
+
+```text
+GET /v1/oauth/authorize
+  ?response_type=code
+  &client_id=qci_…
+  &redirect_uri=https://app.acme.com/api/auth/callback
+  &scope=openid%20profile%20email
+  &state=<csrf>
+  &code_challenge=<base64url(sha256(verifier))>
+  &code_challenge_method=S256
+```
+</Step>
+
+<Step>
+### User authenticates & consents
+
+Qeet ID's hosted login handles authentication and MFA. The consent decision is posted
+back internally:
+
+<APIEndpoint method="POST" path="/v1/oauth/authorize/decision" title="Record consent" />
+</Step>
+
+<Step>
+### Callback with the code
+
+Qeet ID redirects to your `redirect_uri` with `code` and `state`. Validate `state`.
+</Step>
+
+<Step>
+### Exchange the code for tokens
+
+Your server exchanges the code (plus the PKCE `code_verifier`) at the token endpoint.
+
+<APIEndpoint method="POST" path="/v1/oauth/token-code" title="Exchange authorization_code" />
+
+```bash
+curl -X POST https://api.qeetid.com/v1/oauth/token-code \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d grant_type=authorization_code \
+  -d code=$CODE \
+  -d redirect_uri=https://app.acme.com/api/auth/callback \
+  -d client_id=$CLIENT_ID \
+  -d code_verifier=$VERIFIER
+```
+</Step>
+
+</Steps>
+
+The response is an OAuth token response with `access_token`, `id_token` (ES256), and
+`refresh_token`. See [Tokens](/docs/oidc/tokens) for the shape, userinfo, refresh
+rotation, introspection, and revocation.
+
+<Callout type="tip" title="Let the SDK do it">
+  <code>@qeetid/nextjs</code> runs this entire flow — PKCE, hosted login, callback,
+  code exchange, encrypted cookie, and silent refresh — from a single route handler.
+  See [SDKs → TypeScript & Next.js](/docs/sdks/typescript).
+</Callout>
+
+## Hosted login context
+
+The hosted-login UI fetches the pending request's client and scope info to render the
+right screen:
+
+<APIEndpoint method="GET" path="/v1/oauth/login-context" title="Pending authorize context" />

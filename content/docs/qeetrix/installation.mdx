@@ -1,0 +1,92 @@
+---
+title: Installation
+description: Install the Qeetrix packages, wire up Tailwind CSS v4, and render your first component.
+icon: Package
+---
+
+Qeetrix is published to the `@qeetrix` npm scope. React 19 and Tailwind CSS v4 are **peer
+dependencies** — you bring them, Qeetrix builds on top.
+
+## Published packages
+
+<Callout type="info" title="Versions">
+  Qeetrix is pre-1.0. The versions below are current at the time of writing; check npm for the
+  latest before pinning.
+</Callout>
+
+| Package | Version | What it is |
+| --- | --- | --- |
+| `@qeetrix/ui` | `0.1.0` | React component library (shadcn + Base UI) |
+| `@qeetrix/tokens` | `0.0.2` | Design tokens (CSS + JSON) |
+| `@qeetrix/brand` | `0.0.1` | Theme-adaptive logos + Qeet icons |
+| `@qeetrix/eslint-config` | `0.0.1` | Shared ESLint flat config |
+| `@qeetrix/tsconfig` | `0.0.1` | Shared TypeScript configs |
+
+## Install
+
+```bash
+pnpm add @qeetrix/ui @qeetrix/tokens @qeetrix/brand
+pnpm add react react-dom   # peers (>=19)
+```
+
+`@qeetrix/ui` already depends on `@qeetrix/tokens`, but installing it explicitly lets you
+consume the raw tokens directly. Tailwind CSS v4 is also a peer of the consumer build — install
+it if your app doesn't already have it.
+
+## Wire up Tailwind v4
+
+In your global stylesheet, import the Qeetrix styles and let Tailwind scan the compiled
+component classes:
+
+```css title="globals.css"
+@import "tailwindcss";
+@import "@qeetrix/ui/styles.css";
+
+/* Generate the classes used by Qeetrix components: */
+@source "../node_modules/@qeetrix/ui/dist/**/*.js";
+```
+
+`@qeetrix/ui/styles.css` bundles the design tokens, the Cal Sans `@font-face` declarations, and
+the component theme. You don't need to import the token CSS separately for the components to be
+styled.
+
+## Render a component
+
+Wrap your app in `ThemeProvider` (it manages the `.dark` class) and start using components:
+
+```tsx title="app.tsx"
+import { ThemeProvider, Button } from "@qeetrix/ui";
+import { QeetLogo } from "@qeetrix/brand";
+
+export function App() {
+  return (
+    <ThemeProvider defaultTheme="system">
+      <QeetLogo size={28} />
+      <Button>Authenticate with Qeet</Button>
+    </ThemeProvider>
+  );
+}
+```
+
+## Shared configs (optional)
+
+If you're building inside the Qeet ecosystem, the shared configs keep your tooling aligned:
+
+```js title="eslint.config.js"
+import qeetrix from "@qeetrix/eslint-config";
+
+export default [...qeetrix];
+```
+
+```json title="tsconfig.json"
+{
+  "extends": "@qeetrix/tsconfig/next.json"
+}
+```
+
+`@qeetrix/tsconfig` ships `base.json`, `react-vite.json`, `next.json`, and `node.json` — pick
+the one that matches your app.
+
+## Next
+
+<Card title="Components" href="/qeetrix/components" description="See everything @qeetrix/ui exports." />

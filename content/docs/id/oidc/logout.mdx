@@ -1,0 +1,32 @@
+---
+title: RP-initiated logout
+description: End the IdP session with OIDC RP-initiated logout — id_token_hint plus a post-logout redirect.
+---
+
+When a user signs out of a relying party (RP), you often want to end their session at
+the **identity provider** too, so the next visit re-authenticates. Qeet ID implements
+**OIDC RP-initiated logout** (`end_session`).
+
+<APIEndpoint method="GET" path="/v1/oauth/logout" title="End session (RP-initiated logout)" />
+
+```text
+GET /v1/oauth/logout
+  ?id_token_hint=<the user's id_token>
+  &post_logout_redirect_uri=https://app.acme.com
+  &state=<csrf>
+```
+
+Qeet ID validates the `id_token_hint`, clears the hosted-login SSO session, and
+redirects to `post_logout_redirect_uri` (which must be registered on the client as a
+post-logout URI). A `POST` form-binding variant is also available.
+
+<Callout type="tip" title="Next.js handles it">
+  Linking to <code>/api/auth/logout</code> with <code>@qeetid/nextjs</code> clears the
+  local encrypted cookie <em>and</em> triggers RP-initiated logout at Qeet ID.
+</Callout>
+
+<Callout type="info">
+  To revoke a specific token without a full IdP logout, use
+  [RFC 7009 revocation](/docs/oidc/tokens#revocation-rfc-7009). To revoke a backend
+  user session directly, see [Sessions](/docs/sessions#list--revoke-sessions).
+</Callout>

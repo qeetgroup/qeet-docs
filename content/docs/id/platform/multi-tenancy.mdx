@@ -1,0 +1,70 @@
+---
+title: Multi-tenancy
+description: Tenant isolation by tenant_id, per-tenant configuration, branding & email templates, and IP allow/deny rules.
+icon: Building
+---
+
+Qeet ID is **multi-tenant by design**. Every resource is scoped by `tenant_id`, and
+that scoping is enforced on every query. A **personal tenant** is auto-created on
+signup, and a user can belong to multiple tenants.
+
+## Tenants
+
+<APIEndpoint method="POST" path="/v1/tenants" title="Create a tenant" />
+<APIEndpoint method="GET" path="/v1/tenants" title="List tenants" />
+<APIEndpoint method="PATCH" path="/v1/tenants/{id}" title="Update a tenant" />
+
+```ts
+const tenant = await qeetid.tenants.create({ name: "Acme, Inc." });
+```
+
+## Switch the active tenant
+
+A user with multiple memberships can switch — Qeet ID re-mints an access token scoped
+to the target tenant.
+
+<APIEndpoint method="POST" path="/v1/auth/switch-tenant" title="Re-mint a scoped token" />
+
+## Per-tenant configuration
+
+Almost everything is configurable per tenant:
+
+| Area | Endpoint |
+| --- | --- |
+| Auth policy (password rules, login methods, breach checks) | `/v1/tenants/{tenantID}/auth-policy` |
+| ABAC policy | `/v1/tenants/{tenantID}/policy` |
+| Branding | `/v1/tenants/{tenantID}/branding` |
+| Email templates | `/v1/tenants/{tenantID}/email-templates` |
+| IP allow/deny rules | `/v1/tenants/{tenantID}/ip-rules` |
+| SSO connections (SAML/LDAP/social) | see [Enterprise](/docs/enterprise) |
+| Retention | `/v1/tenants/{tenantID}/retention` |
+| Analytics overview | `/v1/tenants/{tenantID}/analytics/overview` |
+
+## Branding & email templates
+
+Each tenant has its own branding and can override transactional email templates
+(with a preview endpoint to check rendering before going live).
+
+<APIEndpoint method="PUT" path="/v1/tenants/{tenantID}/branding" title="Update branding" />
+<APIEndpoint method="PUT" path="/v1/tenants/{tenantID}/email-templates/{key}" title="Override a template" />
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/email-templates/{key}/preview" title="Preview a template" />
+
+## IP allow/deny rules
+
+Restrict access by CIDR per tenant — allow lists, deny lists, and a check endpoint.
+
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/ip-rules" title="List IP rules" />
+<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/ip-rules" title="Add an IP rule (CIDR)" />
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/ip-rules/check" title="Check an IP" />
+
+## Analytics
+
+Per-tenant KPIs — MAU/DAU, login / MFA / failed-login counts, and method mix.
+
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/analytics/overview" title="Tenant KPIs" />
+
+<Callout type="info">
+  Data residency + BYOK is a deployment concern: self-host in the region you need, and
+  source the secrets-vault key from a regional <a href="/docs/platform/secrets">KeyProvider</a>
+  (AWS KMS drops in). It isn't a per-tenant toggle in the API today.
+</Callout>

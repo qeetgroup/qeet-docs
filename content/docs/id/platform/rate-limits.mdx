@@ -1,0 +1,53 @@
+---
+title: Rate limits
+description: Redis-backed distributed token-bucket rate limiting per IP / tenant / user / API key — plus CSRF protection and security headers.
+icon: Gauge
+---
+
+Qeet ID enforces **distributed rate limiting** with a Redis-backed atomic
+**token-bucket** keyed per IP, tenant, user, and API key. Because the counter lives in
+Redis, limits hold **across replicas** — not per-process. CSRF protection and security
+headers are applied alongside.
+
+## How it works
+
+- **Token bucket**, evaluated atomically in Redis, so concurrent requests across nodes
+  share one ceiling.
+- **Keyed** by IP, tenant, user, and API key, so abuse on one dimension doesn't
+  starve others.
+- **Layered** with per-account [lockout](/docs/sessions#account-lockout) on auth
+  endpoints to blunt credential stuffing.
+
+## The 429 response
+
+When a limit is exceeded, Qeet ID returns `429` with a `Retry-After` header and the
+standard error envelope:
+
+```json
+{
+  "error": {
+    "code": "rate_limited",
+    "message": "too many requests"
+  }
+}
+```
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 27
+```
+
+Honor `Retry-After` and back off. The SDKs do this automatically — `429` (and `5xx`
+on idempotent calls) are retried with backoff. See [API → Errors](/docs/api/errors).
+
+## CSRF & security headers
+
+Browser-facing endpoints are CSRF-protected (the hosted-login SSO cookie flows are
+CSRF-aware; SAML ACS / IdP-POST endpoints are explicitly CSRF-exempt because they're
+signature-validated). Standard security headers are set on responses.
+
+<Callout type="info">
+  Adaptive / risk-based rate limiting and bot detection are on the roadmap. The
+  shipped limiter is a deterministic distributed token bucket — predictable and
+  replica-safe.
+</Callout>

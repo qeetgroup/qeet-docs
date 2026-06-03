@@ -1,129 +1,99 @@
 ---
 title: Sessions
-description: Stateful sessions with cluster-wide revocation, idle timeouts, and per-device inventories for users.
+description: ES256 access tokens, refresh-token rotation with theft detection, per-account lockout, and session list/revoke.
 icon: ShieldCheck
 ---
 
-A Qeet ID session is the server-validated handle that says "this client is currently
-authenticated." Sessions are stateful by default — you can revoke any session from
-anywhere, instantly, across your entire fleet.
+Authentication issues a **token pair**: a short-lived **ES256 access JWT** and a
+rotating **refresh token**, both tied to a server-side **session** you can list and
+revoke. This page covers the token model, rotation + theft detection, lockout, and
+session management.
 
-## Lifecycle
+## The token pair
 
-```
-sign-in → session.created → (idle... refresh...) → session.revoked
-                              \__ session.expired (max age)
-                              \__ session.revoked  (admin or user)
-```
-
-## Creating a session
-
-You don't usually call this directly — sign-in does it for you. But if you're building
-custom flows:
-
-```ts
-const session = await qee.sessions.create({
-  user: "usr_abc",
-  ttl: "7d",
-  metadata: { ip: req.ip, userAgent: req.headers["user-agent"] },
-});
-// session.token → the cookie value
-```
-
-## Validating a session
-
-```ts
-const session = await qee.sessions.validate(cookieValue);
-if (!session) {
-  // session is expired or revoked — sign the user out
+```json title="TokenPair"
+{
+  "access_token": "eyJhbGciOiJFUzI1Ni…",
+  "token_type": "Bearer",
+  "expires_at": "2026-06-04T12:15:00Z",
+  "refresh_token": "…",
+  "session_id": "…",
+  "user_id": "…",
+  "tenant_id": "…"
 }
 ```
 
-Validation is **cached** with 30-second TTL and **proactively invalidated** on revoke.
-Sub-30ms p99.
-
-## Revoking a session
-
-From your app (user logs themselves out):
+- **Access token** — an ES256 JWT. Verify it offline against the public JWKS
+  (`/.well-known/jwks.json`): signature, expiry, issuer, audience. No per-request
+  network call.
+- **Refresh token** — opaque; exchange it for a fresh pair at `/v1/auth/refresh`.
 
 ```ts
-await qee.sessions.revoke(sessionId);
+const claims = await qeetid.sessions.verify(accessToken);
+// claims.userId, claims.tenantId, claims.sessionId
 ```
 
-From the dashboard (admin force-logout):
+<Callout type="info" title="Why ES256 + JWKS">
+  Tokens are signed with ECDSA P-256 (asymmetric). The JWKS is public, so any service
+  verifies tokens without a shared secret. Signing keys carry an RFC 7638
+  <code>kid</code>, retire on a grace window, and are guarded against alg-confusion.
+  The SDKs cache the JWKS and refetch on an unknown <code>kid</code>.
+</Callout>
 
-```
-Settings → Users → [select user] → Sessions → Revoke
+## Refresh-token rotation + theft detection
+
+Each refresh **rotates** the token: the old refresh token is invalidated and a new one
+issued. If a previously-rotated (i.e. stolen and replayed) refresh token is ever
+presented, Qeet ID **revokes the entire token chain** for that session and **audits**
+the event — so a leaked token can't be used silently.
+
+<APIEndpoint method="POST" path="/v1/auth/refresh" title="Rotate the token pair" />
+
+```bash
+curl -X POST https://api.qeetid.com/v1/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{"refresh_token":"…"}'
 ```
 
-From the API for **all** of a user's sessions:
+<Callout type="tip" title="Next.js does this for you">
+  <code>@qeetid/nextjs</code> middleware refreshes a near-expiry session silently —
+  it calls the token endpoint, persists the rotated refresh token in the encrypted
+  cookie, and re-runs the request — so users aren't bounced to login.
+</Callout>
+
+## Account lockout
+
+On top of distributed IP [rate limiting](/docs/platform/rate-limits), Qeet ID applies a
+**per-account** failed-attempt throttle and temporary lockout to blunt credential
+stuffing. Locked accounts return `429` on login until the window clears. This is on by
+default.
+
+## List & revoke sessions
+
+For an account-security screen, list the user's active sessions and let them revoke
+any one. `logout` revokes the caller's current session.
+
+<APIEndpoint method="GET" path="/v1/auth/sessions" title="List the caller's sessions" />
+<APIEndpoint method="DELETE" path="/v1/auth/sessions/{id}" title="Revoke a session" />
+<APIEndpoint method="POST" path="/v1/auth/logout" title="Revoke the current session" />
 
 ```ts
-await qee.sessions.revokeAll(userId);
+const sessions = await qeetid.sessions.list();
+await qeetid.sessions.revoke(sessionId);
 ```
 
-Revocation is **cluster-wide** — every edge node will refuse the session within ~30 seconds
-of the revoke call (and immediately for the originating node).
+Password reset revokes **all** of a user's sessions (see
+[Sign-up & passwords](/docs/authentication/sign-up#password-reset)).
 
-## Idle timeout
+## Who am I
 
-Sessions can be configured to expire after a period of inactivity:
+`/v1/auth/me` returns the caller's current principal context (user, tenant,
+session) — handy for hydrating an app shell.
 
-```ts
-await qee.tenants.updateConfiguration("acme", {
-  sessions: {
-    maxAge: "30d",
-    idleTimeout: "8h",
-  },
-});
-```
+<APIEndpoint method="GET" path="/v1/auth/me" title="Current principal context" />
 
-Each successful validation pushes the idle timer forward. You can tune the policy per
-role for higher-privilege users.
-
-## Listing a user's sessions
-
-For your account portal:
-
-```tsx
-<QeetidAccountSessions />
-```
-
-Or:
-
-```ts
-const sessions = await qee.users.sessions.list(userId);
-// Returns metadata: ip, userAgent, lastSeen, location...
-```
-
-Users can revoke any of their own sessions from this UI — instant, no support ticket
-required.
-
-## Stateless JWT (optional)
-
-For edge runtimes or service-to-service auth where you can't reach the session service,
-you can mint a short-lived JWT from a session:
-
-```ts
-const jwt = await qee.sessions.issueJwt(sessionId, { ttl: "5m" });
-```
-
-The JWT is signed with a tenant-scoped key you can rotate at any time. **Don't use this
-as a substitute for sessions** — it's an escape hatch for hot paths where the 30-second
-revocation lag matters less than a database hit.
-
-## Anatomy of a session cookie
-
-The cookie Qeet ID sets:
-
-- **Name** — `qee_session` (configurable per tenant).
-- **Value** — opaque token; not a JWT, no claims embedded.
-- **HttpOnly** — yes. Not readable from JavaScript.
-- **Secure** — yes. HTTPS-only (except `localhost`).
-- **SameSite** — `Lax` by default. `Strict` available for higher-security tenants.
-- **Domain** — your apex domain so subdomains share the session.
-
-<Callout type="warn">
-  Never base authorization decisions on cookie presence alone. Always call
-  `qee.sessions.validate(cookie)` to confirm the session is still active.
+<Callout type="warn" title="Always verify, never trust">
+  Authorization decisions must be based on a verified access token (or a server-side
+  session lookup), never on cookie presence alone. Verify the JWT signature and
+  expiry on every protected request.
 </Callout>

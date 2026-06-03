@@ -1,49 +1,50 @@
 ---
 title: Magic links
-description: Passwordless sign-in via single-use email links. Great for low-friction onboarding.
+description: Passwordless sign-in via single-use, TTL-bound email links — enumeration-safe and replay-protected.
 ---
 
-Magic links email a one-time URL that signs the user in when clicked. Best for:
+Magic links email a one-time URL that signs the user in when consumed. Qeet ID's
+magic links are **single-use** and **TTL-bound**, and starting one is
+**enumeration-safe** (no signal about whether the address exists).
 
-- B2B onboarding where users hate creating passwords.
-- Re-auth flows ("Confirm your identity to change billing").
-- Recovery flows when the user has forgotten their password.
+## Flow
 
-## Enable
+<Steps>
 
-```ts
-await qee.tenants.updateConfiguration("acme", {
-  authentication: {
-    magicLinks: { enabled: true, expiresIn: "10m" },
-  },
-});
+<Step>
+### Start a magic link
+
+The user enters their email; Qeet ID emails a link containing a single-use token.
+
+<APIEndpoint method="POST" path="/v1/auth/magic-link/start" title="Email a magic link" />
+
+```bash
+curl -X POST https://api.qeetid.com/v1/auth/magic-link/start \
+  -H "Content-Type: application/json" \
+  -d '{"email":"alex@acme.com"}'
 ```
+</Step>
 
-## Send a magic link
+<Step>
+### Consume the token
 
-```ts
-import { useSignIn } from "@qeetid/react";
+Your landing page extracts the token from the URL and posts it back. On success,
+Qeet ID returns a token pair.
 
-const { signInWithMagicLink } = useSignIn();
+<APIEndpoint method="POST" path="/v1/auth/magic-link/consume" title="Consume → token pair" />
+</Step>
 
-await signInWithMagicLink({
-  email: "alex@acme.com",
-  redirectTo: "/dashboard",
-});
-```
+</Steps>
 
-The link is **single-use** and **bound to the originating session** — opening it on a
-different device won't work unless you opt into `crossDevice: true`.
+## Security properties
 
-## Customizing the email
+- **Single-use.** Consuming the token invalidates it.
+- **Short-lived.** Tokens expire after a TTL.
+- **Enumeration-safe.** Starting a link doesn't reveal whether the account exists.
+- **Rate-limited.** Per IP, email, and tenant (see [Rate limits](/docs/platform/rate-limits)).
 
-Templates live under [Branding → Email templates](/docs/branding/email-templates). The
-default template uses your tenant's primary color and logo.
-
-## Security
-
-- **Single-use.** Once clicked, the token is invalidated.
-- **Short-lived.** Default 10 minutes; configurable down to 1 minute.
-- **Replay-protected.** Re-issuing a magic link for the same address invalidates the
-  previous one.
-- **Rate-limited.** Per IP, per email, per tenant — with abuse detection.
+<Callout type="warn" title="Deliverability">
+  Magic links depend on email delivery. Configure a sending domain with
+  SPF/DKIM/DMARC for production. Templates are customizable per tenant under
+  [Branding & email templates](/docs/platform/multi-tenancy#branding--email-templates).
+</Callout>

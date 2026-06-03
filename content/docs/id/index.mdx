@@ -1,13 +1,82 @@
 ---
-title: Hello World
-description: Your first document
+title: Qeet ID
+description: An open-source, self-hostable, passkeys-first identity platform — OIDC + SAML provider, SCIM, RBAC, and a tamper-evident audit log, with no SSO tax.
+icon: FingerprintPattern
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+**Qeet ID** is an open-source, self-hostable identity platform. It gives you the
+developer experience of a modern CIAM (passkeys, social login, hosted login, five
+first-party SDKs) and the enterprise model of a B2B identity provider (SAML, SCIM,
+LDAP, organizations) — in one binary, without paywalling SSO behind an "enterprise"
+tier.
 
-## What is Next?
+<Callout type="info" title="Status">
+  Qeet ID is pre-1.0 with a July 2026 GA target. The platform backend, admin/login
+  frontends, and SDKs are implemented and tested. A few items are external/ops
+  dependencies (KMS key material, deliverability domains, conformance runs) rather
+  than code gaps — those are flagged inline throughout the docs.
+</Callout>
+
+## What you can build
 
 <Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
+  <Card icon="Fingerprint" title="Authenticate users" href="/docs/authentication">
+    Password, magic links, passkeys/WebAuthn, and social login — configurable per tenant.
+  </Card>
+  <Card icon="ShieldCheck" title="Add MFA & step-up" href="/docs/mfa">
+    TOTP, email/SMS OTP, WebAuthn as a second factor, and step-up on sensitive actions.
+  </Card>
+  <Card icon="Building" title="Be an SSO provider" href="/docs/oidc">
+    Stand up an OIDC and SAML IdP: hosted login, consent, device grant, M2M.
+  </Card>
+  <Card icon="Network" title="Enterprise federation" href="/docs/enterprise">
+    Consume external IdPs (SAML SP), provision via SCIM Users + Groups, bind LDAP.
+  </Card>
+  <Card icon="KeyRound" title="Authorize requests" href="/docs/authorization">
+    RBAC with a single-call <code>/check</code>, group roles, ABAC, and explainable authz.
+  </Card>
+  <Card icon="ScrollText" title="Prove what happened" href="/docs/platform/audit">
+    A SHA-256 hash-chained, append-only audit log with a <code>/verify</code> endpoint.
+  </Card>
+</Cards>
+
+## Why Qeet ID
+
+- **Both an OIDC IdP and a SAML IdP, with SCIM Users + Groups** — full enterprise
+  federation, open-source and not behind an SSO tax.
+- **Tamper-evident, hash-chained audit** with a `/verify` integrity endpoint —
+  provable audit most CIAM platforms don't offer.
+- **Security defaults on by default** — refresh-token theft detection, per-account
+  lockout, breached-password rejection (HIBP k-anonymity), and a production boot-gate
+  that refuses to start with insecure defaults.
+- **Five first-party SDKs** — TypeScript, Next.js, React, Go, and Python — over a
+  100%-covered OpenAPI spec guarded in CI.
+- **Self-hostable** with a real Helm chart and DR runbook. You own your data.
+
+## Tokens & keys at a glance
+
+<Callout type="warn" title="Two auth schemes — don't mix them">
+  - **Server-to-server API calls** use an API key: `Authorization: ApiKey qk_…`.
+  - **User access tokens** are **ES256 JWTs** verified against the public JWKS:
+    `Authorization: Bearer <jwt>`.
+
+  API keys never go in the browser. The bearer scheme on user/service routes is for
+  the JWT, not the API key.
+</Callout>
+
+## Start here
+
+<Cards>
+  <Card icon="Zap" title="Quickstart" href="/docs/quickstart">
+    Install an SDK, init with an API key, and protect a route in minutes.
+  </Card>
+  <Card icon="Compass" title="Core concepts" href="/docs/concepts">
+    Tenants, users, sessions, principals, roles — the model everything sits on.
+  </Card>
+  <Card icon="Code" title="API reference" href="/docs/api">
+    142 paths from the OpenAPI spec — auth schemes, errors, and pagination.
+  </Card>
+  <Card icon="Package" title="SDKs" href="/docs/sdks">
+    TypeScript, Next.js, React, Go, and Python — with JWKS session verification.
+  </Card>
 </Cards>

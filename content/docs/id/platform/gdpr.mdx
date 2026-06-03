@@ -1,0 +1,44 @@
+---
+title: GDPR & retention
+description: Right-to-erasure (async purge with PII redaction, audit survives), data export, and per-tenant retention auto-purge.
+icon: ShieldCheck
+---
+
+Qeet ID has built-in support for the data-subject rights and retention controls GDPR
+expects: **erasure**, **export**, and **retention**.
+
+## Right to erasure (Article 17)
+
+Erasure asynchronously purges a user's personal data. PII is redacted, but the
+**audit record of the deletion survives** (without PII) — so you keep a provable
+compliance trail without retaining personal data.
+
+<APIEndpoint method="POST" path="/v1/gdpr/purge" title="Request an erasure" />
+<APIEndpoint method="GET" path="/v1/gdpr/purge/{id}" title="Check purge status" />
+<APIEndpoint method="POST" path="/v1/users/{id}/purge" title="Purge a specific user" />
+
+```bash
+curl -X POST https://api.qeetid.com/v1/gdpr/purge \
+  -H "Authorization: ApiKey $QEETID_API_KEY" \
+  -d '{"user_id":"'$USER'"}'
+```
+
+<Callout type="warn" title="Erasure is irreversible">
+  Purge removes personal data permanently. It's distinct from a
+  [soft-delete](/docs/concepts#users) — a soft-deleted user can be restored from the
+  recycle bin; a purged user cannot.
+</Callout>
+
+## Retention
+
+Each tenant configures how long data is retained; an auto-purge enforces it (with a
+preview and a manual run for ad-hoc cleanup).
+
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/retention" title="Read retention policy" />
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/retention/preview" title="Preview what would be purged" />
+<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/retention/run" title="Run retention now" />
+
+<Callout type="info">
+  Retention auto-purge respects the [audit hash chain](/docs/platform/audit) — purging
+  old data doesn't invalidate the integrity proof for what remains.
+</Callout>

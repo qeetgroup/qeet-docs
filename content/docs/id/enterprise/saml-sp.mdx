@@ -1,0 +1,67 @@
+---
+title: SAML SP (consume external IdPs)
+description: Let your customers sign in with their own SAML IdP — connection registry, SP metadata, SP-initiated login, ACS, and JIT provisioning.
+---
+
+As a **Service Provider (SP)**, Qeet ID consumes your customers' SAML identity
+providers (Okta, Entra ID / Azure AD, Google Workspace, OneLogin, ADFS, …). Their
+employees sign in with credentials they already have, and Qeet ID JIT-provisions the
+user on first login.
+
+## Register a connection
+
+Each external IdP is a **per-tenant** SAML connection.
+
+<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/saml" title="Create an external-IdP SAML connection" />
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/saml" title="List connections" />
+<APIEndpoint method="PUT" path="/v1/tenants/{tenantID}/saml/{id}" title="Update a connection" />
+
+## SP metadata
+
+Hand your customer's IdP admin the per-connection SP metadata XML (entity ID, ACS URL,
+certificate) so they can configure their side.
+
+<APIEndpoint method="GET" path="/saml/metadata/{id}" title="SP metadata XML for a connection" />
+
+## Sign-in flow
+
+<Steps>
+
+<Step>
+### SP-initiated login
+
+Send the user to the connection's login endpoint; Qeet ID issues a signed AuthnRequest
+and redirects to the external IdP.
+
+<APIEndpoint method="GET" path="/saml/login/{id}" title="Redirect to the external IdP" />
+</Step>
+
+<Step>
+### Assertion consumer (ACS)
+
+The IdP posts a signed assertion back to Qeet ID's ACS. The endpoint is CSRF-exempt
+and **signature-validated**; on success it produces a one-time login code.
+
+<APIEndpoint method="POST" path="/saml/acs/{id}" title="Assertion Consumer Service" />
+</Step>
+
+<Step>
+### Exchange for a token pair
+
+Your app exchanges the one-time SAML login code for a standard token pair.
+
+<APIEndpoint method="POST" path="/saml/exchange" title="SAML login code → token pair" />
+</Step>
+
+</Steps>
+
+## JIT provisioning
+
+On a first successful assertion, Qeet ID creates the user (if needed) and records a
+SAML external identity, mapped to the tenant. Combine with [SCIM](/docs/enterprise/scim)
+to keep users and group membership in sync over time (and to deprovision on offboard).
+
+<Callout type="info">
+  Assertion signatures are validated against an independent SP implementation. Clock
+  skew on the IdP is the most common cause of validation failures — keep NTP in sync.
+</Callout>

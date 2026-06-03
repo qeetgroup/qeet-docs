@@ -1,69 +1,69 @@
 ---
 title: Authentication
-description: Sign-in, sign-up, social providers, SAML, OIDC, magic links, and passkeys — all in one configurable flow.
+description: Password, magic links, passkeys/WebAuthn, and social login — all configurable per tenant, plus an overview of enterprise SSO.
 icon: KeyRound
 ---
 
-Qeet ID lets you turn auth methods on and off per tenant. The same `<QeetidSignIn />`
-component renders the right UI for whatever you've enabled.
+Qeet ID supports multiple first-factor authentication methods. Which ones are
+available is controlled **per tenant** by its **auth policy**, so each workspace can
+allow exactly the methods it wants.
 
 ## Supported methods
 
 <Cards>
   <Card title="Email + password" href="/docs/authentication/sign-in" icon="Mail">
-    Strong defaults: Argon2id, breach checks, optional password rules.
+    Argon2id (OWASP params), rehash-on-login, optional breached-password rejection.
   </Card>
-  <Card title="Passkeys" href="/docs/authentication/passkeys" icon="Fingerprint">
-    Phishing-resistant WebAuthn passkeys with platform and cross-device support.
+  <Card title="Passkeys / WebAuthn" href="/docs/authentication/passkeys" icon="Fingerprint">
+    Phishing-resistant passwordless login and credential management.
   </Card>
   <Card title="Magic links" href="/docs/authentication/magic-links" icon="Sparkles">
-    One-click sign-in via email with replay protection.
+    Single-use, TTL-bound email links. Enumeration-safe.
   </Card>
-  <Card title="Social providers" href="/docs/authentication/social-providers" icon="Globe">
-    Google, Microsoft, Apple, GitHub, GitLab, Facebook, X.
+  <Card title="Social login" href="/docs/authentication/social-providers" icon="Globe">
+    Per-tenant OIDC-discovery providers with account linking.
   </Card>
   <Card title="Enterprise SSO" href="/docs/authentication/sso" icon="Building">
-    SAML 2.0, OIDC, Okta, Azure AD, OneLogin, Ping.
+    SAML 2.0 (SP + IdP), SCIM, and LDAP — overview, then the Enterprise section.
   </Card>
-  <Card title="API tokens" href="/docs/authentication/api-tokens" icon="KeyRound">
-    Personal access tokens with scoped permissions.
+  <Card title="MFA & step-up" href="/docs/mfa" icon="ShieldCheck">
+    Layer TOTP, OTP factors, and WebAuthn 2FA on any first factor.
   </Card>
 </Cards>
 
-## The sign-in flow, end-to-end
+## Tokens issued on success
 
-1. **Client requests sign-in** — `<QeetidSignIn />` calls `POST /v1/sessions/start` with
-   the configured methods.
-2. **Server returns a challenge** — for password it's a form, for passkey it's a WebAuthn
-   `publicKeyCredentialRequestOptions`, for SSO it's a redirect URL.
-3. **User completes the challenge** — the client sends the result back to
-   `POST /v1/sessions/complete`.
-4. **MFA step-up (optional)** — if the tenant requires MFA, the server returns
-   `mfa_required` with available factors. The client renders the appropriate UI.
-5. **Session issued** — Qeet ID sets an `httpOnly`, `Secure`, `SameSite=Lax` cookie and
-   returns the user object.
+Every successful authentication returns a **token pair** — a short-lived **ES256
+access JWT** plus a rotating **refresh token**. Verify access tokens offline against
+the public JWKS; exchange refresh tokens at `/v1/auth/refresh`. See
+[Sessions](/docs/sessions) for rotation, theft detection, and revocation.
 
-## Choosing methods
+<APIEndpoint method="POST" path="/v1/auth/login" title="Password login → token pair" />
+<APIEndpoint method="POST" path="/v1/auth/refresh" title="Rotate the token pair" />
 
-The configurable `methods` prop controls **what shows up** and **in what order**:
+## Per-tenant auth policy
 
-```tsx
-<QeetidSignIn methods={["passkey", "google", "email"]} />
-```
+Each tenant has an auth policy controlling password rules, allowed login methods, and
+breached-password rejection (HaveIBeenPwned k-anonymity — off by default, fail-open).
 
-If a user has previously enrolled a passkey, that becomes the default. Otherwise the
-first method in your list is the default. Users can always click "more options" to switch.
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/auth-policy" title="Read auth policy" />
+<APIEndpoint method="PUT" path="/v1/tenants/{tenantID}/auth-policy" title="Update auth policy" />
 
-<Callout type="warn">
-  Don't list more than three methods on the primary surface. We've found conversion drops sharply
-  past three options — additional methods belong behind "more options".
+<Callout type="info">
+  Brute-force protection is on by default: failed attempts trigger a per-account
+  throttle and temporary lockout, on top of distributed IP rate limiting. See
+  [Sessions → Lockout](/docs/sessions#account-lockout) and [Rate limits](/docs/platform/rate-limits).
 </Callout>
 
-## Customizing the UI
+## Building the UI
 
-Two paths:
+You have two paths:
 
-- **Themed component** — pass `theme`, `localization`, and `appearance` to `<QeetidSignIn />`.
-- **Headless hooks** — use `useSignIn()` to drive your own UI.
+- **Hosted login** (`qeetid-login`) — Qeet ID hosts the full sign-in experience
+  (password + passkey + social + consent). Drive it from your app with
+  `@qeetid/nextjs` / `@qeetid/react`. This is the recommended path for OIDC clients.
+- **Direct API** — call the REST endpoints yourself (`/v1/auth/*`, `/v1/passkeys/*`,
+  `/v1/social/*`) and build your own screens.
 
-See [Custom UI](/docs/authentication/custom-ui) for both.
+The method pages below document the direct API; the [SDK pages](/docs/sdks) cover the
+hosted flow.

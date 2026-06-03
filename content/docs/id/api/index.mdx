@@ -1,88 +1,71 @@
 ---
 title: API reference
-description: Every Qeet ID endpoint, organized by service. All examples are copy-pasteable in curl, TypeScript, Go, and Python.
+description: The Qeet ID REST API — 142 paths over JSON/HTTPS, with ApiKey and Bearer-JWT auth schemes, a stable error envelope, and cursor pagination.
 icon: Code
 ---
 
-The Qeet ID REST API uses **JSON over HTTPS**. Every endpoint is versioned under
-`/v1/` and lives at:
+The Qeet ID REST API is **JSON over HTTPS**, versioned under `/v1/`. The OpenAPI spec
+covers **142 paths** with **100% route coverage**, guarded in CI — it's the source of
+truth for every SDK.
 
-```
-https://api.qeetid.com/v1
-```
-
-## Base URL by residency
-
-| Tenant residency | Base URL                          |
-| ---------------- | --------------------------------- |
-| US               | `https://api.qeetid.com/v1`      |
-| EU               | `https://api.eu.qeetid.com/v1`   |
-| APAC             | `https://api.apac.qeetid.com/v1` |
-
-The SDKs route automatically; if you're calling the API directly, hit the right region
-for your tenant.
-
-## Authentication
-
-All requests must include a bearer token:
-
-```bash
-Authorization: Bearer qee_sec_xxxxxxxxxxxxxxxxxxx
+```text
+https://api.qeetid.com   (or your self-hosted base URL)
 ```
 
-There are three key types:
+<Callout type="info" title="Self-hosted base URL">
+  Qeet ID is self-hostable, so the base URL is whatever you deploy. Examples use
+  <code>https://api.qeetid.com</code>; substitute your own host. The OpenAPI
+  <code>servers</code> list also includes local dev (<code>:4000</code>/<code>:4001</code>).
+</Callout>
 
-- **Secret keys** (`qee_sec_…`) — server-side, full access.
-- **Publishable keys** (`qee_pub_…`) — client-side, limited access.
-- **Personal access tokens** (`qee_pat_…`) — per-user, scoped permissions.
+## Authentication schemes
 
-## Endpoints
+There are several auth modes — use the right one per route:
+
+| Scheme | Header | Used by |
+| --- | --- | --- |
+| **`apiKeyAuth`** | `Authorization: ApiKey qk_…` | Server-side API access. |
+| **`bearerAuth`** | `Authorization: Bearer <jwt>` | User / service **ES256 JWTs**. |
+| **`scimBearer`** | `Authorization: Bearer <scim-token>` | Per-tenant SCIM provisioning. |
+| **`clientCredentials`** | form `client_id`/`client_secret` or HTTP Basic | OAuth M2M token/revoke/introspect. |
+| **`ssoCookie`** | `qe_ls` cookie (HttpOnly) | Hosted-login SSO session flows. |
+
+<Callout type="danger" title="ApiKey ≠ Bearer">
+  The API-key scheme is literally <code>Authorization: ApiKey &lt;key&gt;</code> — not
+  <code>Bearer</code>. The <code>Bearer</code> scheme on the same authenticated routes
+  is for user/service JWTs. Don't send a <code>qk_…</code> key as a Bearer token.
+</Callout>
+
+```bash title="API key (server)"
+curl https://api.qeetid.com/v1/users \
+  -H "Authorization: ApiKey $QEETID_API_KEY"
+```
+
+```bash title="User access token"
+curl https://api.qeetid.com/v1/auth/me \
+  -H "Authorization: Bearer $ACCESS_TOKEN"
+```
+
+## Endpoint groups
 
 <Cards>
-  <Card title="Users" href="/docs/api/users">
-    Create, list, update, delete users. Manage profiles, metadata, and verification.
-  </Card>
-  <Card title="Tenants" href="/docs/api/tenants">
-    Organization lifecycle, branding, configuration, residency.
-  </Card>
-  <Card title="Roles & permissions" href="/docs/api/roles">
-    Role CRUD, assignments, and policy evaluation.
-  </Card>
-  <Card title="Sessions" href="/docs/api/sessions">
-    Create, validate, revoke, and list sessions.
-  </Card>
-  <Card title="Errors" href="/docs/api/errors">
-    Error codes, retry guidance, and idiomatic handling.
-  </Card>
-  <Card title="Pagination" href="/docs/api/pagination">
-    Cursor-based pagination, ordering, and filtering.
-  </Card>
+  <Card title="Users" href="/docs/api/users">CRUD, pagination, soft-delete & recycle bin.</Card>
+  <Card title="Tenants" href="/docs/api/tenants">Workspace lifecycle + per-tenant config.</Card>
+  <Card title="Roles & checks" href="/docs/api/roles">Roles, permissions, and <code>/check</code>.</Card>
+  <Card title="Sessions" href="/docs/api/sessions">Login, refresh, list, revoke.</Card>
+  <Card title="Errors" href="/docs/api/errors">The error envelope and codes.</Card>
+  <Card title="Pagination" href="/docs/api/pagination">Cursor-based list pagination.</Card>
 </Cards>
 
-## Versioning
+The protocol-level groups (OIDC/OAuth, SAML, SCIM, MFA, webhooks, audit, secrets,
+GDPR) are documented in their product sections — [OIDC](/docs/oidc),
+[Enterprise](/docs/enterprise), [MFA](/docs/mfa), and [Platform](/docs/platform).
 
-API versions are reflected in the URL (`/v1`, `/v2`, …) and pinned per-tenant via the
-`Qeet ID-Version` header (defaults to your tenant's pinned version). Breaking changes
-get 90 days' notice via the `Sunset` header and a changelog entry.
+## Conventions
 
-## Idempotency
-
-Mutating endpoints accept an `Idempotency-Key` header. Repeated requests with the same
-key within 24 hours return the original response — safe to retry on network errors.
-
-```bash
-curl -X POST https://api.qeetid.com/v1/users \
-  -H "Authorization: Bearer $QEETID_SECRET_KEY" \
-  -H "Idempotency-Key: 9c2b5e9f-..." \
-  -d '{"email":"alex@acme.com"}'
-```
-
-## OpenAPI
-
-The full OpenAPI spec is published at:
-
-```
-https://api.qeetid.com/v1/openapi.json
-```
-
-It's the source of truth for every SDK, and you can generate your own clients from it.
+- **Tokens** are ES256 JWTs verified against `/.well-known/jwks.json`.
+- **Errors** use a stable `{ "error": { "code", "message", … } }` envelope — see
+  [Errors](/docs/api/errors).
+- **Lists** are cursor-paginated (`items` + `next_cursor`) — see
+  [Pagination](/docs/api/pagination).
+- **Request IDs** are returned in the `X-Request-Id` header and echoed in error bodies.

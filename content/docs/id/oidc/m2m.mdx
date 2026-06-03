@@ -1,0 +1,49 @@
+---
+title: Machine-to-machine
+description: OAuth client_credentials for service principals — token-endpoint auth, scopes, and lifecycle.
+---
+
+For service-to-service calls with no user present, use the OAuth **`client_credentials`**
+grant against a **service principal**. The service principal authenticates at the token
+endpoint and receives an access token it presents to your APIs.
+
+<Callout type="info" title="Two machine-identity models">
+  For simple backend access to the Qeet ID API, an [API key](/docs/platform/api-keys)
+  (<code>Authorization: ApiKey qk_…</code>) is usually enough. Use
+  <code>client_credentials</code> when a machine client needs a standard OAuth access
+  token (e.g. to call your own OAuth-protected resource servers).
+</Callout>
+
+## Create a service principal
+
+<APIEndpoint method="POST" path="/v1/service-principals" title="Create an M2M service principal" />
+<APIEndpoint method="DELETE" path="/v1/service-principals/{id}" title="Disable a service principal" />
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/service-principals" title="List service principals" />
+
+## Get a token
+
+<APIEndpoint method="POST" path="/v1/oauth/token" title="client_credentials token" />
+
+Clients authenticate with `client_id`/`client_secret` as form params or HTTP Basic.
+
+```bash
+curl -X POST https://api.qeetid.com/v1/oauth/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d grant_type=client_credentials \
+  -d client_id=$CLIENT_ID \
+  -d client_secret=$CLIENT_SECRET \
+  -d scope="reports:read"
+```
+
+```json title="OAuthTokenResponse"
+{
+  "access_token": "eyJhbGciOiJFUzI1Ni…",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "scope": "reports:read"
+}
+```
+
+The access token is an ES256 JWT — your resource servers verify it against the
+[JWKS](/docs/oidc#discovery--keys) exactly like a user token. Revocation and
+introspection use the same client authentication — see [Tokens](/docs/oidc/tokens).

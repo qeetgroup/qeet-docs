@@ -1,0 +1,7 @@
+{
+  "title": "Qeet Notify",
+  "description": "Multi-channel notifications — email, SMS, WhatsApp, push, and in-app",
+  "icon": "BellRing",
+  "root": true,
+  "pages": ["index", "roadmap"]
+}

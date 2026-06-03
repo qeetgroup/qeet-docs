@@ -1,0 +1,44 @@
+---
+title: Roadmap
+description: The phased plan for Qeet Notify — what ships first, and what comes after. Subject to change.
+icon: Bell
+---
+
+<Callout type="warn" title="Planning artifact">
+  This roadmap reflects current planning and is not a commitment. Dates, scope, and ordering
+  will move as the product takes shape.
+</Callout>
+
+## Phase 1 — Foundation
+
+_Targeting H2 2026._ The goal is full internal Qeet Group adoption plus the first external
+design partners in production.
+
+- **Channels:** Email (SES + Resend, with bounce/complaint handling), India SMS (DLT-managed
+  onboarding), WhatsApp (Meta Cloud API), in-app (SSE feed + React SDK), and signed outbound
+  webhooks.
+- **Workflow engine:** trigger → channel step → delay step → condition branch.
+- **Multi-tenancy:** row-level isolation, per-tenant API keys, and Qeet ID dashboard auth.
+- **Templates:** versioned templates with variable interpolation and a starting set of locales
+  (`en`, `hi`, `ta`).
+- **Preference center:** hosted + embeddable, with a category × channel opt-out model.
+- **Compliance:** managed TRAI DLT registration, DPDP erasure, and India data residency.
+- **Developer experience:** REST API v1, Go + TypeScript SDKs, an OpenAPI spec, and a `qn` CLI.
+
+## Phase 2 — Breadth & India-native
+
+_Targeting H1 2027._ Push and RCS, a visual workflow editor, and deeper compliance.
+
+- **More channels:** mobile push (FCM + APNs), web push, RCS for India, and international SMS.
+- **Workflow engine:** digests, channel fallback, timezone-aware delays, and a drag-and-drop
+  editor alongside git-deployable YAML definitions.
+- **Templates:** a WYSIWYG email editor, full Indian-language i18n, and A/B testing.
+- **Analytics:** workflow funnels, provider health, cost breakdowns, and OpenTelemetry export.
+- **Developer experience:** Python + Ruby SDKs, an MCP server, and multi-environment support.
+
+## Beyond
+
+Later phases focus on enterprise scale, advanced send-time optimization, and broadening the
+analytics and orchestration surface as adoption grows.
+
+<Card title="Back to overview" href="/notify" description="What Qeet Notify is, and where it fits." />

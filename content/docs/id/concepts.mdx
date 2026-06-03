@@ -1,151 +1,138 @@
 ---
 title: Core concepts
-description: The five primitives Qeet ID is built on — identities, tenants, roles, sessions, and audit — and how they fit together.
+description: The primitives Qeet ID is built on — tenants & organizations, users, principals, sessions, and roles — and how identity flows between them.
 icon: Compass
 ---
 
-Qeet ID is built on five primitives. Almost everything else is a thin wrapper around them.
+Qeet ID is a multi-tenant identity platform. Almost everything is scoped to a
+**tenant** and acts on a **principal** (a user or a machine identity). This page is
+the mental model the rest of the docs assume.
 
-| Primitive   | Service       | Question it answers                             |
-| ----------- | ------------- | ----------------------------------------------- |
-| **User**    | `svc-user`    | _Who is this person?_                           |
-| **Tenant**  | `svc-tenant`  | _Which organization do they belong to?_         |
-| **Role**    | `svc-rbac`    | _What is this user allowed to do?_              |
-| **Session** | `svc-session` | _Is this client still authenticated right now?_ |
-| **Event**   | `svc-audit`   | _What happened, when, and who did it?_          |
+## Tenants & organizations
 
-## Users
+A **tenant** is the unit of isolation — a workspace/organization. Every resource
+(users' memberships, roles, sessions, SSO connections, audit events) is scoped by
+`tenant_id`, enforced everywhere. A **personal tenant** is auto-created when someone
+signs up, so a single user always has a home.
 
-A **user** in Qeet ID (called a _Qeet ID ID_) is a stable identity that follows a person
-across tenants and applications. Users have:
+A user can belong to **multiple tenants**. `switch-tenant` re-mints a scoped access
+token for a different tenant the user is a member of.
 
-- A canonical **identifier** (`usr_…`) that never changes.
-- A **profile** — display name, locale, timezone, picture.
-- Verified contact methods — email and phone.
-- Free-form **metadata** (JSONB) you control entirely.
+<APIEndpoint method="POST" path="/v1/tenants" title="Create a tenant" />
+<APIEndpoint method="POST" path="/v1/auth/switch-tenant" title="Switch active tenant" />
 
 ```ts
-const user = await qee.users.create({
-  email: "alex@acme.com",
-  profile: { displayName: "Alex Chen", locale: "en-US" },
-  metadata: { stripeCustomerId: "cus_xxx" },
-});
+const tenant = await qeetid.tenants.create({ name: "Acme, Inc." });
 ```
 
 <Callout type="info">
-  Users are global. The same Qeet ID ID can be a member of multiple tenants — that's how
-  invitations, multi-org switching, and partner workflows work.
+  Tenant configuration lives under <code>/v1/tenants/{'{'}tenantID{'}'}</code> — auth
+  policy, branding, email templates, IP rules, retention, and SSO connections are all
+  per-tenant. See [Multi-tenancy](/docs/platform/multi-tenancy).
 </Callout>
 
-## Tenants
+## Users
 
-A **tenant** (also called an _organization_) is the unit of isolation. Everything else
-— roles, sessions, audit logs — lives under a tenant. Tenants control:
+A **user** is a stable identity with a canonical id (`usr_…` / UUID), profile, and
+verified contact methods (email, phone). Email is **globally unique**. Users support:
 
-- **Branding** (logo, colors, custom domain)
-- **Residency** (`us`, `eu`, `apac`)
-- **Configuration** (allowed providers, MFA policy, password rules)
-- **Admins** (users with privileged rights inside that tenant)
+- CRUD + cursor pagination, soft-delete with a recycle bin (restore / purge).
+- `set-password`, email/phone verification, and linked **external identities**
+  (social / SAML / LDAP).
+- Free-form metadata you control.
+
+<APIEndpoint method="GET" path="/v1/users" title="List users (cursor paginated)" />
+<APIEndpoint method="POST" path="/v1/users/{id}/restore" title="Restore a soft-deleted user" />
 
 ```ts
-const tenant = await qee.tenants.create({
-  slug: "acme",
-  name: "Acme, Inc.",
-  residency: "eu",
-  branding: { logo: "https://acme.com/logo.svg", primary: "#FF5C2E" },
-});
+const user = await qeetid.users.create({ email: "alex@acme.com", display_name: "Alex Chen" });
+```
+
+## Principals & machine identities
+
+A **principal** is whoever is acting: a human user, or a **machine identity**. Qeet ID
+ships two machine-identity models:
+
+- **API keys** — scoped, expirable, hashed credentials your backend sends as
+  `Authorization: ApiKey qk_…`.
+- **Service principals** + OAuth **`client_credentials`** — for M2M clients that need
+  an access token via the OAuth token endpoint.
+
+This shared principal model is what makes scoped, auditable non-human access (and,
+ahead, AI-agent delegation) first-class. See [API keys & service principals](/docs/platform/api-keys).
+
+## Sessions & tokens
+
+A **session** represents an authenticated client. Authentication issues a
+**token pair**:
+
+- **Access token** — a short-lived **ES256 JWT**. Verify it offline against the
+  public JWKS (`/.well-known/jwks.json`). Carries `user_id`, `tenant_id`,
+  `session_id`.
+- **Refresh token** — exchanged at `/v1/auth/refresh` for a fresh pair, with
+  **rotation + theft detection**: replaying a rotated refresh token revokes the whole
+  chain and audits it.
+
+Sessions can be listed and revoked individually. See [Sessions](/docs/sessions).
+
+```json title="token pair"
+{
+  "access_token": "eyJhbGciOiJFUzI1Ni…",
+  "token_type": "Bearer",
+  "expires_at": "2026-06-04T12:15:00Z",
+  "refresh_token": "…",
+  "session_id": "…",
+  "user_id": "…",
+  "tenant_id": "…"
+}
 ```
 
 ## Roles & permissions
 
-Permissions are strings like `"billing:write"` or `"members:invite"`. Roles bundle
-permissions. Users (or groups) are **assigned** roles within a specific tenant.
+**Permissions** are strings like `billing:write`. **Roles** bundle permissions and
+are assigned to a user **or a group** within a tenant; effective permissions are
+`direct ∪ group-derived`. A single call answers "may this principal do X?":
 
-```ts
-// Create a role
-await qee.roles.create({
-  tenant: "acme",
-  name: "billing-admin",
-  permissions: ["billing:read", "billing:write", "billing:invoice"],
-});
+<APIEndpoint method="GET" path="/v1/check" title="Authorize an action" />
 
-// Assign it
-await qee.roles.assign({
-  tenant: "acme",
-  user: "usr_abc",
-  role: "billing-admin",
-});
-
-// Check it (cached at the edge)
-const can = await qee.can({
-  user: "usr_abc",
-  action: "billing:write",
-  resource: "org:acme",
-});
+```bash
+curl "https://api.qeetid.com/v1/check?user_id=$U&tenant_id=$T&permission=billing:write" \
+  -H "Authorization: ApiKey $QEETID_API_KEY"
+# → { "allowed": true }
 ```
 
-See [RBAC](/docs/rbac) for the full model, including ABAC attribute policies.
+Add `?explain=true` to get the **grant-path trace** (which role/group allowed it, or
+why it was denied). See [Authorization](/docs/authorization).
 
-## Sessions
+## How it fits together
 
-A **session** is a server-validated handle that represents an authenticated client.
-Sessions are stateful by default — you can revoke any session from anywhere, instantly,
-across your entire fleet.
-
-```ts
-// Validate on every request
-const session = await qee.sessions.validate(cookie);
-if (!session) throw new Unauthorized();
-
-// Revoke from anywhere
-await qee.sessions.revoke(sessionId);
-```
-
-Sessions can optionally be exchanged for a short-lived JWT for stateless edge use cases.
-
-## Events
-
-Every state change in Qeet ID produces an **event** — `user.signed_in`,
-`role.assigned`, `session.revoked`, and so on. Events are:
-
-- Written to an **immutable audit log** with tamper-evident hashes.
-- Streamed to your SIEM (Splunk, Datadog, S3, Kafka).
-- Available as **webhooks** with retries and at-least-once delivery.
-
-```ts
-qee.webhooks.subscribe({
-  events: ["user.signed_in", "user.mfa.added"],
-  url: "https://api.acme.com/qeetid/webhooks",
-});
-```
-
-## How they fit
-
-```
-                 ┌────────────────┐
-                 │     Tenant     │
-                 │   (acme)       │
-                 └────────┬───────┘
-                          │
-        ┌─────────────────┼─────────────────┐
-        │                 │                 │
-        ▼                 ▼                 ▼
-  ┌──────────┐      ┌──────────┐      ┌──────────┐
-  │   User   │◄────►│   Role   │      │ Session  │
-  │ (usr_…)  │      │ (admin)  │      │ (ses_…)  │
-  └──────────┘      └──────────┘      └──────────┘
-        │                 │                 │
-        └────────► Event log ◄───────────────┘
-                  (audit + webhooks)
+```text
+                  ┌──────────────────────┐
+                  │        Tenant         │
+                  │  policy · branding ·  │
+                  │   SSO · audit · keys  │
+                  └───────────┬───────────┘
+            membership +      │
+            role/group        │
+        ┌───────────────┬─────┴───────┬───────────────┐
+        ▼               ▼             ▼               ▼
+  ┌───────────┐   ┌───────────┐  ┌──────────┐  ┌──────────────┐
+  │   User    │   │  Machine  │  │  Session │  │  Role/Group  │
+  │ (principal)│  │ identity  │  │ (tokens) │  │  → perms     │
+  └─────┬─────┘   └─────┬─────┘  └────┬─────┘  └──────┬───────┘
+        └───────────────┴────────────┴───────────────┘
+                          ▼
+              Tamper-evident audit log
+              (hash-chained · /verify · webhooks)
 ```
 
 ## Next steps
 
 <Cards>
   <Card icon="Zap" title="Quickstart" href="/docs/quickstart">
-    Wire your app to all five primitives in fifteen minutes.
+    Wire a server SDK and protect a route.
   </Card>
   <Card icon="Code" title="API reference" href="/docs/api">
-    Every endpoint, with examples.
+    Auth schemes, errors, pagination, and every endpoint group.
   </Card>
 </Cards>

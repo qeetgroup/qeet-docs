@@ -1,0 +1,38 @@
+---
+title: LDAP / AD
+description: Bind-based authentication against LDAP / Active Directory — connection CRUD and a test-bind endpoint.
+---
+
+Qeet ID supports **LDAP** (and Active Directory) authentication via **bind login**:
+users authenticate against your directory, and Qeet ID verifies by binding with their
+credentials. Connections are managed per tenant, with a test-bind to validate config
+before going live.
+
+## Manage connections
+
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/ldap" title="List LDAP connections" />
+<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/ldap" title="Create a connection" />
+<APIEndpoint method="PUT" path="/v1/tenants/{tenantID}/ldap/{id}" title="Update a connection" />
+<APIEndpoint method="DELETE" path="/v1/tenants/{tenantID}/ldap/{id}" title="Delete a connection" />
+
+## Test the bind
+
+Validate host, base DN, bind credentials, and TLS before enabling the connection.
+
+<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/ldap/{id}/test" title="Test bind" />
+
+## Authenticate
+
+<APIEndpoint method="POST" path="/ldap/{id}/authenticate" title="Bind-authenticate a user" />
+
+```bash
+curl -X POST https://api.qeetid.com/ldap/$CONN_ID/authenticate \
+  -H "Content-Type: application/json" \
+  -d '{"username":"alex","password":"…"}'
+```
+
+<Callout type="warn" title="Use LDAPS / StartTLS">
+  Bind authentication sends credentials to the directory. Always use LDAPS or StartTLS
+  in production so credentials aren't sent in the clear. Validate with the test-bind
+  endpoint first.
+</Callout>

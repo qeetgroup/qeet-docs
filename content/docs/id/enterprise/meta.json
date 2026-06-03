@@ -1,0 +1,5 @@
+{
+  "title": "Enterprise",
+  "icon": "Building",
+  "pages": ["index", "saml-sp", "saml-idp", "scim", "ldap"]
+}

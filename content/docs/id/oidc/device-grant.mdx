@@ -1,0 +1,84 @@
+---
+title: Device Authorization Grant
+description: RFC 8628 for input-constrained devices — CLI, TV, IoT. The device shows a user code; the user approves it on a second screen.
+---
+
+The **Device Authorization Grant** (RFC 8628) lets input-constrained clients — CLIs,
+TVs, IoT — authenticate without a browser on the device itself. The device displays a
+short **user code**; the user enters it on a phone or laptop to approve.
+
+<Callout type="tip" title="Implemented">
+  Device grant is fully implemented, including the hosted-login <code>/device</code>
+  page (user-code entry → approve/deny) and admin management of pending device
+  authorizations.
+</Callout>
+
+## The flow
+
+<Steps>
+
+<Step>
+### Device requests authorization
+
+The (client-authenticated) device calls the device authorization endpoint and gets a
+`device_code`, a human-friendly `user_code` (e.g. `BCDF-GHJK`), and verification URIs.
+
+<APIEndpoint method="POST" path="/v1/oauth/device_authorization" title="Start device authorization" />
+
+```bash
+curl -X POST https://api.qeetid.com/v1/oauth/device_authorization \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d client_id=$CLIENT_ID -d scope="openid profile"
+```
+
+```json title="DeviceAuthorizationResponse"
+{
+  "device_code": "…",
+  "user_code": "BCDF-GHJK",
+  "verification_uri": "https://login.qeetid.com/device",
+  "verification_uri_complete": "https://login.qeetid.com/device?user_code=BCDF-GHJK",
+  "expires_in": 600,
+  "interval": 5
+}
+```
+</Step>
+
+<Step>
+### Device shows the code
+
+"Go to **login.qeetid.com/device** and enter **BCDF-GHJK**." The user opens the URL
+on another device. The hosted `/device` page fetches the request context (client name
++ scopes) and renders an approve/deny screen.
+
+<APIEndpoint method="GET" path="/v1/oauth/device" title="Device verification context" />
+<APIEndpoint method="POST" path="/v1/oauth/device/decision" title="Approve / deny" />
+</Step>
+
+<Step>
+### Device polls for the token
+
+Meanwhile the device polls the token endpoint with the device-code grant type,
+respecting `interval`.
+
+<APIEndpoint method="POST" path="/v1/oauth/token-code" title="grant_type=device_code" />
+
+```bash
+curl -X POST https://api.qeetid.com/v1/oauth/token-code \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d grant_type=urn:ietf:params:oauth:grant-type:device_code \
+  -d device_code=$DEVICE_CODE \
+  -d client_id=$CLIENT_ID
+```
+
+Until approval, the endpoint returns `authorization_pending` (or `slow_down`). After
+approval it returns the [token response](/docs/oidc/tokens#token-response).
+</Step>
+
+</Steps>
+
+## Admin management
+
+Tenant admins can list and inspect pending device authorizations.
+
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/oauth/devices" title="List device authorizations" />
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/oauth/devices/{id}" title="Inspect one" />
