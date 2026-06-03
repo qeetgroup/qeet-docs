@@ -77,11 +77,12 @@ function Hero() {
           <ArrowRightIcon className="size-3 transition-transform group-hover:translate-x-0.5" />
         </Link>
 
-        <h1 className="mt-7 max-w-4xl text-balance font-semibold text-5xl leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl">
+        <h1 className="mt-7 max-w-4xl text-balance font-semibold text-4xl leading-[1.02] tracking-tight sm:text-6xl sm:leading-[0.98] lg:text-7xl">
           <WordReveal
             lines={[
-              [{ text: "Documentation for the" }],
-              [{ text: "entire", gradient: true }, { text: "Qeet platform." }],
+              [{ text: "Documentation" }],
+              [{ text: "for the" }, { text: "entire", gradient: true }],
+              [{ text: "Qeet platform." }],
             ]}
           />
         </h1>
