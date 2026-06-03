@@ -1,7 +1,8 @@
 {
-  "title": "Documentation",
-  "description": "Auth that fits in your stack",
-  "icon": "BookOpen",
+  "title": "Qeet ID",
+  "description": "Identity & access — auth that fits in your stack",
+  "icon": "FingerprintPattern",
+  "root": true,
   "pages": [
     "index",
     "quickstart",

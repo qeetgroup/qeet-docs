@@ -1,25 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isMarkdownPreferred, rewritePath } from "fumadocs-core/negotiation";
-import { docsContentRoute, docsRoute } from "@/lib/shared";
+import { docsContentRoute } from "@/lib/shared";
+
+/**
+ * Docs are rooted at `/` and split by product (`/id`, `/people`, `/logs`).
+ * Match those product prefixes (never the bare `/` hub) and rewrite to the
+ * raw-markdown route so `.md` suffixes and `Accept: text/markdown` resolve.
+ */
+const PRODUCT_SEGMENTS = "id,people,logs";
 
 const { rewrite: rewriteDocs } = rewritePath(
-  `${docsRoute}{/*path}`,
-  `${docsContentRoute}{/*path}/content.md`,
+  `/:product{/*path}`,
+  `${docsContentRoute}/:product{/*path}/content.md`,
 );
 const { rewrite: rewriteSuffix } = rewritePath(
-  `${docsRoute}{/*path}.md`,
-  `${docsContentRoute}{/*path}/content.md`,
+  `/:product{/*path}.md`,
+  `${docsContentRoute}/:product{/*path}/content.md`,
 );
 
+function isProduct(pathname: string): boolean {
+  const product = pathname.split("/")[1];
+  return product ? PRODUCT_SEGMENTS.split(",").includes(product) : false;
+}
+
 export default function proxy(request: NextRequest) {
-  const result = rewriteSuffix(request.nextUrl.pathname);
-  if (result) {
-    return NextResponse.rewrite(new URL(result, request.nextUrl));
+  const { pathname } = request.nextUrl;
+  if (!isProduct(pathname)) return NextResponse.next();
+
+  const suffix = rewriteSuffix(pathname);
+  if (suffix) {
+    return NextResponse.rewrite(new URL(suffix, request.nextUrl));
   }
 
   if (isMarkdownPreferred(request)) {
-    const result = rewriteDocs(request.nextUrl.pathname);
-
+    const result = rewriteDocs(pathname);
     if (result) {
       return NextResponse.rewrite(new URL(result, request.nextUrl));
     }

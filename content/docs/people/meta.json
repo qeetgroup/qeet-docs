@@ -1,0 +1,7 @@
+{
+  "title": "Qeet People",
+  "description": "HCM — people, teams, and org structure",
+  "icon": "Users",
+  "root": true,
+  "pages": ["index"]
+}

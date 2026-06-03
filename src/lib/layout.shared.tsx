@@ -1,8 +1,7 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
-import { ShieldCheckIcon } from "lucide-react";
+import { FingerprintIcon, ScrollTextIcon, UsersIcon } from "lucide-react";
+import { QeetLogo } from "@qeetrix/brand";
 import { appName, dashboardUrl, gitConfig, productUrl } from "./shared";
-import { QeetLogo} from "@qeetrix/brand";
-
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -21,27 +20,24 @@ export function baseOptions(): BaseLayoutProps {
     links: [
       {
         type: "main",
-        text: "Documentation",
-        url: "/docs",
+        text: "Qeet ID",
+        url: "/id",
         active: "nested-url",
+        icon: <FingerprintIcon />,
       },
       {
         type: "main",
-        text: "API reference",
-        url: "/docs/api",
+        text: "People",
+        url: "/people",
         active: "nested-url",
+        icon: <UsersIcon />,
       },
       {
         type: "main",
-        text: "SDKs",
-        url: "/docs/sdks",
+        text: "Logs",
+        url: "/logs",
         active: "nested-url",
-      },
-      {
-        type: "main",
-        text: "Changelog",
-        url: "/docs/changelog",
-        active: "nested-url",
+        icon: <ScrollTextIcon />,
       },
       {
         type: "main",

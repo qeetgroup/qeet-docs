@@ -1,0 +1,32 @@
+---
+title: Qeet Logs
+description: Privacy-first, multi-tenant log management — query at scale without shipping your users' data to a third party.
+icon: ScrollText
+---
+
+<Callout type="info" title="Coming soon">
+  Qeet Logs is pre-release — these docs describe the platform we're building. Expect the
+  surfaces below to evolve before general availability.
+</Callout>
+
+## What is Qeet Logs?
+
+Qeet Logs is a **log management platform** for teams that take privacy seriously. It's
+multi-tenant and **identity-aware** — every line is attributable through [Qeet ID](/id) —
+so you can answer "who did what" without bolting on a separate audit pipeline.
+
+## On the roadmap
+
+<Cards>
+  <Card title="High-volume ingest" description="Structured and unstructured logs at scale, backed by ClickHouse." />
+  <Card title="Fast queries" description="Sub-second search across tenants with column-store performance." />
+  <Card title="Identity-aware" description="Filter and attribute every event by Qeet ID user, tenant, and session." />
+  <Card title="Privacy-first" description="Tenant isolation and residency controls baked in, not bolted on." />
+</Cards>
+
+## Want early access?
+
+Logs is being built on the same platform as [Qeet ID](/id). Until it ships, the ID
+[audit docs](/id/audit) cover identity-event logging you can use today.
+
+<Card title="Explore Qeet ID" href="/id" />
