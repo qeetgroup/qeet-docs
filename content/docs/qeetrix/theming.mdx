@@ -1,0 +1,88 @@
+---
+title: Theming
+description: How Qeetrix is themed — design tokens, the brand layer, and light/dark mode via ThemeProvider.
+icon: Palette
+---
+
+Qeetrix theming flows in one direction: **tokens → components → your app**. You theme by
+overriding tokens, not by patching component internals.
+
+## Design tokens
+
+`@qeetrix/tokens` is the root of the system. A single W3C-format token source is compiled with
+**Style Dictionary** into CSS and JSON, exported under the `--qx-` prefix. Token pairs are
+**contrast-checked against WCAG AA** at build time (`pnpm tokens:validate`), so the semantic
+foreground/background combinations are accessible by construction.
+
+You can consume tokens directly when you need raw values:
+
+```css
+/* The full theme, including semantic color roles: */
+@import "@qeetrix/tokens/qeetrix.css";
+
+/* Or just the raw --qx-* variables: */
+@import "@qeetrix/tokens/tokens.css";
+```
+
+```ts
+// JSON form, for tooling or design integrations:
+import tokens from "@qeetrix/tokens/tokens.json";
+```
+
+In most apps you don't import these directly — `@qeetrix/ui/styles.css` already bundles the
+token layer that the components read from.
+
+## Light & dark mode
+
+Light/dark is driven entirely by the **`.dark` class on the root element**. `ThemeProvider`
+manages that class for you:
+
+```tsx
+import { ThemeProvider, useTheme } from "@qeetrix/ui";
+
+function App() {
+  return (
+    <ThemeProvider defaultTheme="system">
+      <ModeToggle />
+    </ThemeProvider>
+  );
+}
+
+function ModeToggle() {
+  const { theme, setTheme } = useTheme();
+  return (
+    <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+      Toggle theme
+    </button>
+  );
+}
+```
+
+`defaultTheme` accepts `"light"`, `"dark"`, or `"system"` (which follows the OS preference).
+Because the entire token set has a dark variant, every component re-themes automatically — no
+per-component dark styles required.
+
+## Brand
+
+`@qeetrix/brand` carries the visual identity:
+
+- **Logos** — `QeetLogo` / `QeetLogoMark`, plus the fixed-tone `QeetLogoOnLight` and
+  `QeetLogoOnDark` for when you control the background.
+- **Icons** — a set of product-specific Qeet icons (`IconPasskey`, `IconMfaShield`,
+  `IconWebhook`, `IconTenant`, `IconApiKey`, `IconAuditLog`, and more).
+
+```tsx
+import { QeetLogo, IconPasskey } from "@qeetrix/brand";
+
+<QeetLogo size={28} />
+<IconPasskey className="size-5" />
+```
+
+The Qeet brand orange (`#F26D0E`) is part of the token set, so brand accents stay consistent
+across every product — including these docs.
+
+<Callout type="info" title="Re-toning per app">
+  An app can layer its own brand variables after importing `@qeetrix/ui/styles.css` to re-tone
+  a single surface without forking the shared packages — that's exactly how this docs site
+  warms its neutrals toward the brand.
+</Callout>

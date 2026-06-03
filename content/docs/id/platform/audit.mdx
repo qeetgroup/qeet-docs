@@ -1,0 +1,52 @@
+---
+title: Audit
+description: An append-only, SHA-256 hash-chained audit log with a /verify integrity endpoint — provable tamper-evidence most CIAM platforms don't offer.
+icon: ScrollText
+---
+
+Qeet ID writes an **append-only** audit log where each entry is **SHA-256
+hash-chained** to the previous one. Because every record commits the hash of its
+predecessor, altering or deleting any entry breaks the chain — and a `/verify`
+endpoint proves the chain is intact.
+
+<Callout type="tip" title="A genuine differentiator">
+  Tamper-evident, hash-chained audit with an integrity endpoint is something most
+  mainstream identity platforms don't ship. (Externally-verifiable Merkle checkpoints —
+  provable to a third party — are on the roadmap.)
+</Callout>
+
+## Read the log
+
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/audit" title="Query audit events" />
+
+```bash
+curl "https://api.qeetid.com/v1/tenants/$TENANT/audit?limit=50" \
+  -H "Authorization: ApiKey $QEETID_API_KEY"
+```
+
+## Verify integrity
+
+The verify endpoint recomputes the chain and reports whether it's intact (and where it
+breaks, if it doesn't).
+
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/audit/verify" title="Verify the hash chain" />
+
+```bash
+curl "https://api.qeetid.com/v1/tenants/$TENANT/audit/verify" \
+  -H "Authorization: ApiKey $QEETID_API_KEY"
+# → { "ok": true, "verified_count": 12840 }
+```
+
+## What's recorded
+
+Security-relevant state changes are audited: sign-ins (success + failure), MFA events,
+refresh-token theft detection, role/permission and policy changes, session
+creation/revocation, admin configuration changes, API-key lifecycle, and GDPR
+operations. After a [GDPR erasure](/docs/platform/gdpr), the audit record of the
+deletion **survives** with PII redacted — you keep a provable trail without retaining
+personal data.
+
+<Callout type="info">
+  Audit retention is governed by per-tenant [retention](/docs/platform/gdpr#retention)
+  settings; auto-purge respects the hash chain.
+</Callout>

@@ -1,0 +1,35 @@
+---
+title: Observability
+description: Prometheus metrics at /metrics, OpenTelemetry tracing, and liveness/readiness probes.
+icon: Activity
+---
+
+Qeet ID exposes the signals you need to run it in production: **Prometheus metrics**,
+**OpenTelemetry tracing**, and health probes.
+
+## Metrics
+
+Prometheus-format metrics are served at `/metrics` for scraping.
+
+<APIEndpoint method="GET" path="/metrics" title="Prometheus metrics" />
+
+## Tracing
+
+Qeet ID emits **OpenTelemetry** spans. Tracing is a **no-op until an OTLP endpoint is
+configured** — point it at your collector (Tempo, Jaeger, Honeycomb, Datadog, …) to
+turn it on. The SDKs propagate context so traces span your services and Qeet ID.
+
+## Health probes
+
+<APIEndpoint method="GET" path="/healthz" title="Liveness" />
+<APIEndpoint method="GET" path="/readyz" title="Readiness (includes a DB ping)" />
+
+Wire `/healthz` to your orchestrator's liveness probe and `/readyz` to readiness — the
+latter fails until the database is reachable, so traffic isn't routed to a pod that
+can't serve.
+
+<Callout type="info">
+  Combine these with the per-tenant [analytics overview](/docs/platform/multi-tenancy#analytics)
+  for product KPIs (MAU/DAU, login/MFA/failed-login, method mix) alongside the
+  operational metrics.
+</Callout>

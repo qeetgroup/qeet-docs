@@ -1,5 +1,12 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
-import { FingerprintIcon, ScrollTextIcon, UsersIcon } from "lucide-react";
+import {
+  BellRingIcon,
+  ComponentIcon,
+  CreditCardIcon,
+  FingerprintIcon,
+  ScrollTextIcon,
+  UsersIcon,
+} from "lucide-react";
 import { QeetLogo } from "@qeetrix/brand";
 import { appName, dashboardUrl, gitConfig, productUrl } from "./shared";
 
@@ -27,6 +34,13 @@ export function baseOptions(): BaseLayoutProps {
       },
       {
         type: "main",
+        text: "Qeetrix",
+        url: "/qeetrix",
+        active: "nested-url",
+        icon: <ComponentIcon />,
+      },
+      {
+        type: "main",
         text: "People",
         url: "/people",
         active: "nested-url",
@@ -38,6 +52,20 @@ export function baseOptions(): BaseLayoutProps {
         url: "/logs",
         active: "nested-url",
         icon: <ScrollTextIcon />,
+      },
+      {
+        type: "main",
+        text: "Notify",
+        url: "/notify",
+        active: "nested-url",
+        icon: <BellRingIcon />,
+      },
+      {
+        type: "main",
+        text: "Pay",
+        url: "/pay",
+        active: "nested-url",
+        icon: <CreditCardIcon />,
       },
       {
         type: "main",

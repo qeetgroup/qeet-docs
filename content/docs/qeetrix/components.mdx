@@ -1,0 +1,65 @@
+---
+title: Components
+description: What @qeetrix/ui exports — a shadcn + Base UI component set, plus higher-level building blocks tuned for Qeet products.
+icon: Blocks
+---
+
+Everything ships from the package root, so a single import gives you the whole library:
+
+```tsx
+import { Button, Dialog, DataState, OTPInput, cn } from "@qeetrix/ui";
+```
+
+Each component is also reachable through subpath exports (`@qeetrix/ui/components/*`,
+`@qeetrix/ui/hooks/*`, `@qeetrix/ui/lib/*`) if you prefer to import granularly.
+
+## Form & input
+
+The form layer is built on Base UI primitives and composes through a `Field` system
+(`Field`, `FieldLabel`, `FieldError`, `FieldGroup`, and friends).
+
+- **Text & choice:** `Input`, `Textarea`, `Label`, `Checkbox` / `CheckboxGroup`,
+  `RadioGroup` / `Radio`, `Switch`, `Slider`, `Toggle` / `ToggleGroup`.
+- **Select & pickers:** `Select`, `CountryPicker`, `TimezonePicker`, `ColorPicker`.
+- **Auth-flavored:** `OTPInput`, `PasswordStrengthMeter` (with a `scorePassword` helper),
+  `CopyableSecret`.
+
+## Actions & navigation
+
+`Button` (with `buttonVariants`), `DropdownMenu`, `CommandPalette`, `Breadcrumb`,
+`PaginationBar`, and a full `Sidebar` system (`SidebarProvider`, `SidebarMenu`,
+`SidebarTrigger`, `useSidebar`, and the related parts).
+
+## Overlays & disclosure
+
+`Dialog`-style surfaces via `AlertDialog`, plus `Popover`, `Tooltip` (with
+`TooltipProvider`), `Sheet`, `Collapsible`, and `Accordion`.
+
+## Data display
+
+- **Tables & lists:** `Table` (with `TableHeader`, `TableRow`, `TableCell`, …), `Tabs`.
+- **Status & identity:** `Badge` (`badgeVariants`), `StatusPill`, `Avatar` (with
+  `AvatarGroup`, `AvatarBadge`, `AvatarFallback`), `TimeSince`.
+- **Developer surfaces:** `CodeBlock`, `JSONTree` — handy for API consoles and audit views.
+- **Feedback:** `Progress`, `Skeleton`, `ScrollArea`, and `DataState` for empty / loading /
+  error states.
+
+## Charts
+
+A Recharts-based charting layer: `ChartContainer`, `ChartTooltip`, `ChartTooltipContent`,
+`ChartLegend`, `ChartLegendContent`, `ChartStyle`, and the `ChartConfig` type.
+
+## Specialized
+
+`LogoUploader` for brand/tenant logo uploads — built for multi-tenant settings screens.
+
+## Theming, hooks & utilities
+
+- `ThemeProvider` and `useTheme` — light/dark management (see [Theming](/qeetrix/theming)).
+- `useIsMobile` — responsive breakpoint hook.
+- `cn` — the `clsx` + `tailwind-merge` class combiner used throughout the system.
+
+<Callout type="info" title="Living surface">
+  Components are added as Qeet products need them. The set above reflects the current
+  `@qeetrix/ui` export surface; expect it to grow before 1.0.
+</Callout>

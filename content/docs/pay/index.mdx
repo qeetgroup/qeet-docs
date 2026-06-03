@@ -1,0 +1,50 @@
+---
+title: Qeet Pay
+description: Unified payments, billing, payouts, and GST-compliant invoicing in one API — built India-first for multi-tenant SaaS.
+icon: CreditCard
+---
+
+<Callout type="info" title="Coming soon — in design">
+  Qeet Pay is in active planning. These docs describe the product from its requirements; there
+  is no code or public API yet, and scope may change before the first release.
+</Callout>
+
+## What is Qeet Pay?
+
+Qeet Pay is the **payments, billing, and financial infrastructure** product in the Qeet suite.
+It brings everything a modern business needs to move money — collect payments, run
+subscriptions, generate GST-compliant invoices, disburse payouts, and settle marketplaces —
+into **one API, one dashboard, and one integration**.
+
+It's built **India-first**: UPI, NACH, cards, net banking, and wallets alongside GST
+e-invoicing and compliance — with multi-tenancy and the [Qeet ecosystem](/id) treated as
+first-class concerns from day one.
+
+## What it will do
+
+<Cards>
+  <Card title="Payment acceptance" description="UPI (all variants), cards with RBI tokenization, net banking, and wallets — via hosted checkout, payment links, or SDK." />
+  <Card title="Payouts & disbursements" description="UPI / IMPS / NEFT payouts, single or bulk, with maker-checker approvals and refunds." />
+  <Card title="Subscription billing" description="Lifecycle, proration, and flat / per-unit / tiered / usage pricing, collected via NACH and UPI AutoPay." />
+  <Card title="GST-compliant invoicing" description="CGST/SGST/IGST auto-calculation, HSN/SAC lookup, e-invoicing with IRN, and credit/debit notes." />
+  <Card title="Marketplace & splits" description="Split payments with automatic GST attribution per seller GSTIN and TCS handling." />
+  <Card title="Intelligence" description="AI-powered dunning to recover failed UPI AutoPay, plus payment orchestration and cash-flow forecasting." />
+</Cards>
+
+## Where it fits in the platform
+
+Every Qeet product needs to bill and disburse — [Qeet People](/people) pays salaries and
+collects HR-SaaS fees, [Qeet Logs](/logs) bills usage-based ingest, and [Qeet ID](/id) bills
+per active user. Rather than each integrating a separate payment gateway, billing tool, and GST
+filer, Qeet Pay is the shared financial layer they all run on, with [Qeet ID](/id) for
+subscriber identity and Qeet Logs for the financial audit trail.
+
+## Want early access?
+
+Pay is being designed alongside the rest of the platform. Until it ships, [Qeet ID](/id) is
+live today and provides the identity and tenant model the billing layer will build on.
+
+<Cards>
+  <Card title="See the roadmap" href="/pay/roadmap" description="The phased plan, from foundation to enterprise." />
+  <Card title="Explore Qeet ID" href="/id" description="The identity layer Pay builds on, live today." />
+</Cards>

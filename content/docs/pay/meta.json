@@ -1,0 +1,7 @@
+{
+  "title": "Qeet Pay",
+  "description": "Payments, billing & GST — unified financial infrastructure, India-first",
+  "icon": "CreditCard",
+  "root": true,
+  "pages": ["index", "roadmap"]
+}

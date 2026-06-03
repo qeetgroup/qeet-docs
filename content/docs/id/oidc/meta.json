@@ -1,0 +1,13 @@
+{
+  "title": "OIDC / OAuth provider",
+  "icon": "Network",
+  "pages": [
+    "index",
+    "clients",
+    "authorization-code",
+    "tokens",
+    "device-grant",
+    "m2m",
+    "logout"
+  ]
+}

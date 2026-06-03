@@ -1,0 +1,52 @@
+---
+title: Edge & deployment
+description: Verify tokens at the edge with the public JWKS, run the Next.js middleware on the Edge runtime, and deploy with the official Helm chart.
+icon: Globe
+---
+
+Qeet ID is **self-hostable** and edge-friendly. Because access tokens are **ES256
+JWTs** verified against a **public JWKS**, the latency-sensitive check — "is this token
+valid?" — runs anywhere, including the edge, with no call back to the auth server.
+
+## Verify at the edge
+
+The JWKS is public and cacheable, so token verification needs only Web Crypto. The
+`@qeetid/nextjs` **middleware** is built for the Edge runtime: it gates routes and
+silently refreshes near-expiry sessions using Web Crypto only, never pulling Node-only
+code into the Edge bundle.
+
+```ts title="middleware.ts (Edge runtime)"
+import { qeetidMiddleware } from "@qeetid/nextjs/middleware";
+
+export default qeetidMiddleware({ publicRoutes: ["/", "/pricing"] });
+```
+
+<Callout type="tip" title="Stateless reads, stateful revocation">
+  Verifying a JWT offline is fast and global. For instant revocation, check the
+  server-side session (or short token lifetimes + refresh rotation). Pick the trade-off
+  per route.
+</Callout>
+
+## Deploying Qeet ID
+
+Qeet ID ships as a **distroless, nonroot** container with an official **Helm chart**:
+
+- Deployment / Service / HPA / PDB / Ingress
+- A pre-upgrade **migration Job** (expand/contract, zero-downtime)
+- A `docker-compose.prod` for smaller footprints
+- A **runbook** covering migrations, RDS backups / PITR, DR restore drills, and rollback
+
+```bash
+helm install qeetid ./charts/qeetid -f values.prod.yaml
+```
+
+## Health & readiness
+
+<APIEndpoint method="GET" path="/healthz" title="Liveness" />
+<APIEndpoint method="GET" path="/readyz" title="Readiness (DB ping)" />
+
+<Callout type="warn" title="Boot-gate in production">
+  Qeet ID refuses to start with insecure defaults (weak JWT secret, CSRF disabled,
+  dev-trust headers, missing allowed origins/keys). Configure secrets before deploying —
+  see [Secrets vault](/docs/platform/secrets) and [Observability](/docs/platform/observability).
+</Callout>

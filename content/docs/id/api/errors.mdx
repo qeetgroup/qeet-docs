@@ -1,113 +1,100 @@
 ---
 title: Errors
-description: Error shape, codes, and idiomatic handling per language.
+description: The canonical error envelope, HTTP status mapping, and idiomatic handling per language.
 ---
 
-Every Qeet ID API error has the same shape:
+Every Qeet ID API error uses the same **canonical envelope** — an `error` object with a
+stable machine `code`, a human `message`, and optional `detail` / `request_id`:
 
 ```json
 {
-  "error": "rate_limited",
-  "message": "Too many sign-in attempts from this address.",
-  "statusCode": 429,
-  "requestId": "req_01HXG…",
-  "retryAfter": 27
-}
-```
-
-## Status code map
-
-| Code | Meaning                                 |
-| ---- | --------------------------------------- |
-| 400  | Malformed request                       |
-| 401  | Missing or invalid auth                 |
-| 403  | Authenticated but lacking permission    |
-| 404  | Resource doesn't exist                  |
-| 409  | Conflict (e.g. duplicate slug)          |
-| 422  | Validation error (see `fields` in body) |
-| 429  | Rate-limited                            |
-| 451  | Tenant residency violation              |
-| 500  | Server error (retry with backoff)       |
-| 503  | Service unavailable (regional issue)    |
-
-## Common error codes
-
-| `error`                  | When                                             |
-| ------------------------ | ------------------------------------------------ |
-| `invalid_credentials`    | Wrong password, expired link, etc. — generic.    |
-| `mfa_required`           | Sign-in succeeded but MFA hasn't been completed. |
-| `mfa_failed`             | Wrong MFA code or factor mismatch.               |
-| `account_locked`         | Too many failed attempts.                        |
-| `account_disabled`       | Admin disabled this account.                     |
-| `tenant_disabled`        | Tenant in soft-delete grace period.              |
-| `email_in_use`           | Sign-up with already-registered email.           |
-| `passkey_not_registered` | No passkey on file for this user.                |
-| `rate_limited`           | Hit a rate limit. See `retryAfter`.              |
-| `validation_failed`      | Body validation failed. See `fields`.            |
-| `permission_denied`      | RBAC or policy denied the action.                |
-| `not_found`              | Resource ID doesn't exist.                       |
-| `idempotency_conflict`   | Re-used Idempotency-Key with different body.     |
-
-## Handling errors
-
-### TypeScript
-
-```ts
-import { QeetidError, RateLimitError, MfaRequiredError } from "@qeetid/sdk";
-
-try {
-  await qee.signIn({
-    /* ... */
-  });
-} catch (e) {
-  if (e instanceof MfaRequiredError) {
-    // Render MFA challenge
-  } else if (e instanceof RateLimitError) {
-    // Show retry-after
-  } else if (e instanceof QeetidError) {
-    // Generic handling
-  } else {
-    throw e;
+  "error": {
+    "code": "unauthorized",
+    "message": "authentication required",
+    "detail": "missing or invalid Authorization header",
+    "request_id": "req_01HXG…"
   }
 }
 ```
 
-### Go
+<Callout type="warn" title="It's nested under `error`">
+  The envelope is <code>{"{"} "error": {"{"} "code", "message" {"}"} {"}"}</code> — not a
+  flat <code>error</code> string. Read the machine value from
+  <code>error.code</code>. The <code>request_id</code> matches the
+  <code>X-Request-Id</code> response header.
+</Callout>
 
-```go
-session, err := qee.Sessions.Validate(ctx, cookieValue)
-var rate qeetid.RateLimitError
-switch {
-case errors.As(err, &rate):
-    // rate.RetryAfter
-case errors.Is(err, qeetid.ErrInvalidCredentials):
-    // ...
+## HTTP status mapping
+
+| Status | Meaning |
+| --- | --- |
+| `400` | Malformed request. |
+| `401` | Missing or invalid authentication. |
+| `403` | Authenticated but not permitted. |
+| `404` | Resource doesn't exist. |
+| `409` | Conflict (e.g. duplicate). |
+| `422` | Validation error. |
+| `429` | Rate-limited / locked out. See `Retry-After`. |
+| `5xx` | Server error — retry idempotent calls with backoff. |
+
+## Common codes
+
+| `error.code` | When |
+| --- | --- |
+| `unauthorized` | Missing/invalid token or API key. |
+| `forbidden` | RBAC/policy denied the action. |
+| `not_found` | Resource ID doesn't exist. |
+| `conflict` | Uniqueness/state conflict. |
+| `validation_failed` | Request body failed validation. |
+| `rate_limited` | Rate limit or account lockout hit. |
+
+## Handling errors
+
+<Tabs items={['TypeScript', 'Go', 'Python']}>
+
+```ts tab="TypeScript"
+import { QeetidError, RateLimitError } from "@qeetid/sdk";
+
+try {
+  await qeetid.users.get(id);
+} catch (e) {
+  if (e instanceof RateLimitError) await wait(e.retryAfterSeconds);
+  else if (e instanceof QeetidError) console.error(e.code, e.requestId);
+  else throw e;
 }
 ```
 
-### Python
+```go tab="Go"
+var apiErr *qeetidsdk.Error
+if errors.As(err, &apiErr) {
+  switch {
+  case apiErr.IsRateLimited(): // apiErr.RetryAfterSeconds
+  case apiErr.IsNotFound():
+  case apiErr.IsUnauthorized():
+  }
+}
+```
 
-```python
-from qeetid import QeetidError, RateLimitError, MFARequiredError
+```python tab="Python"
+from qeetid import QeetidError, RateLimitError
 
 try:
-    qee.sign_in(method="email-password", email=email, password=password)
-except MFARequiredError:
-    # ...
+    qeetid.users.get(id)
 except RateLimitError as e:
-    sleep(e.retry_after)
-except QeetidError:
-    # ...
+    sleep(e.retry_after_seconds)
+except QeetidError as e:
+    log(e.code, e.request_id)
 ```
+
+</Tabs>
 
 ## Retry guidance
 
-| Status / code           | Retry?      | Strategy                             |
-| ----------------------- | ----------- | ------------------------------------ |
-| 5xx / `network_error`   | Yes         | Exponential backoff (1s, 2s, 4s, 8s) |
-| 429                     | Yes         | Honor `retryAfter`                   |
-| 4xx (other)             | No          | Surface the error to the user        |
-| Idempotency-Key replays | Always safe | Same key returns same response       |
+| Status | Retry? | Strategy |
+| --- | --- | --- |
+| `5xx` (idempotent) | Yes | Exponential backoff. |
+| `429` | Yes | Honor `Retry-After`. |
+| Other `4xx` | No | Surface to the caller. |
 
-Always include an `Idempotency-Key` on writes that come from user actions — it makes
-network retries safe by construction.
+The SDKs already implement this — `429` and idempotent `5xx` are retried with backoff,
+honoring `Retry-After`.

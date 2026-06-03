@@ -1,124 +1,93 @@
 ---
 title: Go SDK
-description: Context-aware Go client with zero allocations on the hot path.
+description: Server-side Go client (stdlib-only) — verify ES256 sessions against JWKS, run authorization checks, and manage users and tenants.
 ---
 
-`github.com/qeetid/qeetid-go` is the official Go SDK. It's the same client we use in
-Qeet ID's internal services.
-
-## Install
+`github.com/qeetgroup/qeetid-go` is the server-side Go SDK — **no third-party
+dependencies** (standard library only). It verifies sessions against the public JWKS,
+runs authorization checks, and manages users and tenants.
 
 ```bash title="terminal"
-go get github.com/qeetid/qeetid-go
+go get github.com/qeetgroup/qeetid-go
 ```
 
 ## Initialize
 
-```go title="main.go"
-package main
+Import the package as `qeetidsdk` so the client value can be named `qeetid` without
+shadowing the package. Authenticate with a secret API key (`qk_…`) — never embed it in
+client code.
 
+```go title="main.go"
 import (
     "context"
-    "log"
     "os"
 
-    "github.com/qeetid/qeetid-go"
+    qeetidsdk "github.com/qeetgroup/qeetid-go"
 )
 
-func main() {
-    qee, err := qeetid.New(qeetid.Config{
-        SecretKey: os.Getenv("QEETID_SECRET_KEY"),
-    })
-    if err != nil {
-        log.Fatal(err)
-    }
-    _ = qee
-}
+qeetid := qeetidsdk.New(qeetidsdk.Options{APIKey: os.Getenv("QEETID_API_KEY")})
+ctx := context.Background()
 ```
 
-## Validate a session
+## Verify a session
+
+Local — verifies the ES256 signature against the cached JWKS, then expiry/issuer/audience.
 
 ```go
-session, err := qee.Sessions.Validate(ctx, cookieValue)
-if err != nil {
-    return err
-}
-if session == nil {
-    return ErrUnauthorized
-}
+claims, err := qeetid.Sessions.Verify(ctx, accessToken)
+// claims.UserID, claims.TenantID
 ```
 
-## Check a permission
+## Authorize
 
 ```go
-ok, err := qee.Can(ctx, qeetid.PermissionCheck{
-    User:     session.UserID,
-    Action:   "billing:write",
-    Resource: "org:" + session.TenantID,
+ok, err := qeetid.Can(ctx, qeetidsdk.PermissionCheck{
+    User:       claims.UserID,
+    Tenant:     claims.TenantID,
+    Permission: "billing:write",
 })
-if err != nil || !ok {
-    return ErrForbidden
-}
+// qeetid.CanAll(ctx, user, tenant, perms) → true only if all pass
 ```
 
-## HTTP middleware
-
-```go title="middleware.go"
-func RequireAuth(qee *qeetid.Client) func(http.Handler) http.Handler {
-    return func(next http.Handler) http.Handler {
-        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-            c, _ := r.Cookie("qee_session")
-            if c == nil {
-                http.Error(w, "unauthorized", 401)
-                return
-            }
-            session, err := qee.Sessions.Validate(r.Context(), c.Value)
-            if err != nil || session == nil {
-                http.Error(w, "unauthorized", 401)
-                return
-            }
-            ctx := qeetid.WithSession(r.Context(), session)
-            next.ServeHTTP(w, r.WithContext(ctx))
-        })
-    }
-}
-```
-
-## gRPC interceptor
+## Manage users & tenants
 
 ```go
-import "github.com/qeetid/qeetid-go/grpc"
-
-s := grpc.NewServer(
-    grpc.UnaryInterceptor(qeetidgrpc.UnaryServerInterceptor(qee)),
-)
+user, err := qeetid.Users.Create(ctx, qeetidsdk.CreateUserInput{Email: "new@acme.com"})
+page, err := qeetid.Users.List(ctx, qeetidsdk.ListParams{Tenant: "acme", Limit: 50})
 ```
 
-The interceptor extracts the session token from metadata, validates it, and injects
-the session into the request context.
+`Users.{Create,Get,Update,Delete,SetPassword,List}` and
+`Tenants.{Create,Get,Update,Delete,List}` are available.
 
 ## Errors
 
+Failed calls return a `*qeetid.Error` with `Status`, `Code`, `Message`, and `RequestID`:
+
 ```go
-session, err := qee.Sessions.Validate(ctx, cookieValue)
-var rate qeetid.RateLimitError
-switch {
-case errors.As(err, &rate):
-    // rate.RetryAfter
-case errors.Is(err, qeetid.ErrInvalidCredentials):
-    // Generic creds error
+user, err := qeetid.Users.Get(ctx, "usr_missing")
+var apiErr *qeetidsdk.Error
+if errors.As(err, &apiErr) {
+    switch {
+    case apiErr.IsNotFound():     // 404
+    case apiErr.IsRateLimited():  // 429 — apiErr.RetryAfterSeconds
+    case apiErr.IsUnauthorized(): // 401 — bad API key
+    }
 }
 ```
 
-## Observability
+`429` and idempotent `5xx` are retried automatically with backoff, honoring `Retry-After`.
+
+## Configuration
 
 ```go
-qee, err := qeetid.New(qeetid.Config{
-    SecretKey: os.Getenv("QEETID_SECRET_KEY"),
-    Tracer:    otel.Tracer("my-service"),
-    Metrics:   otel.Meter("my-service"),
+qeetidsdk.New(qeetidsdk.Options{
+    APIKey:     "qk_…",                    // required
+    BaseURL:    "https://api.qeetid.com",  // default
+    HTTPClient: &http.Client{Timeout: 10 * time.Second},
 })
 ```
 
-Every method instrument with OpenTelemetry spans and metrics named under
-`qeetid.client.*`.
+<Callout type="warn" title="Server-only">
+  The Go SDK holds a <code>qk_…</code> API key and sends it as
+  <code>Authorization: ApiKey</code>. Keep it server-side.
+</Callout>

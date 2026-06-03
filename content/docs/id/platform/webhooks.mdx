@@ -1,0 +1,58 @@
+---
+title: Webhooks
+description: HMAC-SHA256 signed events delivered via a transactional outbox, with exponential-backoff retries and a dead-letter queue.
+icon: PlugZap
+---
+
+Webhooks let your services react to identity events. Qeet ID delivers them through a
+**transactional outbox** (so an event is recorded atomically with the change that
+produced it), signs each payload with **HMAC-SHA256**, retries with **exponential
+backoff**, and parks permanent failures in a **dead-letter queue (DLQ)**.
+
+## Register a webhook
+
+<APIEndpoint method="POST" path="/v1/webhooks" title="Create a webhook" />
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/webhooks" title="List webhooks" />
+<APIEndpoint method="POST" path="/v1/webhooks/{id}/test" title="Send a test event" />
+<APIEndpoint method="DELETE" path="/v1/webhooks/{id}" title="Delete a webhook" />
+
+## Verify the signature
+
+Every delivery carries an HMAC-SHA256 signature over the raw body. **Always verify**
+before processing — and verify against the raw bytes, not a re-serialized object.
+
+```ts title="route handler"
+import crypto from "node:crypto";
+
+export async function POST(req: Request) {
+  const body = await req.text(); // raw bytes
+  const sig = req.headers.get("x-qeetid-signature") ?? "";
+  const expected = crypto
+    .createHmac("sha256", process.env.QEETID_WEBHOOK_SECRET!)
+    .update(body)
+    .digest("hex");
+
+  if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+    return new Response("bad signature", { status: 400 });
+  }
+  // process the event …
+  return new Response(null, { status: 204 });
+}
+```
+
+<Callout type="tip" title="Make handlers idempotent">
+  Delivery is at-least-once, so the same event may arrive more than once (e.g. after a
+  retry). De-duplicate on the event id.
+</Callout>
+
+## Retries & the dead-letter queue
+
+If your endpoint returns non-2xx or times out, Qeet ID retries with exponential
+backoff. Events that exhaust retries land in the DLQ for inspection and replay.
+
+<APIEndpoint method="GET" path="/v1/admin/outbox/dlq" title="Inspect the dead-letter queue" />
+
+<Callout type="info">
+  The transactional outbox guarantees an event is enqueued in the same transaction as
+  the state change — no "the row updated but the webhook never fired" gaps.
+</Callout>

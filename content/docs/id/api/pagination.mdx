@@ -1,97 +1,73 @@
 ---
 title: Pagination
-description: Cursor-based pagination across every list endpoint.
+description: Cursor-based pagination across list endpoints — items plus an opaque next_cursor.
 ---
 
-List endpoints in Qeet ID use **cursor-based** pagination. Cursors are opaque, ordered,
-and safe to store.
+List endpoints use **cursor-based** pagination. A page returns an `items` array and an
+opaque **`next_cursor`**; pass it back to fetch the next page. When `next_cursor` is
+empty or absent, you've reached the end.
 
 ## Request
 
 ```bash
-curl 'https://api.qeetid.com/v1/users?limit=50&cursor=eyJjcmVhdGVkQXQi...' \
-  -H "Authorization: Bearer $QEETID_SECRET_KEY"
+curl 'https://api.qeetid.com/v1/users?limit=50&cursor=<next_cursor>' \
+  -H "Authorization: ApiKey $QEETID_API_KEY"
 ```
 
-| Param    | Type    | Default | Max |
-| -------- | ------- | ------- | --- |
-| `limit`  | integer | 25      | 100 |
-| `cursor` | string  | null    | —   |
+| Param | Type | Notes |
+| --- | --- | --- |
+| `limit` | integer | Page size. |
+| `cursor` | string | Opaque cursor from the previous page's `next_cursor`. |
 
 ## Response
 
-```json
+```json title="Page"
 {
-  "data": [
-    /* ... 50 records ... */
+  "items": [
+    /* … records … */
   ],
-  "pagination": {
-    "next": "eyJjcmVhdGVkQXQi...",
-    "previous": "eyJjcmVhdGVkQXQiLCJpZCI...",
-    "hasMore": true
-  }
+  "next_cursor": "eyJjcmVhdGVkX2F0Ijoi…"
 }
 ```
 
-When `hasMore` is `false`, you've reached the end.
+Loop until `next_cursor` is empty:
+
+```bash
+cursor=""
+while :; do
+  resp=$(curl -s "https://api.qeetid.com/v1/users?limit=100&cursor=$cursor" \
+    -H "Authorization: ApiKey $QEETID_API_KEY")
+  # … process .items …
+  cursor=$(echo "$resp" | jq -r '.next_cursor // empty')
+  [ -z "$cursor" ] && break
+done
+```
 
 ## SDK helpers
 
-### TypeScript
+The SDKs hide the cursor loop behind iterators.
 
-```ts
-for await (const user of qee.users.list({ tenant: "acme" })) {
-  // streams pages of 50 by default
+<Tabs items={['TypeScript', 'Go', 'Python']}>
+
+```ts tab="TypeScript"
+for await (const user of qeetid.users.listAll({ tenant: "acme" })) {
+  console.log(user.email);
 }
 ```
 
-### Go
-
-```go
-iter := qee.Users.List(ctx, &qeetid.UserListParams{Tenant: "acme"})
-for iter.Next() {
-  user := iter.Current()
-}
-if err := iter.Err(); err != nil {
-  return err
-}
+```go tab="Go"
+page, err := qeetid.Users.List(ctx, qeetidsdk.ListParams{Tenant: "acme", Limit: 100})
+// page.Items, page.NextCursor
 ```
 
-### Python
-
-```python
-for user in qee.users.list(tenant="acme"):
-    ...
+```python tab="Python"
+for u in qeetid.users.list_all():
+    print(u.email)
 ```
 
-## Ordering
+</Tabs>
 
-By default, lists are ordered **newest first** by `createdAt`. To order by another
-field, pass `order_by`:
-
-```bash
-curl 'https://api.qeetid.com/v1/users?order_by=email&direction=asc' \
-  -H "Authorization: Bearer $QEETID_SECRET_KEY"
-```
-
-Supported `order_by`:
-
-- `createdAt` (default)
-- `updatedAt`
-- `email`
-- `lastSignInAt`
-
-## Filtering
-
-Most list endpoints accept filter parameters specific to the resource. See the
-individual API references for the supported filters per endpoint.
-
-```bash
-curl 'https://api.qeetid.com/v1/users?status=active&since=2026-01-01' \
-  -H "Authorization: Bearer $QEETID_SECRET_KEY"
-```
-
-<Callout type="warn">
-  Cursors include a snapshot of the filter and ordering. Reusing a cursor with different filters
-  returns `cursor_mismatch`. Always pair a cursor with the same query parameters that produced it.
+<Callout type="info">
+  Cursors encode the ordering and position. Don't hand-construct them; always pass back
+  the <code>next_cursor</code> the server returned.
 </Callout>

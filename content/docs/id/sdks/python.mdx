@@ -1,132 +1,77 @@
 ---
 title: Python SDK
-description: Sync and async Python clients, type-checked with pydantic.
+description: Server-side Python client — verify ES256 sessions locally against JWKS, run authorization checks, and manage users and tenants.
 ---
 
-`qeetid` is the official Python SDK. Both sync and async clients are shipped; the
-async one is built on `httpx` + `anyio`.
-
-## Install
+`qeetid` is the server-side Python SDK. It verifies sessions locally against the public
+JWKS, runs authorization checks, and manages users and tenants. Minimal dependencies:
+[`httpx`](https://www.python-httpx.org/) for HTTP and
+[`cryptography`](https://cryptography.io/) for local ES256 verification. Python 3.10+.
 
 ```bash title="terminal"
 pip install qeetid
-# or
-uv add qeetid
 ```
 
 ## Initialize
 
-```python title="auth.py"
+Authenticate with a secret API key (`qk_…`) — server-side only.
+
+```python title="qeetid_client.py"
 import os
-from qeetid import Qeet ID
+from qeetid import Qeetid, CreateUserInput
 
-qee = Qeetid(secret_key=os.environ["QEETID_SECRET_KEY"])
+qeetid = Qeetid(api_key=os.environ["QEETID_API_KEY"])
 ```
 
-Async client:
+## Verify a session
+
+Local — verifies the ES256 signature against the published JWKS, then
+expiry/issuer/audience. No network call after the keys are cached.
 
 ```python
-from qeetid import AsyncQeetid
-
-qee = AsyncQeetid(secret_key=os.environ["QEETID_SECRET_KEY"])
+claims = qeetid.sessions.verify(access_token)
+# claims.user_id, claims.tenant_id
 ```
 
-## Validate a session
+## Authorize
 
 ```python
-session = qee.sessions.validate(cookie_value)
-if session is None:
-    raise Unauthorized()
+if qeetid.can(user=claims.user_id, tenant=claims.tenant_id, permission="billing:write"):
+    ...
+# qeetid.can_all(user, tenant, permissions) → True only if all pass
 ```
 
-Async:
+## Manage users & tenants
 
 ```python
-session = await qee.sessions.validate(cookie_value)
+user = qeetid.users.create(CreateUserInput(email="new@acme.com", display_name="New User"))
+for u in qeetid.users.list_all():
+    print(u.email)
 ```
 
-## Check a permission
-
-```python
-ok = qee.can(
-    user=session.user_id,
-    action="billing:write",
-    resource=f"org:{session.tenant_id}",
-)
-if not ok:
-    raise Forbidden()
-```
-
-## FastAPI middleware
-
-```python title="dependencies.py"
-from fastapi import Depends, Header, HTTPException, Request
-from qeetid import AsyncQeetid
-
-qee = AsyncQeetid(secret_key=os.environ["QEETID_SECRET_KEY"])
-
-async def current_session(request: Request):
-    token = request.cookies.get("qee_session")
-    if not token:
-        raise HTTPException(status_code=401)
-    session = await qee.sessions.validate(token)
-    if session is None:
-        raise HTTPException(status_code=401)
-    return session
-```
-
-Then in a route:
-
-```python
-from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/me")
-async def me(session = Depends(current_session)):
-    return {"user": session.user_id}
-```
-
-## Django middleware
-
-```python title="qeetid_middleware.py"
-from django.http import HttpResponseUnauthorized
-from qeetid import Qeet ID
-
-qee = Qeetid(secret_key=os.environ["QEETID_SECRET_KEY"])
-
-class QeetidMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        token = request.COOKIES.get("qee_session")
-        request.session_obj = qee.sessions.validate(token) if token else None
-        return self.get_response(request)
-```
+`users.{create,get,update,delete,set_password,list,list_all}` and
+`tenants.{create,get,update,delete,list}` are available.
 
 ## Errors
 
+Failed calls raise `QeetidError` (or a subclass) carrying `status`, `code`, and
+`request_id`:
+
 ```python
-from qeetid import QeetidError, RateLimitError, InvalidCredentialsError
+from qeetid import RateLimitError, InvalidCredentialsError
 
 try:
-    qee.users.create(email="alex@acme.com")
-except InvalidCredentialsError:
-    ...
+    qeetid.users.get("usr_missing")
 except RateLimitError as e:
-    print(f"Retry after {e.retry_after}s")
-except QeetidError as e:
-    print(e.message)
+    sleep(e.retry_after_seconds)
+except InvalidCredentialsError:
+    rotate_api_key()  # 401 — bad API key
 ```
 
-## Type hints
+`429` and idempotent `5xx` are retried automatically with backoff, honoring
+`Retry-After`.
 
-The SDK ships with full type hints and validates responses with pydantic:
-
-```python
-from qeetid.types import User, Session, Tenant
-
-def display(user: User) -> str:
-    return f"{user.profile.display_name} <{user.email}>"
-```
+<Callout type="warn" title="Server-only">
+  The Python SDK holds a <code>qk_…</code> API key and sends it as
+  <code>Authorization: ApiKey</code>. Never ship it to a client.
+</Callout>

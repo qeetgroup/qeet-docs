@@ -1,0 +1,51 @@
+---
+title: Qeet Notify
+description: One API for transactional notifications across email, SMS, WhatsApp, push, and in-app — multi-tenant and India-first by design.
+icon: BellRing
+---
+
+<Callout type="info" title="Coming soon — in design">
+  Qeet Notify is in active planning. These docs describe what we're building from the product
+  requirements; there's no code or public API yet, and everything below may change before the
+  first release.
+</Callout>
+
+## What is Qeet Notify?
+
+Qeet Notify is the **multi-channel notification platform** for the Qeet suite. One unified API
+orchestrates messages across **email, SMS, WhatsApp, mobile & web push, and in-app** — with
+multi-tenancy, India-first compliance, and [Qeet ID](/id) subscriber identity treated as
+architecture decisions, not afterthoughts.
+
+It's built for engineering teams at multi-tenant SaaS companies who today stitch together
+separate vendors for each channel — and rebuild preference centers, suppression logic, and
+compliance plumbing for every product they launch.
+
+## What it will do
+
+<Cards>
+  <Card title="Multi-channel, one API" description="Fire a single event and reach the right person on the right channel — email, SMS, WhatsApp, push, in-app, or outbound webhooks." />
+  <Card title="Workflow orchestration" description="Trigger → channel → delay → condition branching, with channel fallback and digests as the engine matures." />
+  <Card title="Multi-tenant by default" description="tenant_id is a first-class concept — per-tenant API keys, isolation, and configuration baked in." />
+  <Card title="Preference center" description="A hosted, embeddable per-user, per-category, per-channel opt-out system you don't have to rebuild." />
+  <Card title="India-first compliance" description="Managed TRAI DLT registration, DND scrubbing, and DPDP-aligned consent records." />
+  <Card title="Identity & audit aware" description="Subscriber identity from Qeet ID; immutable notification audit trails through Qeet Logs." />
+</Cards>
+
+## Where it fits in the platform
+
+Every Qeet product needs notifications — Qeet ID sends OTPs, magic links, and security alerts;
+[Qeet People](/people) sends payroll and approval messages; [Qeet Logs](/logs) sends alert
+notifications. Rather than each product integrating email, SMS, WhatsApp, and push vendors
+independently, Qeet Notify is the shared layer they all send through.
+
+## Want early access?
+
+Notify is being designed alongside the rest of the platform. Until it ships, [Qeet ID](/id)
+already sends the identity-related messages — sign-in, MFA, and webhooks — that Notify will
+eventually carry.
+
+<Cards>
+  <Card title="See the roadmap" href="/notify/roadmap" description="The phased plan, from foundation to breadth." />
+  <Card title="Explore Qeet ID" href="/id" description="The identity layer Notify builds on, live today." />
+</Cards>

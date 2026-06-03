@@ -1,85 +1,80 @@
 ---
-title: Sign-up
-description: Create new users, verify their email and phone, and onboard them into the right tenant.
+title: Sign-up & passwords
+description: Create users with email + password (Argon2id), verify email and phone, and handle password reset — all enumeration-safe.
 ---
 
-Sign-up creates a new **user** (and, optionally, attaches them to a **tenant**). The
-default flow asks for email + password, sends a verification challenge, and lands them
-in your app once verified.
+Sign-up creates a **user** and a personal tenant, then optionally walks them through
+email/phone verification. Passwords are hashed with **Argon2id** (OWASP parameters),
+with a format-detecting verify that **rehashes on login** to migrate legacy bcrypt
+hashes transparently.
 
-## Drop-in component
+## Create an account
 
-```tsx title="app/sign-up/page.tsx"
-import { QeetidSignUp } from "@qeetid/react";
+<APIEndpoint method="POST" path="/v1/auth/signup" title="Sign up with email + password" />
 
-export default function Page() {
-  return (
-    <QeetidSignUp
-      requireEmailVerification
-      onSignUp={async (user) => {
-        // Optional: hook into your CRM, Stripe, etc.
-        await fetch("/api/onboarding", { method: "POST" });
-      }}
-      redirectTo="/welcome"
-    />
-  );
-}
+```bash title="terminal"
+curl -X POST https://api.qeetid.com/v1/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"alex@acme.com","password":"a-strong-passphrase"}'
 ```
 
-## API: create a user
+Email is **globally unique**. A successful signup issues a token pair (see
+[Sessions](/docs/sessions)).
 
-```ts
-await qee.users.create({
-  email: "alex@acme.com",
-  profile: { displayName: "Alex Chen", locale: "en-US" },
-  // Optional: attach to an existing tenant on creation
-  joinTenant: "acme",
-});
-```
-
-This is **idempotent**: calling twice with the same email returns the same user. If you
-need to detect duplicates, check `created` on the response.
-
-## Email verification
-
-By default, sign-ups send a verification email with a one-time token. The user can also
-trigger re-verification from their account settings.
-
-```ts
-// Request a new verification email
-await qee.users.requestEmailVerification(userId);
-
-// Confirm a token (usually called via your /verify route)
-await qee.users.verifyEmail(userId, token);
-```
-
-<Callout type="info">
-  Email templates live under [Branding → Templates](/docs/branding/email-templates). You can
-  customize sender, subject, body, and supported languages.
+<Callout type="tip" title="Reject breached passwords">
+  Enable breached-password rejection in the tenant
+  [auth policy](/docs/authentication#per-tenant-auth-policy). Qeet ID checks the
+  password against HaveIBeenPwned using **k-anonymity** (only a hash prefix leaves
+  your infrastructure) and fails open if the service is unreachable.
 </Callout>
 
-## Phone verification
+## Verify email & phone
 
-```ts
-await qee.users.requestPhoneVerification(userId, "+15551234567");
-await qee.users.verifyPhone(userId, code);
+Verification uses single-use, TTL-bound 6-digit OTPs.
+
+<APIEndpoint method="POST" path="/v1/users/{id}/verify/email/start" title="Send email OTP" />
+<APIEndpoint method="POST" path="/v1/users/{id}/verify/email/confirm" title="Confirm email OTP" />
+<APIEndpoint method="POST" path="/v1/users/{id}/verify/phone/start" title="Send SMS OTP" />
+<APIEndpoint method="POST" path="/v1/users/{id}/verify/phone/confirm" title="Confirm phone OTP" />
+
+<Callout type="warn" title="Deliverability is an ops dependency">
+  SMTP and Twilio senders are wired in code. Production email/SMS delivery needs a
+  sending domain with SPF/DKIM/DMARC (and bounce/complaint handling) configured for
+  your deployment.
+</Callout>
+
+## Password reset
+
+Reset is **enumeration-safe**: starting a reset always returns `202`, whether or not
+the email exists. Completing a reset **revokes all of the user's sessions**.
+
+<APIEndpoint method="POST" path="/v1/auth/forgot-password" title="Start reset (always 202)" />
+<APIEndpoint method="POST" path="/v1/auth/reset-password" title="Complete reset" />
+
+```bash
+curl -X POST https://api.qeetid.com/v1/auth/forgot-password \
+  -H "Content-Type: application/json" \
+  -d '{"email":"alex@acme.com"}'
+# → 202 Accepted (no account-existence signal)
 ```
 
-Phone OTP is rate-limited per number and per IP, with abuse detection on top.
+## Invite users into a tenant
 
-## Inviting users
+For B2B flows, invite people into a tenant rather than self-signup. Accepting an
+invite creates the user if needed and assigns the configured role.
 
-If your product is multi-tenant, you usually want to **invite** users into a tenant
-rather than letting them self-sign-up.
+<APIEndpoint method="POST" path="/v1/invites" title="Create an invite" />
+<APIEndpoint method="POST" path="/v1/invites/accept" title="Accept an invite" />
+
+## Admin user management
+
+Admins manage users directly, including set-password and soft-delete with a recycle
+bin (restore / purge).
+
+<APIEndpoint method="POST" path="/v1/users" title="Create a user" />
+<APIEndpoint method="PUT" path="/v1/users/{id}/password" title="Set a user's password" />
+<APIEndpoint method="POST" path="/v1/users/{id}/restore" title="Restore a soft-deleted user" />
 
 ```ts
-await qee.invitations.send({
-  tenant: "acme",
-  email: "new-hire@acme.com",
-  role: "member",
-  redirectTo: "https://app.acme.com/welcome",
-});
+const user = await qeetid.users.create({ email: "alex@acme.com", display_name: "Alex Chen" });
 ```
-
-The invitation email contains a single-use link. Accepting it creates the user (if
-needed) and assigns them the specified role inside the tenant.

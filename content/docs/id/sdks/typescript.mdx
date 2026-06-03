@@ -1,116 +1,148 @@
 ---
-title: TypeScript SDK
-description: The universal client. Works in Node, Edge, Deno, Bun, and browsers.
+title: "TypeScript & Next.js"
+description: "@qeetid/sdk for server-side token verification and management, and @qeetid/nextjs for the hosted-login flow with silent refresh."
 ---
 
-`@qeetid/sdk` is the universal TypeScript client. It runs in any modern JavaScript
-runtime and has zero non-optional dependencies.
+There are two TypeScript packages, for two jobs:
 
-## Install
+- **`@qeetid/sdk`** — a **server-side** client: verify access tokens, run authorization
+  checks, and manage users/tenants. Zero runtime dependencies (built-in `fetch` +
+  `node:crypto`, Node ≥18; also Bun, Deno, edge).
+- **`@qeetid/nextjs`** — drives the **hosted-login** OAuth flow for App Router apps:
+  route handlers, Edge middleware, and silent refresh.
+
+## `@qeetid/sdk` (server)
 
 ```bash title="terminal"
 pnpm add @qeetid/sdk
 ```
 
-## Initialize
+```ts title="lib/qeetid.ts"
+import { Qeetid } from "@qeetid/sdk";
 
-```ts
-import { Qeet ID } from "@qeetid/sdk";
-
-// Server-side (full access)
-const qee = new Qeetid({
-  secretKey: process.env.QEETID_SECRET_KEY!,
-});
-
-// Client-side (browser, edge — publishable key only)
-const qee = new Qeetid({
-  publishableKey: process.env.NEXT_PUBLIC_QEETID_KEY!,
-  tenant: "acme",
+export const qeetid = new Qeetid({
+  apiKey: process.env.QEETID_API_KEY!,   // qk_… — server only
+  // baseUrl: "https://api.qeetid.com",  // default
+  // timeoutMs: 10_000, maxRetries: 2,
 });
 ```
 
-## Common patterns
+### Verify a session
 
-### Validate a session
+Local — checks the ES256 signature against the cached JWKS, then expiry/issuer/audience.
 
 ```ts
-const session = await qee.sessions.validate(cookieValue);
-if (!session) throw new Unauthorized();
+const claims = await qeetid.sessions.verify(accessToken);
+// claims.userId, claims.tenantId, claims.sessionId
 ```
 
-### Check a permission
+### Authorize
 
 ```ts
-const can = await qee.can({
-  user: session.userId,
-  action: "billing:write",
-  resource: `org:${session.tenantId}`,
-});
-```
-
-### Create a user
-
-```ts
-const user = await qee.users.create({
-  email: "alex@acme.com",
-  profile: { displayName: "Alex Chen", locale: "en-US" },
-});
-```
-
-### Issue a magic link
-
-```ts
-await qee.magicLinks.create({
-  email: "alex@acme.com",
-  redirectTo: "https://app.acme.com/dashboard",
-});
-```
-
-## Errors
-
-All SDK methods throw typed errors. Catch them with `instanceof`:
-
-```ts
-import { QeetidError, RateLimitError, InvalidCredentialsError } from "@qeetid/sdk";
-
-try {
-  await qee.signIn({
-    /* ... */
-  });
-} catch (e) {
-  if (e instanceof InvalidCredentialsError) {
-    // Show generic error
-  } else if (e instanceof RateLimitError) {
-    // Show retry-after
-  } else if (e instanceof QeetidError) {
-    // Generic platform error
-  } else {
-    throw e;
-  }
+if (await qeetid.can({ user: claims.userId, tenant: claims.tenantId!, permission: "billing:write" })) {
+  // …
 }
 ```
 
-## Runtime support
-
-| Runtime            | Status    | Notes                                         |
-| ------------------ | --------- | --------------------------------------------- |
-| Node 18+           | ✅ Stable |                                               |
-| Bun 1.0+           | ✅ Stable |                                               |
-| Deno 1.40+         | ✅ Stable | `import { Qeet ID } from "npm:@qeetid/sdk"`  |
-| Cloudflare Workers | ✅ Stable | `import { Qeet ID } from "@qeetid/sdk/edge"` |
-| Vercel Edge        | ✅ Stable | Same as CF Workers                            |
-| Browser            | ✅ Stable | Publishable key only                          |
-
-## Observability
-
-Set `telemetry: true` to emit OpenTelemetry spans for every call:
+### Manage users & tenants
 
 ```ts
-const qee = new Qeetid({
-  secretKey: process.env.QEETID_SECRET_KEY!,
-  telemetry: true,
-});
+const user = await qeetid.users.create({ email: "new@acme.com", display_name: "New User" });
+for await (const u of qeetid.users.listAll({ tenant: "acme" })) console.log(u.email);
 ```
 
-Spans include trace IDs that match Qeet ID's server-side traces, so you can correlate
-client → server requests end-to-end.
+### Errors
+
+```ts
+import { RateLimitError, InvalidCredentialsError } from "@qeetid/sdk";
+
+try {
+  await qeetid.users.get("usr_missing");
+} catch (err) {
+  if (err instanceof RateLimitError) await wait(err.retryAfterSeconds);
+  else if (err instanceof InvalidCredentialsError) rotateApiKey();
+  else throw err;
+}
+```
+
+`429` and idempotent `5xx` are retried automatically with backoff, honoring
+`Retry-After`.
+
+## `@qeetid/nextjs` (hosted login)
+
+```bash title="terminal"
+pnpm add @qeetid/nextjs
+```
+
+<Steps>
+
+<Step>
+### Environment
+
+```bash title=".env.local"
+QEETID_CLIENT_ID=qci_…
+QEETID_CLIENT_SECRET=…
+QEETID_API_URL=https://api.qeetid.com
+QEETID_APP_URL=https://app.acme.com
+QEETID_COOKIE_SECRET=…        # ≥32 random chars
+# QEETID_SCOPES="openid profile email"
+```
+
+Register `${QEETID_APP_URL}/api/auth/callback` as a redirect URI and
+`${QEETID_APP_URL}` as a post-logout URI on your [OIDC client](/docs/oidc/clients).
+</Step>
+
+<Step>
+### Mount the auth routes
+
+```ts title="app/api/auth/[...qeetid]/route.ts"
+import { handleAuth } from "@qeetid/nextjs";
+export const GET = handleAuth(); // /api/auth/login | /callback | /logout
+```
+</Step>
+
+<Step>
+### Protect routes (Edge middleware)
+
+```ts title="middleware.ts"
+import { qeetidMiddleware } from "@qeetid/nextjs/middleware";
+
+export default qeetidMiddleware({ publicRoutes: ["/", "/pricing"] });
+
+export const config = { matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"] };
+```
+
+Unauthenticated requests are redirected to hosted login; near-expiry sessions are
+**silently refreshed** (the rotated refresh token is persisted) so users aren't bounced.
+</Step>
+
+<Step>
+### Read the user
+
+```ts title="app/page.tsx"
+import { auth, currentUser } from "@qeetid/nextjs";
+
+export default async function Page() {
+  const { isAuthenticated, userId, tenantId } = await auth();
+  if (!isAuthenticated) return null;
+  const user = await currentUser(); // OIDC userinfo, or null
+  return <p>Hello {user?.sub}</p>;
+}
+```
+</Step>
+
+</Steps>
+
+| Export | Use |
+| --- | --- |
+| `handleAuth()` | Route handler for `/api/auth/[...qeetid]`. |
+| `qeetidMiddleware(opts)` | Route protection + silent refresh (Edge). |
+| `auth()` | `{ isAuthenticated, userId, tenantId, sessionId, accessToken }`. |
+| `currentUser()` | OIDC userinfo, or `null`. |
+| `getToken()` | Current access token to call your own APIs. |
+
+<Callout type="info">
+  How it splits: the Edge middleware uses Web Crypto only (no Node code in the Edge
+  bundle); <code>auth()</code> runs in the Node runtime and verifies the ES256 token via
+  <code>@qeetid/sdk</code>. Pair with <a href="/docs/sdks/react">@qeetid/react</a> for UI.
+</Callout>

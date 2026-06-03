@@ -1,0 +1,68 @@
+---
+title: OIDC / OAuth provider
+description: Qeet ID is a full OpenID Connect provider — discovery, JWKS, dynamic client registration, Authorization Code + PKCE, hosted login & consent, ES256 ID tokens, device grant, and M2M.
+icon: Network
+---
+
+Qeet ID is a complete **OpenID Connect / OAuth 2.0 provider** — not just a login box.
+Your apps (and third parties) can integrate with it the way they'd integrate with any
+standards-compliant IdP.
+
+<Callout type="tip" title="Standards, implemented">
+  Discovery, JWKS, dynamic client registration, Authorization Code + PKCE, hosted login
+  + consent, ES256 ID tokens, userinfo, refresh rotation, RFC 7009 revoke, RFC 7662
+  introspect, RP-initiated logout, and the RFC 8628 Device Authorization Grant are all
+  live. ID tokens are signed with <strong>ES256</strong> and verified via the public
+  JWKS.
+</Callout>
+
+## Discovery & keys
+
+Point any OIDC client at the discovery document; it advertises every endpoint and the
+JWKS URI.
+
+<APIEndpoint method="GET" path="/.well-known/openid-configuration" title="OIDC discovery" />
+<APIEndpoint method="GET" path="/.well-known/jwks.json" title="JWKS (verify ID/access tokens)" />
+
+```bash
+curl https://api.qeetid.com/.well-known/openid-configuration
+```
+
+## What's in this section
+
+<Cards>
+  <Card icon="AppWindow" title="Clients" href="/docs/oidc/clients">
+    Register OIDC/OAuth clients (public or confidential) — dynamic registration,
+    secret rotation, redirect URIs.
+  </Card>
+  <Card icon="LogIn" title="Authorization Code + PKCE" href="/docs/oidc/authorization-code">
+    The browser login flow with hosted login + consent.
+  </Card>
+  <Card icon="KeyRound" title="Tokens" href="/docs/oidc/tokens">
+    Token endpoint, ID tokens, userinfo, refresh rotation, introspect, and revoke.
+  </Card>
+  <Card icon="Tv" title="Device grant" href="/docs/oidc/device-grant">
+    RFC 8628 for CLI / TV / IoT — user-code entry on a second screen.
+  </Card>
+  <Card icon="Bot" title="Machine-to-machine" href="/docs/oidc/m2m">
+    <code>client_credentials</code> for service principals.
+  </Card>
+  <Card icon="LogOut" title="RP-initiated logout" href="/docs/oidc/logout">
+    <code>end_session</code> with post-logout redirect.
+  </Card>
+</Cards>
+
+## Signing keys
+
+Tokens are signed with **ES256** (ECDSA P-256). Each key has an RFC 7638 `kid`;
+rotation publishes a new key while retiring the old one on a grace window so
+in-flight tokens still verify. The platform guards against alg-confusion, and the
+algorithm is a property of the key (crypto-agility for future PQC signing).
+
+<APIEndpoint method="GET" path="/v1/oidc/signing-keys" title="Signing-key status (read-only)" />
+
+<Callout type="info">
+  Signing-key rotation is an operational action (config + runbook), not an admin-panel
+  button — the dashboard shows key status read-only. KMS-backed key material is an
+  external dependency (drops into the existing <code>KeyProvider</code> interface).
+</Callout>

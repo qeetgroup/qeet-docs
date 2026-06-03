@@ -1,125 +1,110 @@
 ---
-title: MFA
-description: TOTP, SMS, email OTP, WebAuthn, and recovery codes — with policy-based enforcement and step-up auth.
-icon: FingerprintPattern
+title: MFA & step-up
+description: TOTP + recovery codes, email/SMS OTP factors, WebAuthn as a second factor, and step-up MFA gated by a recent-verification window.
+icon: ShieldCheck
 ---
 
-Multi-factor authentication in Qeet ID isn't a checkbox — it's a system. You can enforce
-factors per role, per resource, or per action, and require **step-up** on sensitive
-operations like billing or admin changes.
+Qeet ID ships a complete multi-factor system: **TOTP** with recovery codes,
+**email/SMS OTP factors**, **WebAuthn as a second factor**, and **step-up MFA** that
+gates sensitive actions behind a recent verification.
+
+<Callout type="tip" title="All implemented">
+  TOTP, OTP factors, WebAuthn-2FA, and step-up are live. Any factor verification
+  refreshes a recent-MFA window that a server-side <code>RequireRecentMFA</code>
+  middleware checks before sensitive operations.
+</Callout>
 
 ## Factors
 
-| Factor             | Notes                                                                   |
-| ------------------ | ----------------------------------------------------------------------- |
-| **TOTP**           | Standard authenticator apps. 6 digits, 30-second windows.               |
-| **WebAuthn**       | Hardware keys (YubiKey) or device-bound passkeys used as a second step. |
-| **SMS**            | Lower assurance — recommended as fallback, not primary.                 |
-| **Email OTP**      | Useful when SMS is unavailable.                                         |
-| **Recovery codes** | One-time codes for account recovery.                                    |
+| Factor | Endpoints | Notes |
+| --- | --- | --- |
+| **TOTP** (RFC 6238) | `/v1/mfa/totp/*` | 6-digit authenticator codes; enroll → confirm → verify. |
+| **Recovery codes** | `/v1/mfa/recovery-codes*` | bcrypt-hashed single-use codes; regenerable. |
+| **Email / SMS OTP** | `/v1/mfa/otp/factors*` | Per-factor challenge + confirm via real senders. |
+| **WebAuthn 2FA** | `/v1/mfa/webauthn/*` | Reuses the user's registered passkeys as a second factor. |
 
-## Enable MFA for a tenant
+## TOTP
 
-```ts
-await qee.tenants.updateConfiguration("acme", {
-  mfa: {
-    enabled: true,
-    requireFor: ["all-users"], // or "admins-only" | "custom"
-    factors: ["totp", "webauthn", "sms"],
-    recoveryCodes: { enabled: true, count: 10 },
-  },
-});
-```
+Three-step enrollment, then verification at sign-in.
 
-## Enrollment flow
+<Steps>
 
-The drop-in component handles enrollment automatically after sign-in if the user has no
-factors set up:
+<Step>
+### Start enrollment
 
-```tsx
-<QeetidMFAEnrollment factors={["totp", "webauthn"]} />
-```
+Returns the shared secret + provisioning URI to render as a QR code.
 
-Or drive it yourself:
+<APIEndpoint method="POST" path="/v1/mfa/totp/enroll/start" title="Begin TOTP enrollment" />
+</Step>
 
-```ts
-import { useMFA } from "@qeetid/react";
+<Step>
+### Confirm
 
-const { startEnrollment, completeEnrollment } = useMFA();
+The user enters the first 6-digit code to prove the authenticator is synced.
 
-const { qrCode, secret } = await startEnrollment({ factor: "totp" });
-// Show QR to user; collect 6-digit code
-await completeEnrollment({ factor: "totp", code });
-```
+<APIEndpoint method="POST" path="/v1/mfa/totp/enroll/confirm" title="Confirm enrollment" />
+</Step>
 
-## Challenge flow
+<Step>
+### Verify at sign-in
 
-When a sign-in requires MFA, the server returns `mfa_required` with a list of available
-factors. The component renders the right UI; with hooks, you drive it yourself:
+<APIEndpoint method="POST" path="/v1/mfa/totp/verify" title="Verify a TOTP code" />
+</Step>
 
-```ts
-import { useSignIn } from "@qeetid/react";
+</Steps>
 
-const result = await signIn({ method: "email-password", email, password });
-if (result.status === "mfa_required") {
-  await challenge({ factor: "totp", code });
-}
-```
+Remove TOTP with `DELETE /v1/mfa/totp` (this is a sensitive action — see
+[Step-up](#step-up-mfa)).
 
-## Step-up auth
+## Recovery codes
 
-Some actions deserve a fresh proof of identity — even mid-session. Step-up requires the
-user to **re-challenge** an MFA factor without losing the session:
+Issued at enrollment, single-use, bcrypt-hashed. Users can regenerate the set
+(another step-up-gated action).
 
-```ts
-import { useStepUp } from "@qeetid/react";
+<APIEndpoint method="GET" path="/v1/mfa/recovery-codes" title="List remaining recovery codes" />
+<APIEndpoint method="POST" path="/v1/mfa/recovery-codes/regenerate" title="Regenerate the set" />
 
-const { stepUp } = useStepUp();
+## Email / SMS OTP factors
 
-async function deleteAccount() {
-  const proof = await stepUp({ factor: "webauthn" });
-  await fetch("/api/account", {
-    method: "DELETE",
-    headers: { "X-Qeet ID-Step-Up": proof.token },
-  });
-}
-```
+Register a contact factor, then challenge + confirm it as a second step.
 
-Your server can require the `X-Qeet ID-Step-Up` header on sensitive endpoints:
+<APIEndpoint method="POST" path="/v1/mfa/otp/factors" title="Register an OTP factor (email/SMS)" />
+<APIEndpoint method="POST" path="/v1/mfa/otp/factors/{id}/challenge" title="Send a code" />
+<APIEndpoint method="POST" path="/v1/mfa/otp/factors/{id}/confirm" title="Confirm enrollment" />
+<APIEndpoint method="POST" path="/v1/mfa/otp/verify" title="Verify an OTP at sign-in" />
 
-```ts
-const proof = await qee.stepUp.validate(req.headers["x-qeetid-step-up"]);
-if (!proof || proof.olderThan("5m")) throw new ProofRequired();
-```
-
-## Recovery
-
-Recovery codes are issued during enrollment. Each is single-use; users can regenerate
-the set at any time.
-
-```ts
-// On the server (e.g. a /recover route)
-await qee.users.recoverWithCode(userId, code);
-```
-
-For lost-everything scenarios, tenant admins can revoke all MFA factors for a user from
-the dashboard, forcing re-enrollment on next sign-in.
-
-<Callout type="warn">
-  Don't use SMS as the only factor. It's vulnerable to SIM-swap attacks. Use it as a fallback
-  alongside TOTP or WebAuthn.
+<Callout type="warn" title="SMS is lower assurance">
+  Prefer TOTP or WebAuthn as the primary second factor; SMS is vulnerable to SIM-swap.
+  SMS/email delivery also depends on a configured sending domain / Twilio account.
 </Callout>
 
-## Policy: requiring MFA for specific actions
+## WebAuthn as a second factor
 
-```ts
-await qee.policies.create({
-  tenant: "acme",
-  name: "billing-mfa",
-  when: { resource: "billing:*" },
-  require: { mfaWithin: "5m" },
-});
+Step-up with a registered passkey. Unlike passwordless login, this **asserts the
+known user** and issues no new token — it only proves presence to refresh the MFA
+window.
+
+<APIEndpoint method="POST" path="/v1/mfa/webauthn/challenge" title="Get assertion options" />
+<APIEndpoint method="POST" path="/v1/mfa/webauthn/verify" title="Verify the assertion" />
+
+## Step-up MFA
+
+Any successful factor verification refreshes a **recent-verification window**. The
+`RequireRecentMFA` middleware gates sensitive endpoints (e.g. disabling MFA,
+regenerating recovery codes) and returns an MFA challenge if the window has lapsed.
+
+Check whether the user currently satisfies the window:
+
+<APIEndpoint method="GET" path="/v1/mfa/step-up/status" title="Is a recent MFA present?" />
+
+```bash
+curl https://api.qeetid.com/v1/mfa/step-up/status \
+  -H "Authorization: Bearer $ACCESS_TOKEN"
+# → { "recent": false }  →  prompt the user to re-verify a factor
 ```
 
-If a user tries to call a `billing:*` endpoint without a recent MFA proof, the server
-returns `mfa_required` and the client triggers step-up.
+<Callout type="info">
+  The pattern: call <code>step-up/status</code> before a sensitive action; if not
+  recent, run any factor's verify endpoint to refresh the window, then retry. The
+  server enforces this independently — clients can't bypass it.
+</Callout>

@@ -1,149 +1,216 @@
 ---
 title: Quickstart
-description: Ship a working sign-in flow in under fifteen minutes — no credit card, no servers to spin up.
+description: Install an SDK, initialize it with an API key, and protect a route — verifying user sessions against the public JWKS.
 icon: Zap
 ---
 
-This guide gets you to your first authenticated user. You'll install the SDK, configure
-a tenant, render a sign-in page, and protect a route. Estimated time: **12 minutes**.
+This guide gets you from zero to a protected route. You'll create an API key,
+initialize a server SDK, and verify an incoming user access token locally against
+Qeet ID's published **ES256 JWKS** — no network round-trip per request.
 
 <Callout type="info">
-  Prefer to copy a working repo? Grab the [Next.js
-  starter](https://github.com/qeetid/starter-nextjs) — it includes everything below plus
-  dashboards, billing, and webhooks.
+  Two integration styles: a **server SDK** (TypeScript/Go/Python) that verifies tokens
+  and manages users, and the **`@qeetid/nextjs` + `@qeetid/react`** pair that runs the
+  full hosted-login OAuth flow for you. This page covers the server SDK; for the
+  drop-in web flow jump to [SDKs → Next.js](/docs/sdks/typescript).
 </Callout>
 
-## 1. Create a tenant
+## 1. Create an API key
 
-Sign up at [qeetid.com](https://qeetid.com), then create a tenant from the dashboard.
-You'll get a **publishable key** (`qee_pub_…`) for the browser and a **secret key**
-(`qee_sec_…`) for the server.
+API keys authenticate your backend to the Qeet ID API. Create one in the admin
+dashboard, or via the API with an admin token:
+
+<APIEndpoint method="POST" path="/v1/api-keys" title="Create an API key" />
 
 ```bash title="terminal"
-# or: create via API
-curl -X POST https://api.qeetid.com/v1/organizations \
+curl -X POST https://api.qeetid.com/v1/api-keys \
   -H "Authorization: Bearer $QEETID_ADMIN_TOKEN" \
-  -d '{"slug":"acme","name":"Acme, Inc."}'
+  -H "Content-Type: application/json" \
+  -d '{"name":"backend"}'
 ```
 
-## 2. Install the SDK
+The response includes the secret **once** — a `qk_…` value. Store it as a server
+secret; never ship it to a browser.
 
-<Tabs items={['pnpm', 'npm', 'yarn', 'bun']}>
+<Callout type="danger" title="API keys are server-only">
+  A `qk_…` key has tenant-scoped access to the API. Keep it in an environment
+  variable or secret manager. For the browser, use the hosted-login flow
+  (`@qeetid/nextjs`) — the secret stays on the server.
+</Callout>
 
-```bash tab="pnpm"
-pnpm add @qeetid/sdk @qeetid/react
+## 2. Install a server SDK
+
+<Tabs items={['TypeScript', 'Go', 'Python']}>
+
+```bash tab="TypeScript"
+pnpm add @qeetid/sdk
 ```
 
-```bash tab="npm"
-npm install @qeetid/sdk @qeetid/react
+```bash tab="Go"
+go get github.com/qeetgroup/qeetid-go
 ```
 
-```bash tab="yarn"
-yarn add @qeetid/sdk @qeetid/react
-```
-
-```bash tab="bun"
-bun add @qeetid/sdk @qeetid/react
+```bash tab="Python"
+pip install qeetid
 ```
 
 </Tabs>
 
-## 3. Configure your environment
+## 3. Initialize the client
 
-```bash title=".env.local"
-NEXT_PUBLIC_QEETID_KEY=qee_pub_xxxxxxxxxxxxxxxxxxx
-QEETID_SECRET_KEY=qee_sec_xxxxxxxxxxxxxxxxxxx
-QEETID_TENANT=acme
+The API key goes in via the SDK config — the SDK sends it as
+`Authorization: ApiKey qk_…` on every request.
+
+<Tabs items={['TypeScript', 'Go', 'Python']}>
+
+```ts tab="TypeScript" title="lib/qeetid.ts"
+import { Qeetid } from "@qeetid/sdk";
+
+export const qeetid = new Qeetid({
+  apiKey: process.env.QEETID_API_KEY!, // qk_…
+  // baseUrl defaults to https://api.qeetid.com
+});
 ```
 
-## 4. Wrap your app
+```go tab="Go" title="qeetid.go"
+import (
+  "os"
+  qeetidsdk "github.com/qeetgroup/qeetid-go"
+)
 
-```tsx title="app/layout.tsx"
-import { QeetidProvider } from "@qeetid/react";
+var qeetid = qeetidsdk.New(qeetidsdk.Options{
+  APIKey: os.Getenv("QEETID_API_KEY"), // qk_…
+})
+```
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body>
-        <QeetidProvider
-          publishableKey={process.env.NEXT_PUBLIC_QEETID_KEY!}
-          tenant={process.env.NEXT_PUBLIC_QEETID_TENANT}
-        >
-          {children}
-        </QeetidProvider>
-      </body>
-    </html>
-  );
+```python tab="Python" title="qeetid_client.py"
+import os
+from qeetid import Qeetid
+
+qeetid = Qeetid(api_key=os.environ["QEETID_API_KEY"])  # qk_…
+```
+
+</Tabs>
+
+## 4. Verify a session
+
+Your app receives a user **access token** (an ES256 JWT) — typically as a bearer
+header from your frontend. Verify it locally: the SDK checks the signature against
+the cached JWKS, then expiry, issuer, and audience. No per-request network call.
+
+<Tabs items={['TypeScript', 'Go', 'Python']}>
+
+```ts tab="TypeScript"
+const claims = await qeetid.sessions.verify(accessToken);
+// claims.userId, claims.tenantId, claims.sessionId
+```
+
+```go tab="Go"
+claims, err := qeetid.Sessions.Verify(ctx, accessToken)
+// claims.UserID, claims.TenantID
+```
+
+```python tab="Python"
+claims = qeetid.sessions.verify(access_token)
+# claims.user_id, claims.tenant_id
+```
+
+</Tabs>
+
+<Callout type="tip" title="Local verification scales">
+  Because tokens are ES256 (asymmetric) and the JWKS is public, your services verify
+  tokens offline after a one-time key fetch. Rotating signing keys publishes a new
+  `kid`; the SDKs refetch automatically. See [Sessions](/docs/sessions).
+</Callout>
+
+## 5. Protect a route
+
+Combine verification with an authorization check. `qeetid.can(...)` is a single call
+to `GET /v1/check`.
+
+<Tabs items={['TypeScript', 'Go', 'Python']}>
+
+```ts tab="TypeScript" title="app/api/billing/route.ts"
+import { qeetid } from "@/lib/qeetid";
+
+export async function POST(req: Request) {
+  const token = req.headers.get("authorization")?.replace("Bearer ", "");
+  if (!token) return new Response("Unauthorized", { status: 401 });
+
+  const claims = await qeetid.sessions.verify(token);
+
+  const ok = await qeetid.can({
+    user: claims.userId,
+    tenant: claims.tenantId!,
+    permission: "billing:write",
+  });
+  if (!ok) return new Response("Forbidden", { status: 403 });
+
+  // … do the work
+  return Response.json({ ok: true });
 }
 ```
 
-## 5. Add a sign-in page
+```go tab="Go" title="handler.go"
+claims, err := qeetid.Sessions.Verify(ctx, token)
+if err != nil {
+  http.Error(w, "unauthorized", http.StatusUnauthorized)
+  return
+}
 
-```tsx title="app/sign-in/page.tsx"
-import { QeetidSignIn } from "@qeetid/react";
-
-export default function Page() {
-  return (
-    <main className="grid min-h-screen place-items-center">
-      <QeetidSignIn methods={["passkey", "google", "email"]} redirectTo="/dashboard" />
-    </main>
-  );
+ok, err := qeetid.Can(ctx, qeetidsdk.PermissionCheck{
+  User:       claims.UserID,
+  Tenant:     claims.TenantID,
+  Permission: "billing:write",
+})
+if err != nil || !ok {
+  http.Error(w, "forbidden", http.StatusForbidden)
+  return
 }
 ```
 
-That's it for the client. The component handles the rest: passkey enrollment, MFA challenges,
-account recovery, and session persistence.
+```python tab="Python" title="views.py"
+claims = qeetid.sessions.verify(token)
 
-## 6. Protect a route
-
-On the server, validate the session cookie and load the current user:
-
-```ts title="lib/auth.ts"
-import { Qeet ID } from "@qeetid/sdk";
-import { cookies } from "next/headers";
-
-const qee = new Qeetid({ secretKey: process.env.QEETID_SECRET_KEY! });
-
-export async function currentUser() {
-  const token = cookies().get("qee_session")?.value;
-  if (!token) return null;
-  const session = await qee.sessions.validate(token);
-  return session?.user ?? null;
-}
+if not qeetid.can(user=claims.user_id, tenant=claims.tenant_id, permission="billing:write"):
+    return Response(status=403)
 ```
 
-Then gate any server component:
+</Tabs>
 
-```tsx title="app/dashboard/page.tsx"
-import { redirect } from "next/navigation";
-import { currentUser } from "@/lib/auth";
+## Prefer a full web flow?
 
-export default async function DashboardPage() {
-  const user = await currentUser();
-  if (!user) redirect("/sign-in");
-  return <h1>Welcome, {user.profile.displayName}</h1>;
-}
+If you're building a Next.js app, `@qeetid/nextjs` runs the entire hosted-login
+OAuth flow (Authorization Code + PKCE), stores an encrypted HttpOnly session cookie,
+and **silently refreshes** near-expiry sessions in middleware — no token handling in
+your code. Pair it with `@qeetid/react` for `<SignedIn>` / `<SignedOut>` and
+`useUser()`.
+
+```ts title="middleware.ts"
+import { qeetidMiddleware } from "@qeetid/nextjs/middleware";
+
+export default qeetidMiddleware({ publicRoutes: ["/", "/pricing"] });
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+};
 ```
 
-## What you just shipped
-
-- ✅ Passkey-first sign-in with Google + email fallback
-- ✅ Server-side session validation with cluster-wide revocation
-- ✅ A protected dashboard route
+See [SDKs → TypeScript & Next.js](/docs/sdks/typescript) for the complete setup.
 
 ## Next steps
 
 <Cards>
-  <Card icon="Fingerprint" title="Enable MFA" href="/docs/mfa">
-    Add TOTP, SMS, and step-up auth on sensitive actions.
+  <Card icon="Compass" title="Core concepts" href="/docs/concepts">
+    Tenants, users, sessions, principals, roles.
   </Card>
-  <Card icon="Users" title="Configure roles" href="/docs/rbac">
-    Create roles, permissions, and policies for your tenant.
+  <Card icon="ShieldCheck" title="Add MFA" href="/docs/mfa">
+    TOTP, OTP factors, WebAuthn 2FA, and step-up.
   </Card>
-  <Card icon="Building" title="Add SSO" href="/docs/authentication/sso">
-    Connect Okta, Azure AD, or any SAML/OIDC provider in five minutes.
+  <Card icon="Building" title="Stand up SSO" href="/docs/oidc">
+    Become an OIDC + SAML identity provider.
   </Card>
-  <Card icon="Plug" title="Webhooks" href="/docs/webhooks">
-    React to user lifecycle events from Kafka or HTTP.
+  <Card icon="KeyRound" title="Authorization" href="/docs/authorization">
+    RBAC, group roles, ABAC, and explainable checks.
   </Card>
 </Cards>

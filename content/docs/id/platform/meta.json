@@ -1,0 +1,16 @@
+{
+  "title": "Platform",
+  "icon": "Server",
+  "pages": [
+    "index",
+    "multi-tenancy",
+    "api-keys",
+    "webhooks",
+    "audit",
+    "gdpr",
+    "secrets",
+    "rate-limits",
+    "observability",
+    "edge"
+  ]
+}

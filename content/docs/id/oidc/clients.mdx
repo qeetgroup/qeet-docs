@@ -1,0 +1,69 @@
+---
+title: Clients
+description: Register OIDC/OAuth clients — public or confidential — with dynamic registration, redirect URIs, grant types, and secret rotation.
+---
+
+An OIDC **client** represents an application that authenticates users through Qeet ID.
+Clients are tenant-scoped and come in two types:
+
+- **`public`** — SPAs / native apps that can't keep a secret. Use Authorization Code +
+  PKCE; no client secret.
+- **`confidential`** — server-side apps that can hold a secret.
+
+Client IDs look like `qci_…`.
+
+## Register a client
+
+<APIEndpoint method="POST" path="/v1/oidc/clients" title="Register a client (dynamic registration)" />
+
+```bash
+curl -X POST https://api.qeetid.com/v1/oidc/clients \
+  -H "Authorization: ApiKey $QEETID_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tenant_id": "'$TENANT'",
+    "name": "Acme Web",
+    "type": "confidential",
+    "redirect_uris": ["https://app.acme.com/api/auth/callback"],
+    "post_logout_uris": ["https://app.acme.com"],
+    "grant_types": ["authorization_code", "refresh_token"]
+  }'
+```
+
+```json title="201 — secret shown once"
+{
+  "client": { "id": "qci_…", "name": "Acme Web", "type": "confidential", "redirect_uris": ["…"] },
+  "client_secret": "…",
+  "warning": "Store the secret now — it is not retrievable later."
+}
+```
+
+<Callout type="danger" title="The secret is shown once">
+  Confidential-client secrets are returned only at creation (and on rotation). Store
+  them immediately in your secret manager.
+</Callout>
+
+## Manage clients
+
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/oidc/clients" title="List clients" />
+<APIEndpoint method="PATCH" path="/v1/tenants/{tenantID}/oidc/clients/{id}" title="Update a client" />
+<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/oidc/clients/{id}/rotate-secret" title="Rotate the secret" />
+<APIEndpoint method="DELETE" path="/v1/oidc/clients/{id}" title="Delete a client" />
+
+The admin dashboard exposes all of this — list, edit, rotate-secret, and delete OIDC
+clients per tenant.
+
+## Consent grants
+
+When a user consents to a client's scopes, Qeet ID records a **grant**. Admins (and
+users) can view and revoke them.
+
+<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/oauth/grants" title="List consent grants" />
+<APIEndpoint method="DELETE" path="/v1/tenants/{tenantID}/oauth/grants/{id}" title="Revoke a grant" />
+
+## Next
+
+<Cards>
+  <Card title="Authorization Code + PKCE" href="/docs/oidc/authorization-code" />
+  <Card title="Tokens" href="/docs/oidc/tokens" />
+</Cards>

@@ -1,0 +1,49 @@
+---
+title: Enterprise
+description: Full B2B federation — SAML 2.0 as both Service Provider and Identity Provider, SCIM 2.0 Users + Groups, and LDAP — open-source, no SSO tax.
+icon: Building
+---
+
+Qeet ID ships the enterprise federation surface usually reserved for a paid "enterprise"
+tier — **open-source and not paywalled**. It works in both directions of SAML, syncs
+directories with SCIM, and binds to LDAP/AD.
+
+<Callout type="tip" title="All implemented today">
+  SAML 2.0 <strong>SP and IdP</strong>, SCIM 2.0 <strong>Users + Groups</strong> (with
+  PatchOp membership), and LDAP are live. Earlier docs implied SAML/SCIM weren't
+  available — that is no longer true. (Interop/conformance runs against specific
+  vendors are an external validation step, not a code gap.)
+</Callout>
+
+## Capabilities
+
+<Cards>
+  <Card icon="LogIn" title="SAML SP — consume IdPs" href="/docs/enterprise/saml-sp">
+    Let customers sign in with their Okta / Entra ID / Google Workspace. SP registry,
+    metadata, AuthnRequest, ACS, JIT provisioning.
+  </Card>
+  <Card icon="LogOut" title="SAML IdP — be a source" href="/docs/enterprise/saml-idp">
+    Qeet ID acts as the IdP: register downstream SPs, publish IdP metadata, serve
+    SP-initiated and IdP-initiated SSO with RSA-SHA256 signed assertions.
+  </Card>
+  <Card icon="RefreshCw" title="SCIM 2.0 — Users + Groups" href="/docs/enterprise/scim">
+    Okta/Entra-style provisioning + deprovisioning, PatchOp group membership, and
+    per-tenant bearer tokens.
+  </Card>
+  <Card icon="Server" title="LDAP / AD" href="/docs/enterprise/ldap">
+    Bind-based login plus connection CRUD and a test-bind endpoint.
+  </Card>
+</Cards>
+
+## SAML, both directions
+
+The distinction trips people up, so to be explicit:
+
+| You want… | Qeet ID role | Page |
+| --- | --- | --- |
+| Your customers' staff to log in with **their** IdP | **Service Provider** (SP) | [SAML SP](/docs/enterprise/saml-sp) |
+| Downstream apps to log in **with Qeet ID** as the IdP | **Identity Provider** (IdP) | [SAML IdP](/docs/enterprise/saml-idp) |
+
+SAML assertions (IdP side) are signed RSA-SHA256 and validated against an independent
+SP library. All connections are **per tenant**, configurable via the admin dashboard's
+SAML registries.
