@@ -1,6 +1,7 @@
 {
   "extends": "@qeetrix/tsconfig/next.json",
   "compilerOptions": {
+    "jsx": "preserve",
     "paths": {
       "@/*": ["./src/*"],
       "collections/*": ["./.source/*"]

@@ -7,7 +7,7 @@ import {
   ScrollTextIcon,
   UsersIcon,
 } from "lucide-react";
-import { QeetLogo } from "@qeetrix/brand";
+import { QeetMark } from "@/components/qeet-mark";
 import { appName, dashboardUrl, gitConfig, productUrl } from "./shared";
 
 export function baseOptions(): BaseLayoutProps {
@@ -15,9 +15,8 @@ export function baseOptions(): BaseLayoutProps {
     nav: {
       title: (
         <span className="flex items-center gap-2 font-semibold tracking-tight">
-          <span className="grid size-7 place-items-center rounded-md bg-foreground text-background">
-            <QeetLogo className="size-4" />
-          </span>
+          {/* Theme-adaptive via currentColor: dark bowl on light, light bowl on dark; orange tail constant. */}
+          <QeetMark className="size-7 text-fd-foreground" />
           <span className="text-[15px]">{appName}</span>
         </span>
       ),

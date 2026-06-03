@@ -23,6 +23,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { BorderBeam } from "@/components/effects/border-beam";
 import { CyclingText } from "@/components/effects/cycling-text";
+import { HeroLightfall } from "@/components/effects/hero-lightfall";
 import { NumberTicker } from "@/components/effects/number-ticker";
 import { Ripple } from "@/components/effects/ripple";
 import { WordReveal } from "@/components/effects/word-reveal";
@@ -76,11 +77,12 @@ function Hero() {
           <ArrowRightIcon className="size-3 transition-transform group-hover:translate-x-0.5" />
         </Link>
 
-        <h1 className="mt-7 max-w-3xl text-balance font-semibold text-5xl leading-[0.98] tracking-tight sm:text-6xl lg:text-7xl">
+        <h1 className="mt-7 max-w-4xl text-balance font-semibold text-4xl leading-[1.02] tracking-tight sm:text-6xl sm:leading-[0.98] lg:text-7xl">
           <WordReveal
             lines={[
-              [{ text: "Docs for the" }],
-              [{ text: "entire", gradient: true }, { text: "Qeet platform." }],
+              [{ text: "Documentation" }],
+              [{ text: "for the" }, { text: "entire", gradient: true }],
+              [{ text: "Qeet platform." }],
             ]}
           />
         </h1>
@@ -139,14 +141,15 @@ function HeroBackground() {
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
       <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--color-fd-background)_0%,color-mix(in_oklab,var(--brand-500)_8%,var(--color-fd-background))_50%,var(--color-fd-background)_100%)]" />
       <div className="absolute inset-0 animate-hero-grid opacity-[0.22] [background-image:linear-gradient(to_right,color-mix(in_oklab,var(--color-fd-border)_70%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_oklab,var(--color-fd-border)_70%,transparent)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_at_center,black_0%,transparent_72%)]" />
+      <div className="absolute top-1/3 left-1/2 size-[36rem] -translate-x-1/2 animate-aurora-slow rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--brand-500)_18%,transparent),transparent_62%)] blur-3xl dark:opacity-0" />
+      {/* Ripple — light mode only (Lightfall takes over in dark mode). */}
       <Ripple
-        className="opacity-90 [mask-image:radial-gradient(ellipse_at_center,black_24%,transparent_72%)]"
+        className="opacity-90 dark:hidden [mask-image:radial-gradient(ellipse_at_center,black_24%,transparent_72%)]"
         mainCircleOpacity={0.3}
         mainCircleSize={320}
         numCircles={9}
       />
-      <div className="absolute top-1/3 left-1/2 size-[36rem] -translate-x-1/2 animate-aurora-slow rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--brand-500)_22%,transparent),transparent_62%)] blur-3xl" />
-      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-fd-background to-transparent" />
+      <HeroLightfall />
     </div>
   );
 }
