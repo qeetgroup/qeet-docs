@@ -8,7 +8,7 @@ import {
   UsersIcon,
 } from "lucide-react";
 import { QeetMark } from "@/components/qeet-mark";
-import { appName, dashboardUrl, gitConfig, productUrl } from "./shared";
+import { appName, gitConfig, productUrl } from "./shared";
 
 export function baseOptions(): BaseLayoutProps {
   return {
@@ -71,13 +71,6 @@ export function baseOptions(): BaseLayoutProps {
         text: "Website",
         url: productUrl,
         external: true,
-      },
-      {
-        type: "button",
-        text: "Dashboard",
-        url: dashboardUrl,
-        external: true,
-        secondary: true,
       },
     ],
   };

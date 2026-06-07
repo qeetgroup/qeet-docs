@@ -5,7 +5,7 @@
   "description": "Qeet docs platform — all product documentation under docs.qeet.in (/id, /people, /logs, …)",
   "scripts": {
     "build": "next build",
-    "dev": "next dev -p 3003",
+    "dev": "portless docs.qeet next dev",
     "start": "next start",
     "postinstall": "fumadocs-mdx",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.mjs,.cjs",
@@ -55,7 +55,8 @@
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.3.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "portless": "^0.14.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
