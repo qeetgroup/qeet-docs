@@ -30,7 +30,7 @@ rotation, introspection, and revocation.
 <APIEndpoint method="GET" path="/v1/oauth/userinfo" title="OIDC userinfo claims" />
 
 ```bash
-curl https://api.qeetid.com/v1/oauth/userinfo \
+curl https://api.id.qeet.in/v1/oauth/userinfo \
   -H "Authorization: Bearer $ACCESS_TOKEN"
 # → { "sub": "…", "tenant_id": "…", … }
 ```
@@ -44,7 +44,7 @@ chain (see [Sessions → theft detection](/docs/sessions#refresh-token-rotation-
 <APIEndpoint method="POST" path="/v1/oauth/token-code" title="grant_type=refresh_token" />
 
 ```bash
-curl -X POST https://api.qeetid.com/v1/oauth/token-code \
+curl -X POST https://api.id.qeet.in/v1/oauth/token-code \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d grant_type=refresh_token \
   -d refresh_token=$REFRESH \
@@ -58,7 +58,7 @@ Resource servers can ask whether a token is active and get its metadata.
 <APIEndpoint method="POST" path="/oauth/introspect" title="Introspect a token" />
 
 ```bash
-curl -X POST https://api.qeetid.com/oauth/introspect \
+curl -X POST https://api.id.qeet.in/oauth/introspect \
   -u "$CLIENT_ID:$CLIENT_SECRET" \
   -d token=$ACCESS_TOKEN
 # → { "active": true, "sub": "…", "scope": "…", "exp": … }
@@ -71,7 +71,7 @@ Revoke an access or refresh token explicitly (e.g. on logout from a specific dev
 <APIEndpoint method="POST" path="/oauth/revoke" title="Revoke a token" />
 
 ```bash
-curl -X POST https://api.qeetid.com/oauth/revoke \
+curl -X POST https://api.id.qeet.in/oauth/revoke \
   -u "$CLIENT_ID:$CLIENT_SECRET" \
   -d token=$REFRESH
 ```

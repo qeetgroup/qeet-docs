@@ -40,7 +40,7 @@ The hot-path question "may this principal do X?" is one request:
 <APIEndpoint method="GET" path="/v1/check" title="Authorize an action" />
 
 ```bash
-curl "https://api.qeetid.com/v1/check?user_id=$U&tenant_id=$T&permission=billing:write" \
+curl "https://api.id.qeet.in/v1/check?user_id=$U&tenant_id=$T&permission=billing:write" \
   -H "Authorization: ApiKey $QEETID_API_KEY"
 # → { "allowed": true }
 ```
@@ -79,7 +79,7 @@ you *why* a decision was made; Qeet ID can.
 <APIEndpoint method="GET" path="/v1/check?explain=true" title="Authorize + explain" />
 
 ```bash
-curl "https://api.qeetid.com/v1/check?user_id=$U&tenant_id=$T&permission=billing:write&explain=true" \
+curl "https://api.id.qeet.in/v1/check?user_id=$U&tenant_id=$T&permission=billing:write&explain=true" \
   -H "Authorization: ApiKey $QEETID_API_KEY"
 ```
 

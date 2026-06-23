@@ -26,7 +26,7 @@ Validate host, base DN, bind credentials, and TLS before enabling the connection
 <APIEndpoint method="POST" path="/ldap/{id}/authenticate" title="Bind-authenticate a user" />
 
 ```bash
-curl -X POST https://api.qeetid.com/ldap/$CONN_ID/authenticate \
+curl -X POST https://api.id.qeet.in/ldap/$CONN_ID/authenticate \
   -H "Content-Type: application/json" \
   -d '{"username":"alex","password":"…"}'
 ```

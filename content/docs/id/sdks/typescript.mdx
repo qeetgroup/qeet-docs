@@ -22,7 +22,7 @@ import { Qeetid } from "@qeetid/sdk";
 
 export const qeetid = new Qeetid({
   apiKey: process.env.QEETID_API_KEY!,   // qk_… — server only
-  // baseUrl: "https://api.qeetid.com",  // default
+  // baseUrl: "https://api.id.qeet.in",  // default
   // timeoutMs: 10_000, maxRetries: 2,
 });
 ```
@@ -82,7 +82,7 @@ pnpm add @qeetid/nextjs
 ```bash title=".env.local"
 QEETID_CLIENT_ID=qci_…
 QEETID_CLIENT_SECRET=…
-QEETID_API_URL=https://api.qeetid.com
+QEETID_API_URL=https://api.id.qeet.in
 QEETID_APP_URL=https://app.acme.com
 QEETID_COOKIE_SECRET=…        # ≥32 random chars
 # QEETID_SCOPES="openid profile email"
