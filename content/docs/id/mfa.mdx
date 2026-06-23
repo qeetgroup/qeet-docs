@@ -98,7 +98,7 @@ Check whether the user currently satisfies the window:
 <APIEndpoint method="GET" path="/v1/mfa/step-up/status" title="Is a recent MFA present?" />
 
 ```bash
-curl https://api.qeetid.com/v1/mfa/step-up/status \
+curl https://api.id.qeet.in/v1/mfa/step-up/status \
   -H "Authorization: Bearer $ACCESS_TOKEN"
 # → { "recent": false }  →  prompt the user to re-verify a factor
 ```

@@ -11,7 +11,7 @@ The Users API manages user identities. Authenticate server-side with an API key
 <APIEndpoint method="POST" path="/v1/users" title="Create a user" />
 
 ```bash title="curl"
-curl -X POST https://api.qeetid.com/v1/users \
+curl -X POST https://api.id.qeet.in/v1/users \
   -H "Authorization: ApiKey $QEETID_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{ "email": "alex@acme.com", "display_name": "Alex Chen" }'
@@ -28,7 +28,7 @@ Email is **globally unique**; a duplicate returns `409`.
 <APIEndpoint method="GET" path="/v1/users" title="List users (cursor paginated)" />
 
 ```bash
-curl 'https://api.qeetid.com/v1/users?limit=50' \
+curl 'https://api.id.qeet.in/v1/users?limit=50' \
   -H "Authorization: ApiKey $QEETID_API_KEY"
 # → { "items": [ … ], "next_cursor": "…" }
 ```

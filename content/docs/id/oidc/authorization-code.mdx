@@ -55,7 +55,7 @@ Your server exchanges the code (plus the PKCE `code_verifier`) at the token endp
 <APIEndpoint method="POST" path="/v1/oauth/token-code" title="Exchange authorization_code" />
 
 ```bash
-curl -X POST https://api.qeetid.com/v1/oauth/token-code \
+curl -X POST https://api.id.qeet.in/v1/oauth/token-code \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d grant_type=authorization_code \
   -d code=$CODE \

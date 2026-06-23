@@ -20,7 +20,7 @@ endpoint proves the chain is intact.
 <APIEndpoint method="GET" path="/v1/tenants/{tenantID}/audit" title="Query audit events" />
 
 ```bash
-curl "https://api.qeetid.com/v1/tenants/$TENANT/audit?limit=50" \
+curl "https://api.id.qeet.in/v1/tenants/$TENANT/audit?limit=50" \
   -H "Authorization: ApiKey $QEETID_API_KEY"
 ```
 
@@ -32,7 +32,7 @@ breaks, if it doesn't).
 <APIEndpoint method="GET" path="/v1/tenants/{tenantID}/audit/verify" title="Verify the hash chain" />
 
 ```bash
-curl "https://api.qeetid.com/v1/tenants/$TENANT/audit/verify" \
+curl "https://api.id.qeet.in/v1/tenants/$TENANT/audit/verify" \
   -H "Authorization: ApiKey $QEETID_API_KEY"
 # → { "ok": true, "verified_count": 12840 }
 ```

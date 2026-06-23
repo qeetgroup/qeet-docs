@@ -13,7 +13,7 @@ hashes transparently.
 <APIEndpoint method="POST" path="/v1/auth/signup" title="Sign up with email + password" />
 
 ```bash title="terminal"
-curl -X POST https://api.qeetid.com/v1/auth/signup \
+curl -X POST https://api.id.qeet.in/v1/auth/signup \
   -H "Content-Type: application/json" \
   -d '{"email":"alex@acme.com","password":"a-strong-passphrase"}'
 ```
@@ -52,7 +52,7 @@ the email exists. Completing a reset **revokes all of the user's sessions**.
 <APIEndpoint method="POST" path="/v1/auth/reset-password" title="Complete reset" />
 
 ```bash
-curl -X POST https://api.qeetid.com/v1/auth/forgot-password \
+curl -X POST https://api.id.qeet.in/v1/auth/forgot-password \
   -H "Content-Type: application/json" \
   -d '{"email":"alex@acme.com"}'
 # → 202 Accepted (no account-existence signal)

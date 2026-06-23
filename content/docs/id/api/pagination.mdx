@@ -10,7 +10,7 @@ empty or absent, you've reached the end.
 ## Request
 
 ```bash
-curl 'https://api.qeetid.com/v1/users?limit=50&cursor=<next_cursor>' \
+curl 'https://api.id.qeet.in/v1/users?limit=50&cursor=<next_cursor>' \
   -H "Authorization: ApiKey $QEETID_API_KEY"
 ```
 
@@ -35,7 +35,7 @@ Loop until `next_cursor` is empty:
 ```bash
 cursor=""
 while :; do
-  resp=$(curl -s "https://api.qeetid.com/v1/users?limit=100&cursor=$cursor" \
+  resp=$(curl -s "https://api.id.qeet.in/v1/users?limit=100&cursor=$cursor" \
     -H "Authorization: ApiKey $QEETID_API_KEY")
   # … process .items …
   cursor=$(echo "$resp" | jq -r '.next_cursor // empty')

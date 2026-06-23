@@ -18,7 +18,7 @@ compliance trail without retaining personal data.
 <APIEndpoint method="POST" path="/v1/users/{id}/purge" title="Purge a specific user" />
 
 ```bash
-curl -X POST https://api.qeetid.com/v1/gdpr/purge \
+curl -X POST https://api.id.qeet.in/v1/gdpr/purge \
   -H "Authorization: ApiKey $QEETID_API_KEY" \
   -d '{"user_id":"'$USER'"}'
 ```

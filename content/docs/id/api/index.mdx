@@ -9,12 +9,12 @@ covers **142 paths** with **100% route coverage**, guarded in CI — it's the so
 truth for every SDK.
 
 ```text
-https://api.qeetid.com   (or your self-hosted base URL)
+https://api.id.qeet.in   (or your self-hosted base URL)
 ```
 
 <Callout type="info" title="Self-hosted base URL">
   Qeet ID is self-hostable, so the base URL is whatever you deploy. Examples use
-  <code>https://api.qeetid.com</code>; substitute your own host. The OpenAPI
+  <code>https://api.id.qeet.in</code>; substitute your own host. The OpenAPI
   <code>servers</code> list also includes local dev (<code>:4000</code>/<code>:4001</code>).
 </Callout>
 
@@ -37,12 +37,12 @@ There are several auth modes — use the right one per route:
 </Callout>
 
 ```bash title="API key (server)"
-curl https://api.qeetid.com/v1/users \
+curl https://api.id.qeet.in/v1/users \
   -H "Authorization: ApiKey $QEETID_API_KEY"
 ```
 
 ```bash title="User access token"
-curl https://api.qeetid.com/v1/auth/me \
+curl https://api.id.qeet.in/v1/auth/me \
   -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
 

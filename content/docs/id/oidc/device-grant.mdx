@@ -26,7 +26,7 @@ The (client-authenticated) device calls the device authorization endpoint and ge
 <APIEndpoint method="POST" path="/v1/oauth/device_authorization" title="Start device authorization" />
 
 ```bash
-curl -X POST https://api.qeetid.com/v1/oauth/device_authorization \
+curl -X POST https://api.id.qeet.in/v1/oauth/device_authorization \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d client_id=$CLIENT_ID -d scope="openid profile"
 ```
@@ -35,8 +35,8 @@ curl -X POST https://api.qeetid.com/v1/oauth/device_authorization \
 {
   "device_code": "…",
   "user_code": "BCDF-GHJK",
-  "verification_uri": "https://login.qeetid.com/device",
-  "verification_uri_complete": "https://login.qeetid.com/device?user_code=BCDF-GHJK",
+  "verification_uri": "https://login.id.qeet.in/device",
+  "verification_uri_complete": "https://login.id.qeet.in/device?user_code=BCDF-GHJK",
   "expires_in": 600,
   "interval": 5
 }
@@ -46,7 +46,7 @@ curl -X POST https://api.qeetid.com/v1/oauth/device_authorization \
 <Step>
 ### Device shows the code
 
-"Go to **login.qeetid.com/device** and enter **BCDF-GHJK**." The user opens the URL
+"Go to **login.id.qeet.in/device** and enter **BCDF-GHJK**." The user opens the URL
 on another device. The hosted `/device` page fetches the request context (client name
 + scopes) and renders an approve/deny screen.
 
@@ -63,7 +63,7 @@ respecting `interval`.
 <APIEndpoint method="POST" path="/v1/oauth/token-code" title="grant_type=device_code" />
 
 ```bash
-curl -X POST https://api.qeetid.com/v1/oauth/token-code \
+curl -X POST https://api.id.qeet.in/v1/oauth/token-code \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d grant_type=urn:ietf:params:oauth:grant-type:device_code \
   -d device_code=$DEVICE_CODE \

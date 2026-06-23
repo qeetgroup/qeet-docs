@@ -23,7 +23,7 @@ dashboard, or via the API with an admin token:
 <APIEndpoint method="POST" path="/v1/api-keys" title="Create an API key" />
 
 ```bash title="terminal"
-curl -X POST https://api.qeetid.com/v1/api-keys \
+curl -X POST https://api.id.qeet.in/v1/api-keys \
   -H "Authorization: Bearer $QEETID_ADMIN_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"name":"backend"}'
@@ -68,7 +68,7 @@ import { Qeetid } from "@qeetid/sdk";
 
 export const qeetid = new Qeetid({
   apiKey: process.env.QEETID_API_KEY!, // qk_…
-  // baseUrl defaults to https://api.qeetid.com
+  // baseUrl defaults to https://api.id.qeet.in
 });
 ```
 

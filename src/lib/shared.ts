@@ -16,4 +16,4 @@ export const gitConfig = {
 };
 
 export const productUrl = "https://qeet.in";
-export const dashboardUrl = "https://app.qeetid.com";
+export const dashboardUrl = "https://app.id.qeet.in";

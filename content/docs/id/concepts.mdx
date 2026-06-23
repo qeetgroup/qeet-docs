@@ -96,7 +96,7 @@ are assigned to a user **or a group** within a tenant; effective permissions are
 <APIEndpoint method="GET" path="/v1/check" title="Authorize an action" />
 
 ```bash
-curl "https://api.qeetid.com/v1/check?user_id=$U&tenant_id=$T&permission=billing:write" \
+curl "https://api.id.qeet.in/v1/check?user_id=$U&tenant_id=$T&permission=billing:write" \
   -H "Authorization: ApiKey $QEETID_API_KEY"
 # → { "allowed": true }
 ```

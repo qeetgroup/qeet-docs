@@ -21,7 +21,7 @@ Authorization: ApiKey qk_…
 <APIEndpoint method="GET" path="/v1/tenants/{tenantID}/api-keys" title="List a tenant's API keys" />
 
 ```bash
-curl -X POST https://api.qeetid.com/v1/api-keys \
+curl -X POST https://api.id.qeet.in/v1/api-keys \
   -H "Authorization: Bearer $QEETID_ADMIN_TOKEN" \
   -d '{"name":"backend"}'
 # → { "id": "…", "key": "qk_…" }   ← shown once
