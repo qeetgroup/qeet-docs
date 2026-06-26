@@ -8,7 +8,7 @@ Node ≥20.9 — run `nvm use v22.20.0` first (default shell node is v18). pnpm.
 
 ```bash
 pnpm install
-pnpm dev          # portless docs.qeet next dev (App Router)
+pnpm dev          # next dev (App Router)
 pnpm build && pnpm start
 pnpm typecheck    # fumadocs-mdx && next typegen && tsc --noEmit
 pnpm lint
