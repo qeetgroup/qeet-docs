@@ -1,0 +1,47 @@
+---
+title: Blocks
+description: Composed, multi-component patterns from @qeetrix/ui/blocks — auth screens, a dashboard shell, onboarding, page states, pricing, and settings.
+icon: LayoutDashboard
+---
+
+**Blocks** are higher-level, composed patterns built from the component primitives — drop-in
+screens and layouts so you don't reassemble the same structure in every product. They're
+exported from the `/blocks` subpath:
+
+```tsx
+import {
+  AuthShell,
+  LoginForm,
+  DashboardShell,
+  PricingTable,
+} from "@qeetrix/ui/blocks";
+```
+
+## Auth
+
+A complete authentication surface: `AuthShell` (the split-screen frame) plus `LoginForm`,
+`SignupForm`, `OtpForm`, and `ForgotPasswordForm`. Types: `AuthShellProps`, `LoginFormProps`,
+and friends.
+
+## DashboardShell
+
+An application shell with sidebar, header, and content regions — the frame most product
+dashboards start from. Props via `DashboardShellProps`.
+
+## OnboardingWizard
+
+A multi-step onboarding flow. Types: `OnboardingWizardProps`, `WizardStep`.
+
+## Page states
+
+Full-page status screens: `PageState` (the base) plus ready-made `NotFound`, `ServerError`,
+and `Maintenance`. Props via `PageStateProps`.
+
+## PricingTable
+
+A pricing grid: `PricingTable` with `PricingTier`. Types: `PricingTierProps`, `PricingFeature`.
+
+## SettingsLayout
+
+A settings page scaffold: `SettingsLayout` with `SettingsSection`. Types:
+`SettingsLayoutProps`, `SettingsSectionProps`.

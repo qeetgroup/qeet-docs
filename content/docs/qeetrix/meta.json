@@ -3,5 +3,15 @@
   "description": "Design system — tokens, components, and brand for every Qeet product",
   "icon": "Component",
   "root": true,
-  "pages": ["index", "installation", "components", "theming"]
+  "pages": [
+    "index",
+    "installation",
+    "theming",
+    "---Library---",
+    "components",
+    "blocks",
+    "brand",
+    "---Updates---",
+    "changelog"
+  ]
 }

@@ -1,0 +1,44 @@
+---
+title: Channels
+description: The delivery channels Qeet Notify supports — email, SMS, WhatsApp, in-app, and outbound webhooks — and what's wired today versus planned.
+icon: Send
+---
+
+A **channel** is how a message reaches a subscriber. Each channel has one or more provider
+integrations and a dedicated delivery worker (`qeet-notify-worker -channel=…`).
+
+<Callout type="info" title="In active development">
+  The channels below have worker implementations in the codebase today. Push and
+  RCS are planned, not yet built — see the [roadmap](/notify/roadmap).
+</Callout>
+
+## Email
+
+Providers: **Amazon SES** and **Resend**. Handles transactional email with bounce and
+complaint processing.
+
+## SMS
+
+Providers: **MSG91** and **2Factor**, India-first. Every outbound SMS is matched against a
+registered **TRAI DLT** template, with promotional sends restricted to the 10:00–21:00 IST
+window.
+
+## WhatsApp
+
+Provider: **Meta WhatsApp Cloud API**, for template and session messages.
+
+## In-app
+
+A real-time in-app feed delivered over **Server-Sent Events** (the server exposes an SSE
+endpoint), fanned out via Redis pub/sub. Pair it with the React SDK as it matures.
+
+## Outbound webhooks
+
+Signed (**HMAC**) outbound webhooks let you receive notification events in your own systems
+— useful for custom channels or downstream automation.
+
+## Planned
+
+Mobile push (FCM + APNs), web push, RCS for India, and international SMS are on the
+[roadmap](/notify/roadmap). Channel fallback and digests will layer on top of the workflow
+engine.

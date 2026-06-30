@@ -9,10 +9,11 @@ initialize a server SDK, and verify an incoming user access token locally agains
 Qeet ID's published **ES256 JWKS** — no network round-trip per request.
 
 <Callout type="info">
-  Two integration styles: a **server SDK** (TypeScript/Go/Python) that verifies tokens
-  and manages users, and the **`@qeetid/nextjs` + `@qeetid/react`** pair that runs the
-  full hosted-login OAuth flow for you. This page covers the server SDK; for the
-  drop-in web flow jump to [SDKs → Next.js](/docs/sdks/typescript).
+  Two integration styles: a **server SDK** (TypeScript/Go/Python) that verifies
+  tokens and manages users, and the **`@qeetid/nextjs` + `@qeetid/react`** pair
+  that runs the full hosted-login OAuth flow for you. This page covers the
+  server SDK; for the drop-in web flow jump to [SDKs →
+  Next.js](/id/sdks/typescript).
 </Callout>
 
 ## 1. Create an API key
@@ -118,9 +119,10 @@ claims = qeetid.sessions.verify(access_token)
 </Tabs>
 
 <Callout type="tip" title="Local verification scales">
-  Because tokens are ES256 (asymmetric) and the JWKS is public, your services verify
-  tokens offline after a one-time key fetch. Rotating signing keys publishes a new
-  `kid`; the SDKs refetch automatically. See [Sessions](/docs/sessions).
+  Because tokens are ES256 (asymmetric) and the JWKS is public, your services
+  verify tokens offline after a one-time key fetch. Rotating signing keys
+  publishes a new `kid`; the SDKs refetch automatically. See
+  [Sessions](/id/sessions).
 </Callout>
 
 ## 5. Protect a route
@@ -196,21 +198,21 @@ export const config = {
 };
 ```
 
-See [SDKs → TypeScript & Next.js](/docs/sdks/typescript) for the complete setup.
+See [SDKs → TypeScript & Next.js](/id/sdks/typescript) for the complete setup.
 
 ## Next steps
 
 <Cards>
-  <Card icon="Compass" title="Core concepts" href="/docs/concepts">
+  <Card icon="Compass" title="Core concepts" href="/id/concepts">
     Tenants, users, sessions, principals, roles.
   </Card>
-  <Card icon="ShieldCheck" title="Add MFA" href="/docs/mfa">
+  <Card icon="ShieldCheck" title="Add MFA" href="/id/mfa">
     TOTP, OTP factors, WebAuthn 2FA, and step-up.
   </Card>
-  <Card icon="Building" title="Stand up SSO" href="/docs/oidc">
+  <Card icon="Building" title="Stand up SSO" href="/id/oidc">
     Become an OIDC + SAML identity provider.
   </Card>
-  <Card icon="KeyRound" title="Authorization" href="/docs/authorization">
+  <Card icon="KeyRound" title="Authorization" href="/id/authorization">
     RBAC, group roles, ABAC, and explainable checks.
   </Card>
 </Cards>

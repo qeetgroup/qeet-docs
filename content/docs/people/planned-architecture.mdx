@@ -1,0 +1,39 @@
+---
+title: Planned architecture
+description: How Qeet People is intended to be built — a Go backend on the Qeet platform, API-first, sharing identity with Qeet ID.
+icon: Boxes
+---
+
+<Callout type="info" title="In design — skeleton repo">
+  The Qeet People backend today is a skeleton. This page describes the intended
+  architecture from the technical design, not shipped code; specifics will
+  change.
+</Callout>
+
+## Platform foundation
+
+Qeet People is planned as a **Go backend** built on the shared Qeet platform. Rather than
+standing up its own identity, tenancy, and audit, it builds on [Qeet ID](/id): authentication,
+RBAC, multi-tenancy, and the tamper-evident audit trail come from the identity layer.
+
+## Identity graph
+
+People and Qeet ID share **one identity graph**. An employee record is associated with a Qeet
+ID user, so there is no cross-system sync — lifecycle changes in People drive ID provisioning
+directly.
+
+## API-first
+
+The product is **API-first**: every capability is exposed over a REST API described by an
+**OpenAPI spec**, with typed SDKs and webhooks — the same developer model as the rest of the
+Qeet suite. Application docs and SDK references will land here as the API stabilizes.
+
+## India-first HCM
+
+The architecture accounts for India statutory needs (PF, ESI, PT, TDS) and regional-language
+support as core requirements, not add-ons — see the [roadmap](/people/roadmap) for sequencing.
+
+## What exists today
+
+A backend skeleton and the product/technical design. There are no public endpoints or SDKs
+yet; follow the [changelog](/people/changelog) for the first shipped milestones.

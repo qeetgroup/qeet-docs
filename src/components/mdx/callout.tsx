@@ -41,7 +41,14 @@ interface CalloutProps extends Omit<ComponentProps<"div">, "title"> {
   icon?: ReactNode;
 }
 
-export function Callout({ type = "info", title, icon, children, className, ...props }: CalloutProps) {
+export function Callout({
+  type = "info",
+  title,
+  icon,
+  children,
+  className,
+  ...props
+}: CalloutProps) {
   const cfg = MAP[type] ?? MAP.info;
 
   return (
@@ -51,7 +58,9 @@ export function Callout({ type = "info", title, icon, children, className, ...pr
       className={cn("rounded-xl", className)}
       {...props}
     >
-      {title ? <CalloutTitle className={cfg.accent}>{title}</CalloutTitle> : null}
+      {title ? (
+        <CalloutTitle className={cfg.accent}>{title}</CalloutTitle>
+      ) : null}
       <CalloutDescription>{children}</CalloutDescription>
     </CalloutContainer>
   );

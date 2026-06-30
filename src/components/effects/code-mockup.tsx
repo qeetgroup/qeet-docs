@@ -35,13 +35,27 @@ export function CodeMockup({ children, filename, className }: CodeMockupProps) {
 
 /* GitHub Dark palette tokens. */
 export const Tok = {
-  k: ({ children }: { children: ReactNode }) => <span className="text-[#ff7b72]">{children}</span>,
-  s: ({ children }: { children: ReactNode }) => <span className="text-[#a5d6ff]">{children}</span>,
-  f: ({ children }: { children: ReactNode }) => <span className="text-[#d2a8ff]">{children}</span>,
-  v: ({ children }: { children: ReactNode }) => <span className="text-[#ffa657]">{children}</span>,
-  t: ({ children }: { children: ReactNode }) => <span className="text-[#7ee787]">{children}</span>,
-  p: ({ children }: { children: ReactNode }) => <span className="text-[#79c0ff]">{children}</span>,
-  c: ({ children }: { children: ReactNode }) => <span className="text-[#8b949e]">{children}</span>,
+  k: ({ children }: { children: ReactNode }) => (
+    <span className="text-[#ff7b72]">{children}</span>
+  ),
+  s: ({ children }: { children: ReactNode }) => (
+    <span className="text-[#a5d6ff]">{children}</span>
+  ),
+  f: ({ children }: { children: ReactNode }) => (
+    <span className="text-[#d2a8ff]">{children}</span>
+  ),
+  v: ({ children }: { children: ReactNode }) => (
+    <span className="text-[#ffa657]">{children}</span>
+  ),
+  t: ({ children }: { children: ReactNode }) => (
+    <span className="text-[#7ee787]">{children}</span>
+  ),
+  p: ({ children }: { children: ReactNode }) => (
+    <span className="text-[#79c0ff]">{children}</span>
+  ),
+  c: ({ children }: { children: ReactNode }) => (
+    <span className="text-[#8b949e]">{children}</span>
+  ),
   punct: ({ children }: { children: ReactNode }) => (
     <span className="text-[#c9d1d9]">{children}</span>
   ),

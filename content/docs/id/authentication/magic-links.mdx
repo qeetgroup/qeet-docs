@@ -16,13 +16,18 @@ magic links are **single-use** and **TTL-bound**, and starting one is
 
 The user enters their email; Qeet ID emails a link containing a single-use token.
 
-<APIEndpoint method="POST" path="/v1/auth/magic-link/start" title="Email a magic link" />
+<APIEndpoint
+  method="POST"
+  path="/v1/auth/magic-link/start"
+  title="Email a magic link"
+/>
 
 ```bash
 curl -X POST https://api.id.qeet.in/v1/auth/magic-link/start \
   -H "Content-Type: application/json" \
   -d '{"email":"alex@acme.com"}'
 ```
+
 </Step>
 
 <Step>
@@ -41,10 +46,11 @@ Qeet ID returns a token pair.
 - **Single-use.** Consuming the token invalidates it.
 - **Short-lived.** Tokens expire after a TTL.
 - **Enumeration-safe.** Starting a link doesn't reveal whether the account exists.
-- **Rate-limited.** Per IP, email, and tenant (see [Rate limits](/docs/platform/rate-limits)).
+- **Rate-limited.** Per IP, email, and tenant (see [Rate limits](/id/platform/rate-limits)).
 
 <Callout type="warn" title="Deliverability">
   Magic links depend on email delivery. Configure a sending domain with
   SPF/DKIM/DMARC for production. Templates are customizable per tenant under
-  [Branding & email templates](/docs/platform/multi-tenancy#branding--email-templates).
+  [Branding & email
+  templates](/id/platform/multi-tenancy#branding--email-templates).
 </Callout>

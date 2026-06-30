@@ -4,38 +4,44 @@ description: The operational surface — multi-tenancy, API keys & service princ
 icon: Server
 ---
 
-Beyond authentication and authorization, Qeet ID is a full identity *platform*: the
+Beyond authentication and authorization, Qeet ID is a full identity _platform_: the
 operational, security, and compliance machinery you'd otherwise assemble yourself.
 
 <Cards>
-  <Card icon="Building" title="Multi-tenancy" href="/docs/platform/multi-tenancy">
+  <Card icon="Building" title="Multi-tenancy" href="/id/platform/multi-tenancy">
     Tenant isolation, per-tenant config, branding & email templates, IP rules.
   </Card>
-  <Card icon="KeyRound" title="API keys & service principals" href="/docs/platform/api-keys">
+  <Card
+    icon="KeyRound"
+    title="API keys & service principals"
+    href="/id/platform/api-keys"
+  >
     Scoped, expirable, hashed machine credentials.
   </Card>
-  <Card icon="PlugZap" title="Webhooks" href="/docs/platform/webhooks">
+  <Card icon="PlugZap" title="Webhooks" href="/id/platform/webhooks">
     HMAC-signed, transactional outbox, backoff retries, and a dead-letter queue.
   </Card>
-  <Card icon="ScrollText" title="Audit" href="/docs/platform/audit">
-    Append-only, SHA-256 hash-chained, with a <code>/verify</code> integrity endpoint.
+  <Card icon="ScrollText" title="Audit" href="/id/platform/audit">
+    Append-only, SHA-256 hash-chained, with a <code>/verify</code> integrity
+    endpoint.
   </Card>
-  <Card icon="ShieldCheck" title="GDPR" href="/docs/platform/gdpr">
+  <Card icon="ShieldCheck" title="GDPR" href="/id/platform/gdpr">
     Right-to-erasure (async purge), data export, and retention auto-purge.
   </Card>
-  <Card icon="Lock" title="Secrets vault" href="/docs/platform/secrets">
+  <Card icon="Lock" title="Secrets vault" href="/id/platform/secrets">
     Per-tenant AES-256-GCM secrets via a pluggable KeyProvider.
   </Card>
-  <Card icon="Gauge" title="Rate limits" href="/docs/platform/rate-limits">
+  <Card icon="Gauge" title="Rate limits" href="/id/platform/rate-limits">
     Redis-backed distributed token bucket; CSRF + security headers.
   </Card>
-  <Card icon="Activity" title="Observability" href="/docs/platform/observability">
+  <Card icon="Activity" title="Observability" href="/id/platform/observability">
     Prometheus metrics, OpenTelemetry tracing, and health probes.
   </Card>
 </Cards>
 
 <Callout type="tip" title="Secure by default">
-  A production <strong>boot-gate</strong> refuses to start with insecure defaults — a
-  weak JWT secret, CSRF disabled, dev-trust headers on, or missing allowed origins/keys.
-  Misconfiguration fails loudly at startup instead of quietly in production.
+  A production <strong>boot-gate</strong> refuses to start with insecure
+  defaults — a weak JWT secret, CSRF disabled, dev-trust headers on, or missing
+  allowed origins/keys. Misconfiguration fails loudly at startup instead of
+  quietly in production.
 </Callout>

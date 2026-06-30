@@ -15,10 +15,22 @@ An **API key** (`qk_…`) authenticates your backend to the Qeet ID API. Keys ar
 Authorization: ApiKey qk_…
 ```
 
-<APIEndpoint method="POST" path="/v1/api-keys" title="Create an API key (secret shown once)" />
+<APIEndpoint
+  method="POST"
+  path="/v1/api-keys"
+  title="Create an API key (secret shown once)"
+/>
 <APIEndpoint method="GET" path="/v1/api-keys" title="List API keys" />
-<APIEndpoint method="DELETE" path="/v1/api-keys/{id}" title="Revoke an API key" />
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/api-keys" title="List a tenant's API keys" />
+<APIEndpoint
+  method="DELETE"
+  path="/v1/api-keys/{id}"
+  title="Revoke an API key"
+/>
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/api-keys"
+  title="List a tenant's API keys"
+/>
 
 ```bash
 curl -X POST https://api.id.qeet.in/v1/api-keys \
@@ -28,14 +40,15 @@ curl -X POST https://api.id.qeet.in/v1/api-keys \
 ```
 
 <Callout type="danger" title="Server-only, shown once">
-  The full <code>qk_…</code> value is returned only at creation — store it in a secret
-  manager immediately. Never ship an API key to a browser; for client apps use the
-  hosted-login flow (<a href="/docs/sdks/typescript">@qeetid/nextjs</a>).
+  The full <code>qk_…</code> value is returned only at creation — store it in a
+  secret manager immediately. Never ship an API key to a browser; for client
+  apps use the hosted-login flow (
+  <a href="/id/sdks/typescript">@qeetid/nextjs</a>).
 </Callout>
 
 <Callout type="warn" title="ApiKey, not Bearer">
-  API keys use the <code>ApiKey</code> scheme. The <code>Bearer</code> scheme on the
-  same routes is for user/service <strong>JWTs</strong>. Don't mix them.
+  API keys use the <code>ApiKey</code> scheme. The <code>Bearer</code> scheme on
+  the same routes is for user/service <strong>JWTs</strong>. Don't mix them.
 </Callout>
 
 ## Service principals
@@ -44,15 +57,23 @@ A **service principal** is an OAuth client for **M2M** access via
 `client_credentials`. Use it when a machine needs a standard OAuth access token (e.g.
 to call your own resource servers), rather than direct Qeet ID API access.
 
-<APIEndpoint method="POST" path="/v1/service-principals" title="Create a service principal" />
-<APIEndpoint method="POST" path="/v1/oauth/token" title="Get a client_credentials token" />
+<APIEndpoint
+  method="POST"
+  path="/v1/service-principals"
+  title="Create a service principal"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/oauth/token"
+  title="Get a client_credentials token"
+/>
 
-See [OIDC → Machine-to-machine](/docs/oidc/m2m) for the full flow.
+See [OIDC → Machine-to-machine](/id/oidc/m2m) for the full flow.
 
 ## Which should I use?
 
-| Need | Use |
-| --- | --- |
-| Backend calling the Qeet ID API | **API key** (`ApiKey qk_…`) |
+| Need                                         | Use                                          |
+| -------------------------------------------- | -------------------------------------------- |
+| Backend calling the Qeet ID API              | **API key** (`ApiKey qk_…`)                  |
 | Machine client needing an OAuth access token | **Service principal** (`client_credentials`) |
-| Per-user backend call | the user's **access token** (`Bearer <jwt>`) |
+| Per-user backend call                        | the user's **access token** (`Bearer <jwt>`) |

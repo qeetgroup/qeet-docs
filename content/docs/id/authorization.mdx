@@ -15,23 +15,47 @@ is assigned to a **user** or a **group** within a tenant. A user's **effective
 permissions** are `direct ∪ group-derived`.
 
 <APIEndpoint method="GET" path="/v1/permissions" title="List permissions" />
-<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/roles" title="Create a role" />
-<APIEndpoint method="PUT" path="/v1/roles/{roleID}/permissions/{permID}" title="Add a permission to a role" />
+<APIEndpoint
+  method="POST"
+  path="/v1/tenants/{tenantID}/roles"
+  title="Create a role"
+/>
+<APIEndpoint
+  method="PUT"
+  path="/v1/roles/{roleID}/permissions/{permID}"
+  title="Add a permission to a role"
+/>
 
 ## Assigning roles
 
 To a **user**:
 
-<APIEndpoint method="PUT" path="/v1/users/{userID}/tenants/{tenantID}/roles/{roleID}" title="Assign a role to a user" />
+<APIEndpoint
+  method="PUT"
+  path="/v1/users/{userID}/tenants/{tenantID}/roles/{roleID}"
+  title="Assign a role to a user"
+/>
 
 To a **group** (every member inherits the role's permissions):
 
-<APIEndpoint method="PUT" path="/v1/tenants/{tenantID}/groups/{groupID}/roles/{roleID}" title="Grant a role to a group" />
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/groups/{groupID}/roles" title="List a group's roles" />
+<APIEndpoint
+  method="PUT"
+  path="/v1/tenants/{tenantID}/groups/{groupID}/roles/{roleID}"
+  title="Grant a role to a group"
+/>
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/groups/{groupID}/roles"
+  title="List a group's roles"
+/>
 
 Inspect a user's combined effective permissions in a tenant:
 
-<APIEndpoint method="GET" path="/v1/users/{userID}/tenants/{tenantID}/permissions" title="Effective permissions" />
+<APIEndpoint
+  method="GET"
+  path="/v1/users/{userID}/tenants/{tenantID}/permissions"
+  title="Effective permissions"
+/>
 
 ## The check — single call
 
@@ -48,7 +72,11 @@ curl "https://api.id.qeet.in/v1/check?user_id=$U&tenant_id=$T&permission=billing
 <Tabs items={['TypeScript', 'Go', 'Python']}>
 
 ```ts tab="TypeScript"
-const ok = await qeetid.can({ user: userId, tenant: tenantId, permission: "billing:write" });
+const ok = await qeetid.can({
+  user: userId,
+  tenant: tenantId,
+  permission: "billing:write",
+});
 // canAll(user, tenant, ["a", "b"]) → true only if all pass
 ```
 
@@ -66,7 +94,7 @@ ok = qeetid.can(user=user_id, tenant=tenant_id, permission="billing:write")
 
 Assigning a role to a **group** grants it to every member transitively — the basis for
 directory-driven access. SCIM keeps group membership in sync (see
-[Enterprise → SCIM](/docs/enterprise/scim)), so adding someone to a group in Okta/Entra
+[Enterprise → SCIM](/id/enterprise/scim)), so adding someone to a group in Okta/Entra
 grants their roles in Qeet ID automatically.
 
 ## Explainable authz
@@ -74,9 +102,13 @@ grants their roles in Qeet ID automatically.
 Add `?explain=true` to `/check` and instead of the bare `{ allowed }`, Qeet ID returns
 the full **grant-path trace**: every distinct grant (direct and group-derived) that
 confers the permission, or — on a denial — the reason. Most CIAM platforms can't tell
-you *why* a decision was made; Qeet ID can.
+you _why_ a decision was made; Qeet ID can.
 
-<APIEndpoint method="GET" path="/v1/check?explain=true" title="Authorize + explain" />
+<APIEndpoint
+  method="GET"
+  path="/v1/check?explain=true"
+  title="Authorize + explain"
+/>
 
 ```bash
 curl "https://api.id.qeet.in/v1/check?user_id=$U&tenant_id=$T&permission=billing:write&explain=true" \
@@ -107,9 +139,9 @@ curl "https://api.id.qeet.in/v1/check?user_id=$U&tenant_id=$T&permission=billing
 ```
 
 <Callout type="tip" title="It's in the dashboard too">
-  The admin dashboard's <strong>Access Tester</strong> renders this grant-path trace
-  visually — paste a user, tenant, and permission and see exactly which role/group
-  allows it.
+  The admin dashboard's <strong>Access Tester</strong> renders this grant-path
+  trace visually — paste a user, tenant, and permission and see exactly which
+  role/group allows it.
 </Callout>
 
 ## ABAC policy
@@ -118,12 +150,21 @@ For rules RBAC can't express (e.g. attribute matching), each tenant has an ABAC
 **policy** evaluated alongside RBAC. A request must satisfy both the required
 permission and any matching policy.
 
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/policy" title="Read the tenant ABAC policy" />
-<APIEndpoint method="PUT" path="/v1/tenants/{tenantID}/policy" title="Update the ABAC policy" />
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/policy"
+  title="Read the tenant ABAC policy"
+/>
+<APIEndpoint
+  method="PUT"
+  path="/v1/tenants/{tenantID}/policy"
+  title="Update the ABAC policy"
+/>
 
 <Callout type="info">
-  The tenant <strong>auth policy</strong> (password rules, allowed login methods,
-  breached-password rejection) is separate from this <strong>ABAC policy</strong> —
-  see [Authentication → auth policy](/docs/authentication#per-tenant-auth-policy).
-  Fine-grained / ReBAC (Zanzibar-style) authorization is on the roadmap.
+  The tenant <strong>auth policy</strong> (password rules, allowed login
+  methods, breached-password rejection) is separate from this{" "}
+  <strong>ABAC policy</strong> — see [Authentication → auth
+  policy](/id/authentication#per-tenant-auth-policy). Fine-grained / ReBAC
+  (Zanzibar-style) authorization is on the roadmap.
 </Callout>

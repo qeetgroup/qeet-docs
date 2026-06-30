@@ -1,0 +1,45 @@
+---
+title: {{Resource}} API
+description: {{One sentence — what this resource is and what you can do with it.}}
+icon: Code
+---
+
+{{One paragraph introducing the resource. Note the base URL and auth scheme, and link
+to errors + pagination conventions.}}
+
+<Callout type="info">
+  All endpoints require `Authorization: ApiKey qk_…` and are tenant-scoped. See
+  [Errors](/{{ product }}/api/errors) and [Pagination](/{{ product }}
+  /api/pagination).
+</Callout>
+
+## {{Operation group, e.g. List + retrieve}}
+
+<APIEndpoint method="GET" path="/v1/{{resource}}" title="List {{resources}}" />
+<APIEndpoint
+  method="GET"
+  path="/v1/{{resource}}/{id}"
+  title="Get a {{resource}}"
+/>
+
+```bash title="terminal"
+curl https://api.{{product}}.qeet.in/v1/{{resource}} \
+  -H "Authorization: ApiKey $API_KEY"
+```
+
+## {{Operation group, e.g. Create + update}}
+
+<APIEndpoint
+  method="POST"
+  path="/v1/{{resource}}"
+  title="Create a {{resource}}"
+/>
+<APIEndpoint
+  method="PATCH"
+  path="/v1/{{resource}}/{id}"
+  title="Update a {{resource}}"
+/>
+
+> NOTE: For the full, schema-accurate, "try-it" reference, prefer the generated
+> OpenAPI pages where they exist. Hand-curated pages like this are for narrative
+> grouping and conventions.

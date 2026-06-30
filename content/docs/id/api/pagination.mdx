@@ -14,10 +14,10 @@ curl 'https://api.id.qeet.in/v1/users?limit=50&cursor=<next_cursor>' \
   -H "Authorization: ApiKey $QEETID_API_KEY"
 ```
 
-| Param | Type | Notes |
-| --- | --- | --- |
-| `limit` | integer | Page size. |
-| `cursor` | string | Opaque cursor from the previous page's `next_cursor`. |
+| Param    | Type    | Notes                                                 |
+| -------- | ------- | ----------------------------------------------------- |
+| `limit`  | integer | Page size.                                            |
+| `cursor` | string  | Opaque cursor from the previous page's `next_cursor`. |
 
 ## Response
 
@@ -68,6 +68,6 @@ for u in qeetid.users.list_all():
 </Tabs>
 
 <Callout type="info">
-  Cursors encode the ordering and position. Don't hand-construct them; always pass back
-  the <code>next_cursor</code> the server returned.
+  Cursors encode the ordering and position. Don't hand-construct them; always
+  pass back the <code>next_cursor</code> the server returned.
 </Callout>

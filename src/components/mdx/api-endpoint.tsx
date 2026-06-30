@@ -7,7 +7,8 @@ const METHOD_STYLES: Record<Method, string> = {
   GET: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
   POST: "bg-brand-500/14 text-brand-text border-brand-500/30",
   PUT: "bg-amber-500/12 text-amber-700 dark:text-amber-300 border-amber-500/25",
-  PATCH: "bg-violet-500/12 text-violet-700 dark:text-violet-300 border-violet-500/25",
+  PATCH:
+    "bg-violet-500/12 text-violet-700 dark:text-violet-300 border-violet-500/25",
   DELETE: "bg-rose-500/12 text-rose-700 dark:text-rose-300 border-rose-500/25",
   HEAD: "bg-cyan-500/12 text-cyan-700 dark:text-cyan-300 border-cyan-500/25",
   OPTIONS: "bg-fd-muted text-fd-muted-foreground border-fd-border",
@@ -41,8 +42,12 @@ export function APIEndpoint({ method, path, title }: APIEndpointProps) {
       >
         {m}
       </span>
-      <code className="min-w-0 flex-1 break-all font-mono text-fd-foreground text-sm">{path}</code>
-      {title ? <span className="text-fd-muted-foreground text-sm">{title}</span> : null}
+      <code className="min-w-0 flex-1 break-all font-mono text-fd-foreground text-sm">
+        {path}
+      </code>
+      {title ? (
+        <span className="text-fd-muted-foreground text-sm">{title}</span>
+      ) : null}
     </div>
   );
 }

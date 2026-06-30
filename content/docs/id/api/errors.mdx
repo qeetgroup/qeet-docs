@@ -18,35 +18,38 @@ stable machine `code`, a human `message`, and optional `detail` / `request_id`:
 ```
 
 <Callout type="warn" title="It's nested under `error`">
-  The envelope is <code>{"{"} "error": {"{"} "code", "message" {"}"} {"}"}</code> — not a
-  flat <code>error</code> string. Read the machine value from
+  The envelope is{" "}
+  <code>
+    {"{"} "error": {"{"} "code", "message" {"}"} {"}"}
+  </code>{" "}
+  — not a flat <code>error</code> string. Read the machine value from
   <code>error.code</code>. The <code>request_id</code> matches the
   <code>X-Request-Id</code> response header.
 </Callout>
 
 ## HTTP status mapping
 
-| Status | Meaning |
-| --- | --- |
-| `400` | Malformed request. |
-| `401` | Missing or invalid authentication. |
-| `403` | Authenticated but not permitted. |
-| `404` | Resource doesn't exist. |
-| `409` | Conflict (e.g. duplicate). |
-| `422` | Validation error. |
-| `429` | Rate-limited / locked out. See `Retry-After`. |
-| `5xx` | Server error — retry idempotent calls with backoff. |
+| Status | Meaning                                             |
+| ------ | --------------------------------------------------- |
+| `400`  | Malformed request.                                  |
+| `401`  | Missing or invalid authentication.                  |
+| `403`  | Authenticated but not permitted.                    |
+| `404`  | Resource doesn't exist.                             |
+| `409`  | Conflict (e.g. duplicate).                          |
+| `422`  | Validation error.                                   |
+| `429`  | Rate-limited / locked out. See `Retry-After`.       |
+| `5xx`  | Server error — retry idempotent calls with backoff. |
 
 ## Common codes
 
-| `error.code` | When |
-| --- | --- |
-| `unauthorized` | Missing/invalid token or API key. |
-| `forbidden` | RBAC/policy denied the action. |
-| `not_found` | Resource ID doesn't exist. |
-| `conflict` | Uniqueness/state conflict. |
-| `validation_failed` | Request body failed validation. |
-| `rate_limited` | Rate limit or account lockout hit. |
+| `error.code`        | When                               |
+| ------------------- | ---------------------------------- |
+| `unauthorized`      | Missing/invalid token or API key.  |
+| `forbidden`         | RBAC/policy denied the action.     |
+| `not_found`         | Resource ID doesn't exist.         |
+| `conflict`          | Uniqueness/state conflict.         |
+| `validation_failed` | Request body failed validation.    |
+| `rate_limited`      | Rate limit or account lockout hit. |
 
 ## Handling errors
 
@@ -90,11 +93,11 @@ except QeetidError as e:
 
 ## Retry guidance
 
-| Status | Retry? | Strategy |
-| --- | --- | --- |
-| `5xx` (idempotent) | Yes | Exponential backoff. |
-| `429` | Yes | Honor `Retry-After`. |
-| Other `4xx` | No | Surface to the caller. |
+| Status             | Retry? | Strategy               |
+| ------------------ | ------ | ---------------------- |
+| `5xx` (idempotent) | Yes    | Exponential backoff.   |
+| `429`              | Yes    | Honor `Retry-After`.   |
+| Other `4xx`        | No     | Surface to the caller. |
 
 The SDKs already implement this — `429` and idempotent `5xx` are retried with backoff,
 honoring `Retry-After`.

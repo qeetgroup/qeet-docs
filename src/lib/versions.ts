@@ -31,15 +31,23 @@ export interface DocsVersion {
 }
 
 export const VERSIONS: DocsVersion[] = [
-  // Until v1.0 cuts, the docs are unversioned. The entry below is a
-  // placeholder so the switcher renders something meaningful — flip
-  // its `slug` to "v1" + move content under `content/docs/v1/` to
-  // activate real versioning.
+  // Until v1.0 cuts, the docs are unversioned and `current` is the default.
+  // This list is the source of truth for the planned version line; the version
+  // switcher + `[version]` route are wired only when we execute the migration
+  // recipe above (targeted at qeet-id's July 2026 GA).
   {
     slug: "current",
     label: "Current (pre-1.0)",
     status: "preview",
     isDefault: true,
+  },
+  // Planned. Not yet routable — no `content/docs/v1/` tree exists. Flip
+  // `isDefault` here (and off `current`) as step 4 of the migration recipe
+  // once content moves under `content/docs/v1/`.
+  {
+    slug: "v1",
+    label: "v1.0",
+    status: "stable",
   },
 ];
 

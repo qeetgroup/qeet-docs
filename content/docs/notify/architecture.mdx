@@ -1,0 +1,48 @@
+---
+title: Architecture
+description: How Qeet Notify is built — the service binaries, messaging backbone, multi-tenant data layer, and observability.
+icon: Boxes
+---
+
+Qeet Notify is a Go services platform behind an event-driven core. This page describes how
+it's put together today.
+
+## Services
+
+| Binary                  | Role                                                                          |
+| ----------------------- | ----------------------------------------------------------------------------- |
+| `qeet-notify-server`    | HTTP API (`:8080`) + in-app SSE stream (`:8082`) in one process               |
+| `qeet-notify-worker`    | Per-channel delivery worker (`-channel=email\|sms\|whatsapp\|inapp\|webhook`) |
+| `qeet-notify-workflow`  | DAG workflow engine — consumes events from NATS and executes steps            |
+| `qeet-notify-analytics` | Aggregates delivery events into TimescaleDB                                   |
+| `qeet-notify-scheduler` | Delay/retry ticker _(early — being built out)_                                |
+| `qeet-notify-migrate`   | Database migration runner                                                     |
+
+## Messaging backbone
+
+**NATS JetStream** carries events between services. Subjects are tenant-scoped:
+`qeet-notify.{tenant_id}.events` and `qeet-notify.{tenant_id}.channel.{channel}`. The server
+publishes an accepted event; the workflow engine and channel workers consume it.
+
+## Data layer
+
+**PostgreSQL** with **row-level security** for tenant isolation — the API key resolves to a
+`tenant_id` that's set as a session variable and enforced on every query. PII fields (email,
+phone) are encrypted at rest. Analytics roll up into **TimescaleDB**; **Redis** backs caching
+and the in-app SSE fan-out.
+
+## Multi-tenancy
+
+`tenant_id` is first-class end to end: derived from the `X-Qeet-Api-Key` header, enforced in
+the database, and embedded in NATS subjects so no tenant's traffic can cross into another's.
+
+## Observability & deployment
+
+Structured logging and **Prometheus** metrics are built in. Services deploy as containers
+(GHCR + `docker compose`); local development runs Postgres, NATS, and Redis via Docker.
+
+<Callout type="info">
+  This describes the internal architecture for context. The supported
+  integration surface is the [public API](/notify/api) and SDKs — internals may
+  change.
+</Callout>

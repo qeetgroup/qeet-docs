@@ -1,0 +1,67 @@
+---
+title: Feedback & status
+description: Alerts, banners, toasts, notifications, progress, and empty/loading/error states from @qeetrix/ui.
+icon: BellRing
+---
+
+```tsx
+import { Alert, toast, Progress, EmptyState, DataState } from "@qeetrix/ui";
+```
+
+## Inline messages
+
+### Alert
+
+An inline message block: `Alert`, `AlertTitle`, `AlertDescription` (with `alertVariants`).
+
+### Banner
+
+A full-width page banner; ships `bannerVariants`. Props via `BannerProps`.
+
+## Transient & async notifications
+
+### Toast
+
+Imperative toasts via the `toast()` function; mount `<Toaster />` once near the app root.
+Types: `ToastInput`, `ToastType`.
+
+### Notification
+
+A single notification card; ships `notificationVariants`. Props via `NotificationProps`.
+
+### NotificationCenter
+
+An inbox/notification-center surface. Types: `NotificationItem`, `NotificationCenterProps`.
+
+## Progress & presence
+
+### Progress
+
+A determinate/indeterminate progress bar.
+
+### Meter
+
+A bounded value meter (e.g. usage); ships `meterIndicatorVariants`. Props via `MeterProps`.
+
+### Spinner
+
+A loading spinner; ships `spinnerVariants`.
+
+### Skeleton
+
+A content placeholder for loading states.
+
+### PresenceIndicator
+
+An online/away/offline dot; ships `presenceVariants`. Props via `PresenceIndicatorProps`.
+
+## Composite states
+
+### EmptyState
+
+A standardized empty-state layout (icon, title, description, action). Props via `EmptyStateProps`.
+
+### DataState
+
+A wrapper that renders empty / loading / error states for data-driven views. Props via
+`DataStateProps`.

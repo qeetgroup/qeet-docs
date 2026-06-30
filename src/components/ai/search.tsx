@@ -11,7 +11,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { Loader2, MessageCircleIcon, RefreshCw, SearchIcon, Send, X } from "lucide-react";
+import {
+  Loader2,
+  MessageCircleIcon,
+  RefreshCw,
+  SearchIcon,
+  Send,
+  X,
+} from "lucide-react";
 import { cn } from "../../lib/cn";
 import { buttonVariants } from "../ui/button";
 import { useChat, type UseChatHelpers } from "@ai-sdk/react";
@@ -26,7 +33,10 @@ const Context = createContext<{
   chat: UseChatHelpers<ChatUIMessage>;
 } | null>(null);
 
-export function AISearchPanelHeader({ className, ...props }: ComponentProps<"div">) {
+export function AISearchPanelHeader({
+  className,
+  ...props
+}: ComponentProps<"div">) {
   const { setOpen } = useAISearchContext();
 
   return (
@@ -106,7 +116,9 @@ export function AISearchInputActions() {
 const StorageKeyInput = "__ai_search_input";
 export function AISearchInput(props: ComponentProps<"form">) {
   const { status, sendMessage, stop } = useChatContext();
-  const [input, setInput] = useState(() => localStorage.getItem(StorageKeyInput) ?? "");
+  const [input, setInput] = useState(
+    () => localStorage.getItem(StorageKeyInput) ?? "",
+  );
   const isLoading = status === "streaming" || status === "submitted";
   const onStart = (e?: SyntheticEvent) => {
     e?.preventDefault();
@@ -137,7 +149,11 @@ export function AISearchInput(props: ComponentProps<"form">) {
   }, [isLoading]);
 
   return (
-    <form {...props} className={cn("flex items-start pe-2", props.className)} onSubmit={onStart}>
+    <form
+      {...props}
+      className={cn("flex items-start pe-2", props.className)}
+      onSubmit={onStart}
+    >
       <Input
         value={input}
         placeholder={isLoading ? "AI is answering..." : "Ask a question"}
@@ -221,7 +237,10 @@ function List(props: Omit<ComponentProps<"div">, "dir">) {
     <div
       ref={containerRef}
       {...props}
-      className={cn("fd-scroll-container overflow-y-auto min-w-0 flex flex-col", props.className)}
+      className={cn(
+        "fd-scroll-container overflow-y-auto min-w-0 flex flex-col",
+        props.className,
+      )}
     >
       {props.children}
     </div>
@@ -254,7 +273,10 @@ const roleName: Record<string, string> = {
   assistant: "fumadocs",
 };
 
-function Message({ message, ...props }: { message: ChatUIMessage } & ComponentProps<"div">) {
+function Message({
+  message,
+  ...props
+}: { message: ChatUIMessage } & ComponentProps<"div">) {
   let markdown = "";
   const searchCalls: UIToolInvocation<SearchTool>[] = [];
 
@@ -295,9 +317,15 @@ function Message({ message, ...props }: { message: ChatUIMessage } & ComponentPr
           >
             <SearchIcon className="size-4" />
             {call.state === "output-error" || call.state === "output-denied" ? (
-              <p className="text-fd-error">{call.errorText ?? "Failed to search"}</p>
+              <p className="text-fd-error">
+                {call.errorText ?? "Failed to search"}
+              </p>
             ) : (
-              <p>{!call.output ? "Searching…" : `${call.output.length} search results`}</p>
+              <p>
+                {!call.output
+                  ? "Searching…"
+                  : `${call.output.length} search results`}
+              </p>
             )}
           </div>
         );
@@ -316,7 +344,9 @@ export function AISearch({ children }: { children: ReactNode }) {
   });
 
   return (
-    <Context value={useMemo(() => ({ chat, open, setOpen }), [chat, open])}>{children}</Context>
+    <Context value={useMemo(() => ({ chat, open, setOpen }), [chat, open])}>
+      {children}
+    </Context>
   );
 }
 
@@ -406,7 +436,11 @@ export function AISearchPanel() {
   );
 }
 
-export function AISearchPanelList({ className, style, ...props }: ComponentProps<"div">) {
+export function AISearchPanelList({
+  className,
+  style,
+  ...props
+}: ComponentProps<"div">) {
   const chat = useChatContext();
   const messages = chat.messages.filter((msg) => msg.role !== "system");
 

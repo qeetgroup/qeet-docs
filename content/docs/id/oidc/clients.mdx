@@ -14,7 +14,11 @@ Client IDs look like `qci_…`.
 
 ## Register a client
 
-<APIEndpoint method="POST" path="/v1/oidc/clients" title="Register a client (dynamic registration)" />
+<APIEndpoint
+  method="POST"
+  path="/v1/oidc/clients"
+  title="Register a client (dynamic registration)"
+/>
 
 ```bash
 curl -X POST https://api.id.qeet.in/v1/oidc/clients \
@@ -32,23 +36,44 @@ curl -X POST https://api.id.qeet.in/v1/oidc/clients \
 
 ```json title="201 — secret shown once"
 {
-  "client": { "id": "qci_…", "name": "Acme Web", "type": "confidential", "redirect_uris": ["…"] },
+  "client": {
+    "id": "qci_…",
+    "name": "Acme Web",
+    "type": "confidential",
+    "redirect_uris": ["…"]
+  },
   "client_secret": "…",
   "warning": "Store the secret now — it is not retrievable later."
 }
 ```
 
 <Callout type="danger" title="The secret is shown once">
-  Confidential-client secrets are returned only at creation (and on rotation). Store
-  them immediately in your secret manager.
+  Confidential-client secrets are returned only at creation (and on rotation).
+  Store them immediately in your secret manager.
 </Callout>
 
 ## Manage clients
 
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/oidc/clients" title="List clients" />
-<APIEndpoint method="PATCH" path="/v1/tenants/{tenantID}/oidc/clients/{id}" title="Update a client" />
-<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/oidc/clients/{id}/rotate-secret" title="Rotate the secret" />
-<APIEndpoint method="DELETE" path="/v1/oidc/clients/{id}" title="Delete a client" />
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/oidc/clients"
+  title="List clients"
+/>
+<APIEndpoint
+  method="PATCH"
+  path="/v1/tenants/{tenantID}/oidc/clients/{id}"
+  title="Update a client"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/tenants/{tenantID}/oidc/clients/{id}/rotate-secret"
+  title="Rotate the secret"
+/>
+<APIEndpoint
+  method="DELETE"
+  path="/v1/oidc/clients/{id}"
+  title="Delete a client"
+/>
 
 The admin dashboard exposes all of this — list, edit, rotate-secret, and delete OIDC
 clients per tenant.
@@ -58,12 +83,20 @@ clients per tenant.
 When a user consents to a client's scopes, Qeet ID records a **grant**. Admins (and
 users) can view and revoke them.
 
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/oauth/grants" title="List consent grants" />
-<APIEndpoint method="DELETE" path="/v1/tenants/{tenantID}/oauth/grants/{id}" title="Revoke a grant" />
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/oauth/grants"
+  title="List consent grants"
+/>
+<APIEndpoint
+  method="DELETE"
+  path="/v1/tenants/{tenantID}/oauth/grants/{id}"
+  title="Revoke a grant"
+/>
 
 ## Next
 
 <Cards>
-  <Card title="Authorization Code + PKCE" href="/docs/oidc/authorization-code" />
-  <Card title="Tokens" href="/docs/oidc/tokens" />
+  <Card title="Authorization Code + PKCE" href="/id/oidc/authorization-code" />
+  <Card title="Tokens" href="/id/oidc/tokens" />
 </Cards>

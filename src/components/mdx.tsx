@@ -1,4 +1,8 @@
-import { Card as FumaCard, type CardProps, Cards } from "fumadocs-ui/components/card";
+import {
+  Card as FumaCard,
+  type CardProps,
+  Cards,
+} from "fumadocs-ui/components/card";
 import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import defaultMdxComponents from "fumadocs-ui/mdx";

@@ -12,9 +12,21 @@ backoff**, and parks permanent failures in a **dead-letter queue (DLQ)**.
 ## Register a webhook
 
 <APIEndpoint method="POST" path="/v1/webhooks" title="Create a webhook" />
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/webhooks" title="List webhooks" />
-<APIEndpoint method="POST" path="/v1/webhooks/{id}/test" title="Send a test event" />
-<APIEndpoint method="DELETE" path="/v1/webhooks/{id}" title="Delete a webhook" />
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/webhooks"
+  title="List webhooks"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/webhooks/{id}/test"
+  title="Send a test event"
+/>
+<APIEndpoint
+  method="DELETE"
+  path="/v1/webhooks/{id}"
+  title="Delete a webhook"
+/>
 
 ## Verify the signature
 
@@ -41,8 +53,8 @@ export async function POST(req: Request) {
 ```
 
 <Callout type="tip" title="Make handlers idempotent">
-  Delivery is at-least-once, so the same event may arrive more than once (e.g. after a
-  retry). De-duplicate on the event id.
+  Delivery is at-least-once, so the same event may arrive more than once (e.g.
+  after a retry). De-duplicate on the event id.
 </Callout>
 
 ## Retries & the dead-letter queue
@@ -50,9 +62,14 @@ export async function POST(req: Request) {
 If your endpoint returns non-2xx or times out, Qeet ID retries with exponential
 backoff. Events that exhaust retries land in the DLQ for inspection and replay.
 
-<APIEndpoint method="GET" path="/v1/admin/outbox/dlq" title="Inspect the dead-letter queue" />
+<APIEndpoint
+  method="GET"
+  path="/v1/admin/outbox/dlq"
+  title="Inspect the dead-letter queue"
+/>
 
 <Callout type="info">
-  The transactional outbox guarantees an event is enqueued in the same transaction as
-  the state change — no "the row updated but the webhook never fired" gaps.
+  The transactional outbox guarantees an event is enqueued in the same
+  transaction as the state change — no "the row updated but the webhook never
+  fired" gaps.
 </Callout>

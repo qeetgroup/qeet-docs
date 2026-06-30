@@ -14,8 +14,16 @@ Erasure asynchronously purges a user's personal data. PII is redacted, but the
 compliance trail without retaining personal data.
 
 <APIEndpoint method="POST" path="/v1/gdpr/purge" title="Request an erasure" />
-<APIEndpoint method="GET" path="/v1/gdpr/purge/{id}" title="Check purge status" />
-<APIEndpoint method="POST" path="/v1/users/{id}/purge" title="Purge a specific user" />
+<APIEndpoint
+  method="GET"
+  path="/v1/gdpr/purge/{id}"
+  title="Check purge status"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/purge"
+  title="Purge a specific user"
+/>
 
 ```bash
 curl -X POST https://api.id.qeet.in/v1/gdpr/purge \
@@ -25,8 +33,8 @@ curl -X POST https://api.id.qeet.in/v1/gdpr/purge \
 
 <Callout type="warn" title="Erasure is irreversible">
   Purge removes personal data permanently. It's distinct from a
-  [soft-delete](/docs/concepts#users) — a soft-deleted user can be restored from the
-  recycle bin; a purged user cannot.
+  [soft-delete](/id/concepts#users) — a soft-deleted user can be restored from
+  the recycle bin; a purged user cannot.
 </Callout>
 
 ## Retention
@@ -34,11 +42,23 @@ curl -X POST https://api.id.qeet.in/v1/gdpr/purge \
 Each tenant configures how long data is retained; an auto-purge enforces it (with a
 preview and a manual run for ad-hoc cleanup).
 
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/retention" title="Read retention policy" />
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/retention/preview" title="Preview what would be purged" />
-<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/retention/run" title="Run retention now" />
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/retention"
+  title="Read retention policy"
+/>
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/retention/preview"
+  title="Preview what would be purged"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/tenants/{tenantID}/retention/run"
+  title="Run retention now"
+/>
 
 <Callout type="info">
-  Retention auto-purge respects the [audit hash chain](/docs/platform/audit) — purging
-  old data doesn't invalidate the integrity proof for what remains.
+  Retention auto-purge respects the [audit hash chain](/id/platform/audit) —
+  purging old data doesn't invalidate the integrity proof for what remains.
 </Callout>

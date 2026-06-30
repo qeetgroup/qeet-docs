@@ -34,10 +34,12 @@ const claims = await qeetid.sessions.verify(accessToken);
 ```
 
 <Callout type="info" title="Why ES256 + JWKS">
-  Tokens are signed with ECDSA P-256 (asymmetric). The JWKS is public, so any service
-  verifies tokens without a shared secret. Signing keys carry an RFC 7638
-  <code>kid</code>, retire on a grace window, and are guarded against alg-confusion.
-  The SDKs cache the JWKS and refetch on an unknown <code>kid</code>.
+  Tokens are signed with ECDSA P-256 (asymmetric). The JWKS is public, so any
+  service verifies tokens without a shared secret. Signing keys carry an RFC
+  7638
+  <code>kid</code>, retire on a grace window, and are guarded against
+  alg-confusion. The SDKs cache the JWKS and refetch on an unknown{" "}
+  <code>kid</code>.
 </Callout>
 
 ## Refresh-token rotation + theft detection
@@ -47,7 +49,11 @@ issued. If a previously-rotated (i.e. stolen and replayed) refresh token is ever
 presented, Qeet ID **revokes the entire token chain** for that session and **audits**
 the event — so a leaked token can't be used silently.
 
-<APIEndpoint method="POST" path="/v1/auth/refresh" title="Rotate the token pair" />
+<APIEndpoint
+  method="POST"
+  path="/v1/auth/refresh"
+  title="Rotate the token pair"
+/>
 
 ```bash
 curl -X POST https://api.id.qeet.in/v1/auth/refresh \
@@ -56,14 +62,15 @@ curl -X POST https://api.id.qeet.in/v1/auth/refresh \
 ```
 
 <Callout type="tip" title="Next.js does this for you">
-  <code>@qeetid/nextjs</code> middleware refreshes a near-expiry session silently —
-  it calls the token endpoint, persists the rotated refresh token in the encrypted
-  cookie, and re-runs the request — so users aren't bounced to login.
+  <code>@qeetid/nextjs</code> middleware refreshes a near-expiry session
+  silently — it calls the token endpoint, persists the rotated refresh token in
+  the encrypted cookie, and re-runs the request — so users aren't bounced to
+  login.
 </Callout>
 
 ## Account lockout
 
-On top of distributed IP [rate limiting](/docs/platform/rate-limits), Qeet ID applies a
+On top of distributed IP [rate limiting](/id/platform/rate-limits), Qeet ID applies a
 **per-account** failed-attempt throttle and temporary lockout to blunt credential
 stuffing. Locked accounts return `429` on login until the window clears. This is on by
 default.
@@ -73,9 +80,21 @@ default.
 For an account-security screen, list the user's active sessions and let them revoke
 any one. `logout` revokes the caller's current session.
 
-<APIEndpoint method="GET" path="/v1/auth/sessions" title="List the caller's sessions" />
-<APIEndpoint method="DELETE" path="/v1/auth/sessions/{id}" title="Revoke a session" />
-<APIEndpoint method="POST" path="/v1/auth/logout" title="Revoke the current session" />
+<APIEndpoint
+  method="GET"
+  path="/v1/auth/sessions"
+  title="List the caller's sessions"
+/>
+<APIEndpoint
+  method="DELETE"
+  path="/v1/auth/sessions/{id}"
+  title="Revoke a session"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/auth/logout"
+  title="Revoke the current session"
+/>
 
 ```ts
 const sessions = await qeetid.sessions.list();
@@ -83,17 +102,21 @@ await qeetid.sessions.revoke(sessionId);
 ```
 
 Password reset revokes **all** of a user's sessions (see
-[Sign-up & passwords](/docs/authentication/sign-up#password-reset)).
+[Sign-up & passwords](/id/authentication/sign-up#password-reset)).
 
 ## Who am I
 
 `/v1/auth/me` returns the caller's current principal context (user, tenant,
 session) — handy for hydrating an app shell.
 
-<APIEndpoint method="GET" path="/v1/auth/me" title="Current principal context" />
+<APIEndpoint
+  method="GET"
+  path="/v1/auth/me"
+  title="Current principal context"
+/>
 
 <Callout type="warn" title="Always verify, never trust">
-  Authorization decisions must be based on a verified access token (or a server-side
-  session lookup), never on cookie presence alone. Verify the JWT signature and
-  expiry on every protected request.
+  Authorization decisions must be based on a verified access token (or a
+  server-side session lookup), never on cookie presence alone. Verify the JWT
+  signature and expiry on every protected request.
 </Callout>

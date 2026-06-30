@@ -1,0 +1,54 @@
+---
+title: Concepts
+description: The planned model behind Qeet Pay — acceptance, payouts, subscriptions, GST invoicing, marketplace splits, and India compliance.
+icon: Compass
+---
+
+<Callout type="info" title="In design">
+  Qeet Pay is documented from its product requirements — there's no code or
+  public API yet. These are the concepts the product is being built around and
+  may change before release.
+</Callout>
+
+Qeet Pay aims to bring everything a business needs to move money — collect, bill, disburse,
+invoice, and settle — into one API, one dashboard, and one integration, built India-first.
+
+## Payment acceptance
+
+Collect via **UPI** (collect, intent, QR), **cards** (3DS 2.0 with RBI tokenization), **net
+banking**, and **wallets** — through hosted checkout, payment links, or an SDK. A single
+payment object tracks state across rails.
+
+## Payouts & disbursements
+
+Send money out over **UPI / IMPS / NEFT**, individually or in bulk, with **maker-checker
+approvals** and refunds — for vendor payments, salaries, or marketplace settlements.
+
+## Subscription billing
+
+Model recurring revenue: subscription **lifecycle and proration**, with **flat, per-unit,
+tiered, and usage-based** pricing, collected through **NACH and UPI AutoPay** mandates, plus
+rule-based dunning for failed collections.
+
+## GST-compliant invoicing
+
+Invoicing is GST-native: **CGST/SGST/IGST auto-calculation**, **HSN/SAC** lookup, credit and
+debit notes, and **e-invoicing with IRN** — so invoices are compliant by construction, not by
+a downstream reconciliation step.
+
+## Marketplace & splits
+
+**Split payments** across sellers with automatic **per-GSTIN GST attribution** and TCS
+handling — the model marketplaces need to pay out correctly and stay compliant.
+
+## India compliance
+
+Compliance is foundational: **KYB onboarding**, **India data residency**, fraud scoring, and
+the GST/e-invoicing obligations above. The roadmap sequences regulated capabilities behind
+the approvals they require.
+
+## Where this is heading
+
+The phased plan — foundation rails first, then AI and deeper GST/compliance, then enterprise
+and cross-border — is on the [roadmap](/pay/roadmap). Until Pay ships, [Qeet ID](/id)
+provides the identity and tenant model the billing layer will build on.

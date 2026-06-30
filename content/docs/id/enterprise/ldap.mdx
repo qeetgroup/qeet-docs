@@ -10,20 +10,44 @@ before going live.
 
 ## Manage connections
 
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/ldap" title="List LDAP connections" />
-<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/ldap" title="Create a connection" />
-<APIEndpoint method="PUT" path="/v1/tenants/{tenantID}/ldap/{id}" title="Update a connection" />
-<APIEndpoint method="DELETE" path="/v1/tenants/{tenantID}/ldap/{id}" title="Delete a connection" />
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/ldap"
+  title="List LDAP connections"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/tenants/{tenantID}/ldap"
+  title="Create a connection"
+/>
+<APIEndpoint
+  method="PUT"
+  path="/v1/tenants/{tenantID}/ldap/{id}"
+  title="Update a connection"
+/>
+<APIEndpoint
+  method="DELETE"
+  path="/v1/tenants/{tenantID}/ldap/{id}"
+  title="Delete a connection"
+/>
 
 ## Test the bind
 
 Validate host, base DN, bind credentials, and TLS before enabling the connection.
 
-<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/ldap/{id}/test" title="Test bind" />
+<APIEndpoint
+  method="POST"
+  path="/v1/tenants/{tenantID}/ldap/{id}/test"
+  title="Test bind"
+/>
 
 ## Authenticate
 
-<APIEndpoint method="POST" path="/ldap/{id}/authenticate" title="Bind-authenticate a user" />
+<APIEndpoint
+  method="POST"
+  path="/ldap/{id}/authenticate"
+  title="Bind-authenticate a user"
+/>
 
 ```bash
 curl -X POST https://api.id.qeet.in/ldap/$CONN_ID/authenticate \
@@ -32,7 +56,7 @@ curl -X POST https://api.id.qeet.in/ldap/$CONN_ID/authenticate \
 ```
 
 <Callout type="warn" title="Use LDAPS / StartTLS">
-  Bind authentication sends credentials to the directory. Always use LDAPS or StartTLS
-  in production so credentials aren't sent in the clear. Validate with the test-bind
-  endpoint first.
+  Bind authentication sends credentials to the directory. Always use LDAPS or
+  StartTLS in production so credentials aren't sent in the clear. Validate with
+  the test-bind endpoint first.
 </Callout>

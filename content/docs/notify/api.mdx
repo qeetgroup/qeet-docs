@@ -1,0 +1,54 @@
+---
+title: API
+description: The Qeet Notify HTTP API as it exists today — trigger events and check health. The surface is early and will grow.
+icon: Code
+---
+
+<Callout type="info" title="Early API — surface will grow">
+  Only the endpoints below exist today. As channels, workflows, and the
+  preference center ship, this reference will expand. Anything not listed here
+  is not yet available.
+</Callout>
+
+The API is served at `https://notify.api.qeet.in` (and `http://localhost:8080` in local
+development).
+
+## Authentication
+
+Authenticated requests send your tenant API key in the **`X-Qeet-Api-Key`** header (not an
+`Authorization` bearer). The key resolves to a tenant; all data access is tenant-scoped.
+
+```bash title="terminal"
+curl -X POST https://notify.api.qeet.in/v1/events \
+  -H "X-Qeet-Api-Key: $QEET_NOTIFY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event": "user.welcome",
+    "subscriber_id": "8f1c…",
+    "payload": { "name": "Asha" }
+  }'
+```
+
+## Trigger an event
+
+<APIEndpoint
+  method="POST"
+  path="/v1/events"
+  title="Trigger a notification event"
+/>
+
+Body (`application/json`):
+
+| Field           | Type   | Required | Notes                                       |
+| --------------- | ------ | -------- | ------------------------------------------- |
+| `event`         | string | yes      | Event name, e.g. `user.welcome`.            |
+| `subscriber_id` | uuid   | yes      | The recipient subscriber.                   |
+| `payload`       | object | no       | Free-form variables passed to the template. |
+
+Responses: **202** accepted for processing · **401** missing/invalid key · **422** validation error.
+
+## Health
+
+<APIEndpoint method="GET" path="/healthz" title="Health check" />
+
+Returns `{ "status": "ok" }` when the service is healthy. No authentication required.

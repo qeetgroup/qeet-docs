@@ -1,0 +1,51 @@
+---
+title: { { Product } }
+description: { { One sentence describing what the product will be. } }
+icon: { { LucideIcon } }
+---
+
+{{Pick the callout that matches the Honesty ladder in ../STYLE-GUIDE.md:}}
+
+<Callout type="info" title="In design">
+  {{ Product }} is in active planning. These docs describe what we're building
+  from the product requirements; there's no public API yet, and details may
+  change before the first release.
+</Callout>
+
+{{— OR, if code already exists (e.g. qeet-notify): —}}
+
+<Callout type="info" title="In active development">
+  {{ Product }} has an early implementation. We document only what's live today
+  and mark everything else "planned"; the surface will grow.
+</Callout>
+
+## What is {{Product}}?
+
+{{Two short paragraphs: what it is, who it's for, what problem it removes.}}
+
+## What it will do
+
+<Cards>
+  <Card title="{{Capability}}" description="{{one line}}" />
+  <Card title="{{Capability}}" description="{{one line}}" />
+  <Card title="{{Capability}}" description="{{one line}}" />
+</Cards>
+
+## Where it fits in the platform
+
+{{How it relates to the rest of the suite — Qeet ID identity, Qeet Logs audit, etc.}}
+
+## What's next
+
+<Cards>
+  <Card
+    title="See the roadmap"
+    href="/{{product}}/roadmap"
+    description="The phased plan."
+  />
+  <Card
+    title="Explore Qeet ID"
+    href="/id"
+    description="The identity layer, live today."
+  />
+</Cards>

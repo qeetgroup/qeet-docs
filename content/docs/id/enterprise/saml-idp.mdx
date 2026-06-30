@@ -3,22 +3,35 @@ title: SAML IdP (be an SSO source)
 description: Qeet ID as a SAML Identity Provider — register downstream service providers, publish IdP metadata, and serve SP-initiated and IdP-initiated SSO.
 ---
 
-Qeet ID can act as a **SAML Identity Provider (IdP)** — the SSO *source* that downstream
+Qeet ID can act as a **SAML Identity Provider (IdP)** — the SSO _source_ that downstream
 **service providers** (your own apps, or third-party SaaS) authenticate against. This
-is the inverse of [SAML SP](/docs/enterprise/saml-sp).
+is the inverse of [SAML SP](/id/enterprise/saml-sp).
 
 <Callout type="tip" title="Being the IdP is rarer — and implemented">
-  Many CIAM products consume SAML but can't <em>be</em> a SAML IdP. Qeet ID does both.
-  Assertions are signed RSA-SHA256 and served from the hosted-login SSO session.
+  Many CIAM products consume SAML but can't <em>be</em> a SAML IdP. Qeet ID does
+  both. Assertions are signed RSA-SHA256 and served from the hosted-login SSO
+  session.
 </Callout>
 
 ## Register a downstream SP
 
 Register each service provider that will trust Qeet ID, with its entity ID and ACS URL.
 
-<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/saml-providers" title="Register a downstream SP" />
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/saml-providers" title="List downstream SPs" />
-<APIEndpoint method="PUT" path="/v1/tenants/{tenantID}/saml-providers/{id}" title="Update an SP" />
+<APIEndpoint
+  method="POST"
+  path="/v1/tenants/{tenantID}/saml-providers"
+  title="Register a downstream SP"
+/>
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/saml-providers"
+  title="List downstream SPs"
+/>
+<APIEndpoint
+  method="PUT"
+  path="/v1/tenants/{tenantID}/saml-providers/{id}"
+  title="Update an SP"
+/>
 
 The admin dashboard exposes this as a **Service-Provider registry** (with metadata).
 
@@ -36,10 +49,19 @@ hosted-login SSO session it returns an auto-submitting POST form with a signed
 HTTP-Redirect and HTTP-POST bindings are supported. IdP-initiated SSO works the same
 way from the hosted-login session.
 
-<APIEndpoint method="GET" path="/saml/idp/sso" title="SSO (HTTP-Redirect binding)" />
-<APIEndpoint method="POST" path="/saml/idp/sso" title="SSO (HTTP-POST binding, CSRF-exempt)" />
+<APIEndpoint
+  method="GET"
+  path="/saml/idp/sso"
+  title="SSO (HTTP-Redirect binding)"
+/>
+<APIEndpoint
+  method="POST"
+  path="/saml/idp/sso"
+  title="SSO (HTTP-POST binding, CSRF-exempt)"
+/>
 
 <Callout type="info">
-  Because IdP SSO is served from the hosted-login SSO session, the same session can
-  drive OIDC, SAML-IdP, and the device grant — a single sign-on across protocols.
+  Because IdP SSO is served from the hosted-login SSO session, the same session
+  can drive OIDC, SAML-IdP, and the device grant — a single sign-on across
+  protocols.
 </Callout>

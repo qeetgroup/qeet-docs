@@ -1,0 +1,38 @@
+---
+title: Charts
+description: The Recharts-based charting layer in @qeetrix/ui — a themeable container plus ready-made chart presets.
+icon: ChartArea
+---
+
+```tsx
+import { ChartContainer, BarChart, LineChart, Sparkline } from "@qeetrix/ui";
+```
+
+## Container & primitives
+
+The low-level layer wires Recharts to the Qeetrix theme via a `ChartConfig`.
+
+### ChartContainer
+
+The themeable wrapper that supplies colors and sizing to any chart.
+
+### Chart parts
+
+`ChartTooltip`, `ChartTooltipContent`, `ChartLegend`, `ChartLegendContent`, and `ChartStyle`
+compose the tooltip/legend/styling. Configure series with the `ChartConfig` type.
+
+## Presets
+
+Ready-made charts for common shapes — pass data and a config, skip the boilerplate.
+
+### Cartesian
+
+`AreaChart`, `BarChart`, `LineChart`. Props via `CartesianChartProps`.
+
+### Radial & pie
+
+`DonutChart`, `RadialChart`. Props via `RadialOrPieProps`.
+
+### Sparkline
+
+A compact inline trend line. Props via `SparklineProps`.

@@ -3,5 +3,13 @@
   "description": "HCM — people, teams, and org structure",
   "icon": "Users",
   "root": true,
-  "pages": ["index"]
+  "pages": [
+    "index",
+    "concepts",
+    "---Plan---",
+    "planned-architecture",
+    "roadmap",
+    "---Updates---",
+    "changelog"
+  ]
 }

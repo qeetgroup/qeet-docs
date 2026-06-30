@@ -6,7 +6,7 @@ description: "@qeetid/react — client components and hooks for the hosted-login
 `@qeetid/react` provides client components and hooks for the hosted-login flow:
 `<SignedIn>`, `<SignedOut>`, `useUser()`, `useAuth()`, and sign-in/out buttons. It's
 framework-agnostic React; with Next.js, pair it with
-[`@qeetid/nextjs`](/docs/sdks/typescript) to compute the initial state on the server.
+[`@qeetid/nextjs`](/id/sdks/typescript) to compute the initial state on the server.
 
 ```bash title="terminal"
 pnpm add @qeetid/react
@@ -21,13 +21,19 @@ paint and the HttpOnly session cookie is never read in the browser.
 import { auth, currentUser } from "@qeetid/nextjs";
 import { QeetidProvider } from "@qeetid/react";
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { isAuthenticated, userId, tenantId, sessionId } = await auth();
   const user = isAuthenticated ? await currentUser() : null;
   return (
     <html>
       <body>
-        <QeetidProvider initialState={{ isAuthenticated, userId, tenantId, sessionId, user }}>
+        <QeetidProvider
+          initialState={{ isAuthenticated, userId, tenantId, sessionId, user }}
+        >
           {children}
         </QeetidProvider>
       </body>
@@ -40,7 +46,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
 ```tsx
 "use client";
-import { SignedIn, SignedOut, SignInButton, SignOutButton, useUser } from "@qeetid/react";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignOutButton,
+  useUser,
+} from "@qeetid/react";
 
 export function Header() {
   const { user } = useUser();
@@ -58,17 +70,17 @@ export function Header() {
 }
 ```
 
-| Export | Description |
-| --- | --- |
-| `<QeetidProvider initialState loginUrl? logoutUrl?>` | Supplies auth context. |
-| `<SignedIn>` / `<SignedOut>` | Conditionally render by auth state. |
-| `<SignInButton>` / `<SignOutButton>` | Redirect to the hosted login / logout. |
-| `useUser()` | `{ isLoaded, isAuthenticated, user }`. |
-| `useAuth()` | `{ isLoaded, isAuthenticated, userId, tenantId, sessionId }`. |
+| Export                                               | Description                                                   |
+| ---------------------------------------------------- | ------------------------------------------------------------- |
+| `<QeetidProvider initialState loginUrl? logoutUrl?>` | Supplies auth context.                                        |
+| `<SignedIn>` / `<SignedOut>`                         | Conditionally render by auth state.                           |
+| `<SignInButton>` / `<SignOutButton>`                 | Redirect to the hosted login / logout.                        |
+| `useUser()`                                          | `{ isLoaded, isAuthenticated, user }`.                        |
+| `useAuth()`                                          | `{ isLoaded, isAuthenticated, userId, tenantId, sessionId }`. |
 
 <Callout type="info">
-  The buttons redirect to the <a href="/docs/sdks/typescript">@qeetid/nextjs</a> auth
-  routes (<code>/api/auth/login</code>, <code>/api/auth/logout</code>), which run the
-  hosted-login OAuth flow. Prebuilt full-page sign-in components are on the roadmap; the
-  hosted login covers the UI today.
+  The buttons redirect to the <a href="/id/sdks/typescript">@qeetid/nextjs</a>{" "}
+  auth routes (<code>/api/auth/login</code>, <code>/api/auth/logout</code>),
+  which run the hosted-login OAuth flow. Prebuilt full-page sign-in components
+  are on the roadmap; the hosted login covers the UI today.
 </Callout>

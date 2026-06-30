@@ -9,28 +9,40 @@ tier — **open-source and not paywalled**. It works in both directions of SAML,
 directories with SCIM, and binds to LDAP/AD.
 
 <Callout type="tip" title="All implemented today">
-  SAML 2.0 <strong>SP and IdP</strong>, SCIM 2.0 <strong>Users + Groups</strong> (with
-  PatchOp membership), and LDAP are live. Earlier docs implied SAML/SCIM weren't
-  available — that is no longer true. (Interop/conformance runs against specific
-  vendors are an external validation step, not a code gap.)
+  SAML 2.0 <strong>SP and IdP</strong>, SCIM 2.0 <strong>Users + Groups</strong>{" "}
+  (with PatchOp membership), and LDAP are live. Earlier docs implied SAML/SCIM
+  weren't available — that is no longer true. (Interop/conformance runs against
+  specific vendors are an external validation step, not a code gap.)
 </Callout>
 
 ## Capabilities
 
 <Cards>
-  <Card icon="LogIn" title="SAML SP — consume IdPs" href="/docs/enterprise/saml-sp">
-    Let customers sign in with their Okta / Entra ID / Google Workspace. SP registry,
-    metadata, AuthnRequest, ACS, JIT provisioning.
+  <Card
+    icon="LogIn"
+    title="SAML SP — consume IdPs"
+    href="/id/enterprise/saml-sp"
+  >
+    Let customers sign in with their Okta / Entra ID / Google Workspace. SP
+    registry, metadata, AuthnRequest, ACS, JIT provisioning.
   </Card>
-  <Card icon="LogOut" title="SAML IdP — be a source" href="/docs/enterprise/saml-idp">
-    Qeet ID acts as the IdP: register downstream SPs, publish IdP metadata, serve
-    SP-initiated and IdP-initiated SSO with RSA-SHA256 signed assertions.
+  <Card
+    icon="LogOut"
+    title="SAML IdP — be a source"
+    href="/id/enterprise/saml-idp"
+  >
+    Qeet ID acts as the IdP: register downstream SPs, publish IdP metadata,
+    serve SP-initiated and IdP-initiated SSO with RSA-SHA256 signed assertions.
   </Card>
-  <Card icon="RefreshCw" title="SCIM 2.0 — Users + Groups" href="/docs/enterprise/scim">
-    Okta/Entra-style provisioning + deprovisioning, PatchOp group membership, and
-    per-tenant bearer tokens.
+  <Card
+    icon="RefreshCw"
+    title="SCIM 2.0 — Users + Groups"
+    href="/id/enterprise/scim"
+  >
+    Okta/Entra-style provisioning + deprovisioning, PatchOp group membership,
+    and per-tenant bearer tokens.
   </Card>
-  <Card icon="Server" title="LDAP / AD" href="/docs/enterprise/ldap">
+  <Card icon="Server" title="LDAP / AD" href="/id/enterprise/ldap">
     Bind-based login plus connection CRUD and a test-bind endpoint.
   </Card>
 </Cards>
@@ -39,10 +51,10 @@ directories with SCIM, and binds to LDAP/AD.
 
 The distinction trips people up, so to be explicit:
 
-| You want… | Qeet ID role | Page |
-| --- | --- | --- |
-| Your customers' staff to log in with **their** IdP | **Service Provider** (SP) | [SAML SP](/docs/enterprise/saml-sp) |
-| Downstream apps to log in **with Qeet ID** as the IdP | **Identity Provider** (IdP) | [SAML IdP](/docs/enterprise/saml-idp) |
+| You want…                                             | Qeet ID role                | Page                                |
+| ----------------------------------------------------- | --------------------------- | ----------------------------------- |
+| Your customers' staff to log in with **their** IdP    | **Service Provider** (SP)   | [SAML SP](/id/enterprise/saml-sp)   |
+| Downstream apps to log in **with Qeet ID** as the IdP | **Identity Provider** (IdP) | [SAML IdP](/id/enterprise/saml-idp) |
 
 SAML assertions (IdP side) are signed RSA-SHA256 and validated against an independent
 SP library. All connections are **per tenant**, configurable via the admin dashboard's

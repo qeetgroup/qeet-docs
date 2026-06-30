@@ -11,32 +11,42 @@ LDAP, organizations) — in one binary, without paywalling SSO behind an "enterp
 tier.
 
 <Callout type="info" title="Status">
-  Qeet ID is pre-1.0 with a July 2026 GA target. The platform backend, admin/login
-  frontends, and SDKs are implemented and tested. A few items are external/ops
-  dependencies (KMS key material, deliverability domains, conformance runs) rather
-  than code gaps — those are flagged inline throughout the docs.
+  Qeet ID is pre-1.0 with a July 2026 GA target. The platform backend,
+  admin/login frontends, and SDKs are implemented and tested. A few items are
+  external/ops dependencies (KMS key material, deliverability domains,
+  conformance runs) rather than code gaps — those are flagged inline throughout
+  the docs.
 </Callout>
 
 ## What you can build
 
 <Cards>
-  <Card icon="FingerprintPattern" title="Authenticate users" href="/docs/authentication">
-    Password, magic links, passkeys/WebAuthn, and social login — configurable per tenant.
+  <Card
+    icon="FingerprintPattern"
+    title="Authenticate users"
+    href="/id/authentication"
+  >
+    Password, magic links, passkeys/WebAuthn, and social login — configurable
+    per tenant.
   </Card>
-  <Card icon="ShieldCheck" title="Add MFA & step-up" href="/docs/mfa">
-    TOTP, email/SMS OTP, WebAuthn as a second factor, and step-up on sensitive actions.
+  <Card icon="ShieldCheck" title="Add MFA & step-up" href="/id/mfa">
+    TOTP, email/SMS OTP, WebAuthn as a second factor, and step-up on sensitive
+    actions.
   </Card>
-  <Card icon="Building" title="Be an SSO provider" href="/docs/oidc">
+  <Card icon="Building" title="Be an SSO provider" href="/id/oidc">
     Stand up an OIDC and SAML IdP: hosted login, consent, device grant, M2M.
   </Card>
-  <Card icon="Network" title="Enterprise federation" href="/docs/enterprise">
-    Consume external IdPs (SAML SP), provision via SCIM Users + Groups, bind LDAP.
+  <Card icon="Network" title="Enterprise federation" href="/id/enterprise">
+    Consume external IdPs (SAML SP), provision via SCIM Users + Groups, bind
+    LDAP.
   </Card>
-  <Card icon="KeyRound" title="Authorize requests" href="/docs/authorization">
-    RBAC with a single-call <code>/check</code>, group roles, ABAC, and explainable authz.
+  <Card icon="KeyRound" title="Authorize requests" href="/id/authorization">
+    RBAC with a single-call <code>/check</code>, group roles, ABAC, and
+    explainable authz.
   </Card>
-  <Card icon="ScrollText" title="Prove what happened" href="/docs/platform/audit">
-    A SHA-256 hash-chained, append-only audit log with a <code>/verify</code> endpoint.
+  <Card icon="ScrollText" title="Prove what happened" href="/id/platform/audit">
+    A SHA-256 hash-chained, append-only audit log with a <code>/verify</code>{" "}
+    endpoint.
   </Card>
 </Cards>
 
@@ -60,23 +70,24 @@ tier.
   - **User access tokens** are **ES256 JWTs** verified against the public JWKS:
     `Authorization: Bearer <jwt>`.
 
-  API keys never go in the browser. The bearer scheme on user/service routes is for
-  the JWT, not the API key.
+API keys never go in the browser. The bearer scheme on user/service routes is for
+the JWT, not the API key.
+
 </Callout>
 
 ## Start here
 
 <Cards>
-  <Card icon="Zap" title="Quickstart" href="/docs/quickstart">
+  <Card icon="Zap" title="Quickstart" href="/id/quickstart">
     Install an SDK, init with an API key, and protect a route in minutes.
   </Card>
-  <Card icon="Compass" title="Core concepts" href="/docs/concepts">
+  <Card icon="Compass" title="Core concepts" href="/id/concepts">
     Tenants, users, sessions, principals, roles — the model everything sits on.
   </Card>
-  <Card icon="Code" title="API reference" href="/docs/api">
+  <Card icon="Code" title="API reference" href="/id/api">
     142 paths from the OpenAPI spec — auth schemes, errors, and pagination.
   </Card>
-  <Card icon="Package" title="SDKs" href="/docs/sdks">
+  <Card icon="Package" title="SDKs" href="/id/sdks">
     TypeScript, Next.js, React, Go, and Python — with JWKS session verification.
   </Card>
 </Cards>

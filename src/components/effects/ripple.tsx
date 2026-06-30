@@ -15,7 +15,13 @@ export function Ripple({
   ...props
 }: RippleProps) {
   return (
-    <div className={cn("pointer-events-none absolute inset-0 select-none", className)} {...props}>
+    <div
+      className={cn(
+        "pointer-events-none absolute inset-0 select-none",
+        className,
+      )}
+      {...props}
+    >
       {Array.from({ length: numCircles }, (_, i) => {
         const size = mainCircleSize + i * 70;
         const opacity = mainCircleOpacity - i * 0.03;
@@ -33,7 +39,8 @@ export function Ripple({
                 animationDelay: `${i * 0.06}s`,
                 borderStyle: "solid",
                 borderWidth: "1px",
-                borderColor: "color-mix(in oklab, var(--color-fd-foreground) 18%, transparent)",
+                borderColor:
+                  "color-mix(in oklab, var(--color-fd-foreground) 18%, transparent)",
                 top: "50%",
                 left: "50%",
                 transform: "translate(-50%, -50%) scale(1)",

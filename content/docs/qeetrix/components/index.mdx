@@ -1,0 +1,87 @@
+---
+title: Components
+description: The full @qeetrix/ui component catalog — ~114 React components plus blocks and brand assets, grouped by what they do.
+icon: Blocks
+---
+
+`@qeetrix/ui` ships **~114 components** built on shadcn + Base UI and themed by the Qeetrix
+tokens. Everything is exported from the package root, so one import gives you the whole
+library:
+
+```tsx
+import { Button, Dialog, DataTable, OTPInput, cn } from "@qeetrix/ui";
+```
+
+Components are also reachable through subpath exports (`@qeetrix/ui/components/*`,
+`@qeetrix/ui/hooks/*`, `@qeetrix/ui/lib/*`) if you prefer granular imports.
+
+<Callout type="info" title="Living surface">
+  This catalog mirrors the `@qeetrix/ui` export surface. For live, interactive
+  examples and full prop tables, run the Qeetrix workshop locally (`pnpm
+  --filter @qeetrix/docs storybook`, on `:6006`) — each component has a
+  Storybook story under its category.
+</Callout>
+
+## Categories
+
+<Cards>
+  <Card
+    icon="TextCursorInput"
+    title="Forms & inputs"
+    href="/qeetrix/components/forms-inputs"
+    description="Text, choice, pickers, and rich inputs built on a Field system."
+  />
+  <Card
+    icon="MousePointerClick"
+    title="Actions & navigation"
+    href="/qeetrix/components/actions-nav"
+    description="Buttons, menus, command palette, breadcrumbs, sidebar, and shells."
+  />
+  <Card
+    icon="Layers"
+    title="Overlays & disclosure"
+    href="/qeetrix/components/overlays"
+    description="Dialogs, sheets, popovers, tooltips, and collapsibles."
+  />
+  <Card
+    icon="Table"
+    title="Data display"
+    href="/qeetrix/components/data-display"
+    description="Tables, cards, avatars, timelines, code, and developer surfaces."
+  />
+  <Card
+    icon="BellRing"
+    title="Feedback & status"
+    href="/qeetrix/components/feedback-status"
+    description="Alerts, toasts, notifications, progress, and empty/loading states."
+  />
+  <Card
+    icon="ChartArea"
+    title="Charts"
+    href="/qeetrix/components/charts"
+    description="A Recharts-based charting layer with ready-made presets."
+  />
+  <Card
+    icon="Wrench"
+    title="Utilities & hooks"
+    href="/qeetrix/components/utilities-hooks"
+    description="Theme/direction providers, layout helpers, typography, and hooks."
+  />
+</Cards>
+
+## Beyond components
+
+<Cards>
+  <Card
+    icon="LayoutDashboard"
+    title="Blocks"
+    href="/qeetrix/blocks"
+    description="Six composed, multi-component patterns — auth, dashboard shell, and more."
+  />
+  <Card
+    icon="Sparkles"
+    title="Brand"
+    href="/qeetrix/brand"
+    description="Qeet logos and custom product icons."
+  />
+</Cards>

@@ -11,18 +11,18 @@ public **ES256 JWKS**. The web SDKs run the hosted-login OAuth flow for you.
 ## Available now
 
 <Cards>
-  <Card title="TypeScript & Next.js" href="/docs/sdks/typescript" icon="Braces">
+  <Card title="TypeScript & Next.js" href="/id/sdks/typescript" icon="Braces">
     <code>@qeetid/sdk</code> (server) + <code>@qeetid/nextjs</code> (App Router
     middleware, hosted-login flow, silent refresh).
   </Card>
-  <Card title="React" href="/docs/sdks/react" icon="Atom">
+  <Card title="React" href="/id/sdks/react" icon="Atom">
     <code>@qeetid/react</code> — <code>&lt;SignedIn&gt;</code> /
     <code>&lt;SignedOut&gt;</code>, <code>useUser()</code>, sign-in/out buttons.
   </Card>
-  <Card title="Go" href="/docs/sdks/go" icon="Cpu">
+  <Card title="Go" href="/id/sdks/go" icon="Cpu">
     <code>github.com/qeetgroup/qeetid-go</code> — stdlib-only server SDK.
   </Card>
-  <Card title="Python" href="/docs/sdks/python" icon="Cpu">
+  <Card title="Python" href="/id/sdks/python" icon="Cpu">
     <code>qeetid</code> on PyPI — httpx + local ES256 verification.
   </Card>
 </Cards>
@@ -38,18 +38,22 @@ public **ES256 JWKS**. The web SDKs run the hosted-login OAuth flow for you.
 
 ```ts title="the shape, across languages"
 const claims = await qeetid.sessions.verify(accessToken);
-const ok = await qeetid.can({ user: claims.userId, tenant: claims.tenantId!, permission: "billing:write" });
+const ok = await qeetid.can({
+  user: claims.userId,
+  tenant: claims.tenantId!,
+  permission: "billing:write",
+});
 ```
 
 <Callout type="warn" title="Server SDKs use ApiKey; never ship the key">
-  <code>@qeetid/sdk</code>, Go, and Python are <strong>server-side</strong> — they hold
-  a <code>qk_…</code> API key. For browsers, use <code>@qeetid/nextjs</code> +
-  <code>@qeetid/react</code>: the secret stays on the server and the session lives in an
-  encrypted HttpOnly cookie.
+  <code>@qeetid/sdk</code>, Go, and Python are <strong>server-side</strong> —
+  they hold a <code>qk_…</code> API key. For browsers, use{" "}
+  <code>@qeetid/nextjs</code> +<code>@qeetid/react</code>: the secret stays on
+  the server and the session lives in an encrypted HttpOnly cookie.
 </Callout>
 
 ## Planned
 
 Node-only (CommonJS), Rust, and React Native SDKs are **planned** and not yet shipped.
 Until then, use `@qeetid/sdk` (it runs on Node ≥18, Bun, Deno, and edge runtimes via
-Web Crypto) or call the [REST API](/docs/api) directly.
+Web Crypto) or call the [REST API](/id/api) directly.

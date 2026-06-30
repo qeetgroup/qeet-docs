@@ -16,12 +16,12 @@ gates sensitive actions behind a recent verification.
 
 ## Factors
 
-| Factor | Endpoints | Notes |
-| --- | --- | --- |
-| **TOTP** (RFC 6238) | `/v1/mfa/totp/*` | 6-digit authenticator codes; enroll → confirm → verify. |
-| **Recovery codes** | `/v1/mfa/recovery-codes*` | bcrypt-hashed single-use codes; regenerable. |
-| **Email / SMS OTP** | `/v1/mfa/otp/factors*` | Per-factor challenge + confirm via real senders. |
-| **WebAuthn 2FA** | `/v1/mfa/webauthn/*` | Reuses the user's registered passkeys as a second factor. |
+| Factor              | Endpoints                 | Notes                                                     |
+| ------------------- | ------------------------- | --------------------------------------------------------- |
+| **TOTP** (RFC 6238) | `/v1/mfa/totp/*`          | 6-digit authenticator codes; enroll → confirm → verify.   |
+| **Recovery codes**  | `/v1/mfa/recovery-codes*` | bcrypt-hashed single-use codes; regenerable.              |
+| **Email / SMS OTP** | `/v1/mfa/otp/factors*`    | Per-factor challenge + confirm via real senders.          |
+| **WebAuthn 2FA**    | `/v1/mfa/webauthn/*`      | Reuses the user's registered passkeys as a second factor. |
 
 ## TOTP
 
@@ -61,21 +61,46 @@ Remove TOTP with `DELETE /v1/mfa/totp` (this is a sensitive action — see
 Issued at enrollment, single-use, bcrypt-hashed. Users can regenerate the set
 (another step-up-gated action).
 
-<APIEndpoint method="GET" path="/v1/mfa/recovery-codes" title="List remaining recovery codes" />
-<APIEndpoint method="POST" path="/v1/mfa/recovery-codes/regenerate" title="Regenerate the set" />
+<APIEndpoint
+  method="GET"
+  path="/v1/mfa/recovery-codes"
+  title="List remaining recovery codes"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/mfa/recovery-codes/regenerate"
+  title="Regenerate the set"
+/>
 
 ## Email / SMS OTP factors
 
 Register a contact factor, then challenge + confirm it as a second step.
 
-<APIEndpoint method="POST" path="/v1/mfa/otp/factors" title="Register an OTP factor (email/SMS)" />
-<APIEndpoint method="POST" path="/v1/mfa/otp/factors/{id}/challenge" title="Send a code" />
-<APIEndpoint method="POST" path="/v1/mfa/otp/factors/{id}/confirm" title="Confirm enrollment" />
-<APIEndpoint method="POST" path="/v1/mfa/otp/verify" title="Verify an OTP at sign-in" />
+<APIEndpoint
+  method="POST"
+  path="/v1/mfa/otp/factors"
+  title="Register an OTP factor (email/SMS)"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/mfa/otp/factors/{id}/challenge"
+  title="Send a code"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/mfa/otp/factors/{id}/confirm"
+  title="Confirm enrollment"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/mfa/otp/verify"
+  title="Verify an OTP at sign-in"
+/>
 
 <Callout type="warn" title="SMS is lower assurance">
-  Prefer TOTP or WebAuthn as the primary second factor; SMS is vulnerable to SIM-swap.
-  SMS/email delivery also depends on a configured sending domain / Twilio account.
+  Prefer TOTP or WebAuthn as the primary second factor; SMS is vulnerable to
+  SIM-swap. SMS/email delivery also depends on a configured sending domain /
+  Twilio account.
 </Callout>
 
 ## WebAuthn as a second factor
@@ -84,8 +109,16 @@ Step-up with a registered passkey. Unlike passwordless login, this **asserts the
 known user** and issues no new token — it only proves presence to refresh the MFA
 window.
 
-<APIEndpoint method="POST" path="/v1/mfa/webauthn/challenge" title="Get assertion options" />
-<APIEndpoint method="POST" path="/v1/mfa/webauthn/verify" title="Verify the assertion" />
+<APIEndpoint
+  method="POST"
+  path="/v1/mfa/webauthn/challenge"
+  title="Get assertion options"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/mfa/webauthn/verify"
+  title="Verify the assertion"
+/>
 
 ## Step-up MFA
 
@@ -95,7 +128,11 @@ regenerating recovery codes) and returns an MFA challenge if the window has laps
 
 Check whether the user currently satisfies the window:
 
-<APIEndpoint method="GET" path="/v1/mfa/step-up/status" title="Is a recent MFA present?" />
+<APIEndpoint
+  method="GET"
+  path="/v1/mfa/step-up/status"
+  title="Is a recent MFA present?"
+/>
 
 ```bash
 curl https://api.id.qeet.in/v1/mfa/step-up/status \
@@ -104,7 +141,7 @@ curl https://api.id.qeet.in/v1/mfa/step-up/status \
 ```
 
 <Callout type="info">
-  The pattern: call <code>step-up/status</code> before a sensitive action; if not
-  recent, run any factor's verify endpoint to refresh the window, then retry. The
-  server enforces this independently — clients can't bypass it.
+  The pattern: call <code>step-up/status</code> before a sensitive action; if
+  not recent, run any factor's verify endpoint to refresh the window, then
+  retry. The server enforces this independently — clients can't bypass it.
 </Callout>

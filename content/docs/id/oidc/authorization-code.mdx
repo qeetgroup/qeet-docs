@@ -30,6 +30,7 @@ GET /v1/oauth/authorize
   &code_challenge=<base64url(sha256(verifier))>
   &code_challenge_method=S256
 ```
+
 </Step>
 
 <Step>
@@ -45,6 +46,7 @@ back internally:
 ### Callback with the code
 
 Qeet ID redirects to your `redirect_uri` with `code` and `state`. Validate `state`.
+
 </Step>
 
 <Step>
@@ -52,7 +54,11 @@ Qeet ID redirects to your `redirect_uri` with `code` and `state`. Validate `stat
 
 Your server exchanges the code (plus the PKCE `code_verifier`) at the token endpoint.
 
-<APIEndpoint method="POST" path="/v1/oauth/token-code" title="Exchange authorization_code" />
+<APIEndpoint
+  method="POST"
+  path="/v1/oauth/token-code"
+  title="Exchange authorization_code"
+/>
 
 ```bash
 curl -X POST https://api.id.qeet.in/v1/oauth/token-code \
@@ -63,18 +69,19 @@ curl -X POST https://api.id.qeet.in/v1/oauth/token-code \
   -d client_id=$CLIENT_ID \
   -d code_verifier=$VERIFIER
 ```
+
 </Step>
 
 </Steps>
 
 The response is an OAuth token response with `access_token`, `id_token` (ES256), and
-`refresh_token`. See [Tokens](/docs/oidc/tokens) for the shape, userinfo, refresh
+`refresh_token`. See [Tokens](/id/oidc/tokens) for the shape, userinfo, refresh
 rotation, introspection, and revocation.
 
 <Callout type="tip" title="Let the SDK do it">
-  <code>@qeetid/nextjs</code> runs this entire flow — PKCE, hosted login, callback,
-  code exchange, encrypted cookie, and silent refresh — from a single route handler.
-  See [SDKs → TypeScript & Next.js](/docs/sdks/typescript).
+  <code>@qeetid/nextjs</code> runs this entire flow — PKCE, hosted login,
+  callback, code exchange, encrypted cookie, and silent refresh — from a single
+  route handler. See [SDKs → TypeScript & Next.js](/id/sdks/typescript).
 </Callout>
 
 ## Hosted login context
@@ -82,4 +89,8 @@ rotation, introspection, and revocation.
 The hosted-login UI fetches the pending request's client and scope info to render the
 right screen:
 
-<APIEndpoint method="GET" path="/v1/oauth/login-context" title="Pending authorize context" />
+<APIEndpoint
+  method="GET"
+  path="/v1/oauth/login-context"
+  title="Pending authorize context"
+/>

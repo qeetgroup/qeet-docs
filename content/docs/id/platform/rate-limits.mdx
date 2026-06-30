@@ -15,7 +15,7 @@ headers are applied alongside.
   share one ceiling.
 - **Keyed** by IP, tenant, user, and API key, so abuse on one dimension doesn't
   starve others.
-- **Layered** with per-account [lockout](/docs/sessions#account-lockout) on auth
+- **Layered** with per-account [lockout](/id/sessions#account-lockout) on auth
   endpoints to blunt credential stuffing.
 
 ## The 429 response
@@ -38,7 +38,7 @@ Retry-After: 27
 ```
 
 Honor `Retry-After` and back off. The SDKs do this automatically — `429` (and `5xx`
-on idempotent calls) are retried with backoff. See [API → Errors](/docs/api/errors).
+on idempotent calls) are retried with backoff. See [API → Errors](/id/api/errors).
 
 ## CSRF & security headers
 

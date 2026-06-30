@@ -3,7 +3,7 @@ title: Tokens, userinfo, introspect & revoke
 description: ID tokens (ES256), the userinfo endpoint, refresh-token rotation, RFC 7662 introspection, and RFC 7009 revocation.
 ---
 
-After [Authorization Code + PKCE](/docs/oidc/authorization-code), the token endpoint
+After [Authorization Code + PKCE](/id/oidc/authorization-code), the token endpoint
 returns an OAuth token response. This page covers the token shape, userinfo, refresh
 rotation, introspection, and revocation.
 
@@ -21,13 +21,17 @@ rotation, introspection, and revocation.
 ```
 
 - **`id_token`** — an OIDC ID token signed with **ES256**. Verify it against the
-  [JWKS](/docs/oidc#discovery--keys).
+  [JWKS](/id/oidc#discovery--keys).
 - **`access_token`** — present it as `Authorization: Bearer <token>` to userinfo and
   your resource servers.
 
 ## Userinfo
 
-<APIEndpoint method="GET" path="/v1/oauth/userinfo" title="OIDC userinfo claims" />
+<APIEndpoint
+  method="GET"
+  path="/v1/oauth/userinfo"
+  title="OIDC userinfo claims"
+/>
 
 ```bash
 curl https://api.id.qeet.in/v1/oauth/userinfo \
@@ -39,9 +43,13 @@ curl https://api.id.qeet.in/v1/oauth/userinfo \
 
 Exchange a refresh token for a fresh pair at the same token endpoint. Refresh tokens
 **rotate** — the old one is invalidated, and replaying a rotated token revokes the
-chain (see [Sessions → theft detection](/docs/sessions#refresh-token-rotation--theft-detection)).
+chain (see [Sessions → theft detection](/id/sessions#refresh-token-rotation--theft-detection)).
 
-<APIEndpoint method="POST" path="/v1/oauth/token-code" title="grant_type=refresh_token" />
+<APIEndpoint
+  method="POST"
+  path="/v1/oauth/token-code"
+  title="grant_type=refresh_token"
+/>
 
 ```bash
 curl -X POST https://api.id.qeet.in/v1/oauth/token-code \
@@ -55,7 +63,11 @@ curl -X POST https://api.id.qeet.in/v1/oauth/token-code \
 
 Resource servers can ask whether a token is active and get its metadata.
 
-<APIEndpoint method="POST" path="/oauth/introspect" title="Introspect a token" />
+<APIEndpoint
+  method="POST"
+  path="/oauth/introspect"
+  title="Introspect a token"
+/>
 
 ```bash
 curl -X POST https://api.id.qeet.in/oauth/introspect \
@@ -78,6 +90,6 @@ curl -X POST https://api.id.qeet.in/oauth/revoke \
 
 <Callout type="info">
   Introspection and revocation use the same client authentication as the token
-  endpoint (form params or HTTP Basic). For full session sign-out across the IdP, use
-  [RP-initiated logout](/docs/oidc/logout).
+  endpoint (form params or HTTP Basic). For full session sign-out across the
+  IdP, use [RP-initiated logout](/id/oidc/logout).
 </Callout>

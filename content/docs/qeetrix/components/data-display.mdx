@@ -1,0 +1,127 @@
+---
+title: Data display
+description: Tables, cards, avatars, badges, timelines, developer surfaces, and collaboration components from @qeetrix/ui.
+icon: Table
+---
+
+```tsx
+import { DataTable, Card, Avatar, Timeline, CodeBlock } from "@qeetrix/ui";
+```
+
+## Tables & lists
+
+### Table
+
+The primitive table set: `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`,
+`TableHead`, `TableCell`, `TableCaption`.
+
+### DataTable
+
+A batteries-included data grid (built on TanStack Table). Re-exports `createColumnHelper` and
+the `ColumnDef` / `Row` types. Props via `DataTableProps`.
+
+### DescriptionList
+
+Key/value display: `DescriptionList`, `DescriptionTerm`, `DescriptionDetails`.
+
+### Tabs
+
+Tabbed sections: `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`.
+
+### MasterDetail
+
+A list + detail split layout. Props via `MasterDetailProps`.
+
+### TreeView
+
+A hierarchical tree. Types: `TreeNode`, `TreeViewProps`.
+
+### OrgChart
+
+An organization chart. Types: `OrgNode`, `OrgChartProps`.
+
+### Feed
+
+An activity/event feed. Props via `FeedProps`.
+
+### Carousel
+
+A slide carousel: `Carousel`, `CarouselContent`, `CarouselItem`, `CarouselPrevious`,
+`CarouselNext`, with `useCarousel` and the `CarouselApi` type.
+
+### Calendar
+
+A month calendar surface for date display and selection.
+
+## Identity & status
+
+### Card
+
+A content container: `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardAction`,
+`CardContent`, `CardFooter`.
+
+### Avatar
+
+`Avatar` with `AvatarImage`, `AvatarFallback`, `AvatarBadge`, `AvatarGroup`, `AvatarGroupCount`.
+
+### Badge
+
+A small label; ships `badgeVariants`.
+
+### Chip
+
+A removable/selectable chip: `Chip`, `ChipGroup` (with `chipVariants`). Types: `ChipProps`,
+`ChipGroupProps`.
+
+### StatusPill
+
+A status indicator pill. Types: `StatusKind`, `StatusPillProps`.
+
+### Stat
+
+A KPI/metric tile with trend delta (`statDeltaVariants`). Types: `StatProps`, `StatTrend`.
+
+### Timeline
+
+A vertical timeline: `Timeline`, `TimelineItem`, `TimelineIndicator`, `TimelineContent`,
+`TimelineTitle`, `TimelineDescription`, `TimelineTime`.
+
+## Developer surfaces
+
+### CodeBlock
+
+Syntax-highlighted code with copy. Types: `CodeBlockProps`, `CodeLanguage`.
+
+### JSONTree
+
+A collapsible JSON viewer — handy for API consoles and audit views. Props via `JSONTreeProps`.
+
+### DiffViewer
+
+A side-by-side / inline diff renderer. Props via `DiffViewerProps`.
+
+### CopyableSecret
+
+A masked, click-to-copy secret display (API keys, tokens). Props via `CopyableSecretProps`.
+
+### Blockquote
+
+A styled quotation; ships `blockquoteVariants`. Props via `BlockquoteProps`.
+
+## Files & collaboration
+
+### FileCard
+
+A file preview card. Props via `FileCardProps`.
+
+### FileTypeIcon
+
+A file-type glyph by MIME/extension. Props via `FileTypeIconProps`.
+
+### CommentThread
+
+A nested comment thread. Types: `CommentNode`, `CommentAuthor`, `CommentThreadProps`.
+
+### ReactionBar
+
+An emoji reaction bar. Types: `Reaction`, `ReactionBarProps`.

@@ -12,16 +12,32 @@ user on first login.
 
 Each external IdP is a **per-tenant** SAML connection.
 
-<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/saml" title="Create an external-IdP SAML connection" />
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/saml" title="List connections" />
-<APIEndpoint method="PUT" path="/v1/tenants/{tenantID}/saml/{id}" title="Update a connection" />
+<APIEndpoint
+  method="POST"
+  path="/v1/tenants/{tenantID}/saml"
+  title="Create an external-IdP SAML connection"
+/>
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/saml"
+  title="List connections"
+/>
+<APIEndpoint
+  method="PUT"
+  path="/v1/tenants/{tenantID}/saml/{id}"
+  title="Update a connection"
+/>
 
 ## SP metadata
 
 Hand your customer's IdP admin the per-connection SP metadata XML (entity ID, ACS URL,
 certificate) so they can configure their side.
 
-<APIEndpoint method="GET" path="/saml/metadata/{id}" title="SP metadata XML for a connection" />
+<APIEndpoint
+  method="GET"
+  path="/saml/metadata/{id}"
+  title="SP metadata XML for a connection"
+/>
 
 ## Sign-in flow
 
@@ -58,10 +74,11 @@ Your app exchanges the one-time SAML login code for a standard token pair.
 ## JIT provisioning
 
 On a first successful assertion, Qeet ID creates the user (if needed) and records a
-SAML external identity, mapped to the tenant. Combine with [SCIM](/docs/enterprise/scim)
+SAML external identity, mapped to the tenant. Combine with [SCIM](/id/enterprise/scim)
 to keep users and group membership in sync over time (and to deprovision on offboard).
 
 <Callout type="info">
-  Assertion signatures are validated against an independent SP implementation. Clock
-  skew on the IdP is the most common cause of validation failures — keep NTP in sync.
+  Assertion signatures are validated against an independent SP implementation.
+  Clock skew on the IdP is the most common cause of validation failures — keep
+  NTP in sync.
 </Callout>

@@ -10,7 +10,11 @@ hashes transparently.
 
 ## Create an account
 
-<APIEndpoint method="POST" path="/v1/auth/signup" title="Sign up with email + password" />
+<APIEndpoint
+  method="POST"
+  path="/v1/auth/signup"
+  title="Sign up with email + password"
+/>
 
 ```bash title="terminal"
 curl -X POST https://api.id.qeet.in/v1/auth/signup \
@@ -19,28 +23,44 @@ curl -X POST https://api.id.qeet.in/v1/auth/signup \
 ```
 
 Email is **globally unique**. A successful signup issues a token pair (see
-[Sessions](/docs/sessions)).
+[Sessions](/id/sessions)).
 
 <Callout type="tip" title="Reject breached passwords">
-  Enable breached-password rejection in the tenant
-  [auth policy](/docs/authentication#per-tenant-auth-policy). Qeet ID checks the
-  password against HaveIBeenPwned using **k-anonymity** (only a hash prefix leaves
-  your infrastructure) and fails open if the service is unreachable.
+  Enable breached-password rejection in the tenant [auth
+  policy](/id/authentication#per-tenant-auth-policy). Qeet ID checks the
+  password against HaveIBeenPwned using **k-anonymity** (only a hash prefix
+  leaves your infrastructure) and fails open if the service is unreachable.
 </Callout>
 
 ## Verify email & phone
 
 Verification uses single-use, TTL-bound 6-digit OTPs.
 
-<APIEndpoint method="POST" path="/v1/users/{id}/verify/email/start" title="Send email OTP" />
-<APIEndpoint method="POST" path="/v1/users/{id}/verify/email/confirm" title="Confirm email OTP" />
-<APIEndpoint method="POST" path="/v1/users/{id}/verify/phone/start" title="Send SMS OTP" />
-<APIEndpoint method="POST" path="/v1/users/{id}/verify/phone/confirm" title="Confirm phone OTP" />
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/verify/email/start"
+  title="Send email OTP"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/verify/email/confirm"
+  title="Confirm email OTP"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/verify/phone/start"
+  title="Send SMS OTP"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/verify/phone/confirm"
+  title="Confirm phone OTP"
+/>
 
 <Callout type="warn" title="Deliverability is an ops dependency">
-  SMTP and Twilio senders are wired in code. Production email/SMS delivery needs a
-  sending domain with SPF/DKIM/DMARC (and bounce/complaint handling) configured for
-  your deployment.
+  SMTP and Twilio senders are wired in code. Production email/SMS delivery needs
+  a sending domain with SPF/DKIM/DMARC (and bounce/complaint handling)
+  configured for your deployment.
 </Callout>
 
 ## Password reset
@@ -48,8 +68,16 @@ Verification uses single-use, TTL-bound 6-digit OTPs.
 Reset is **enumeration-safe**: starting a reset always returns `202`, whether or not
 the email exists. Completing a reset **revokes all of the user's sessions**.
 
-<APIEndpoint method="POST" path="/v1/auth/forgot-password" title="Start reset (always 202)" />
-<APIEndpoint method="POST" path="/v1/auth/reset-password" title="Complete reset" />
+<APIEndpoint
+  method="POST"
+  path="/v1/auth/forgot-password"
+  title="Start reset (always 202)"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/auth/reset-password"
+  title="Complete reset"
+/>
 
 ```bash
 curl -X POST https://api.id.qeet.in/v1/auth/forgot-password \
@@ -72,9 +100,20 @@ Admins manage users directly, including set-password and soft-delete with a recy
 bin (restore / purge).
 
 <APIEndpoint method="POST" path="/v1/users" title="Create a user" />
-<APIEndpoint method="PUT" path="/v1/users/{id}/password" title="Set a user's password" />
-<APIEndpoint method="POST" path="/v1/users/{id}/restore" title="Restore a soft-deleted user" />
+<APIEndpoint
+  method="PUT"
+  path="/v1/users/{id}/password"
+  title="Set a user's password"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/restore"
+  title="Restore a soft-deleted user"
+/>
 
 ```ts
-const user = await qeetid.users.create({ email: "alex@acme.com", display_name: "Alex Chen" });
+const user = await qeetid.users.create({
+  email: "alex@acme.com",
+  display_name: "Alex Chen",
+});
 ```

@@ -9,7 +9,11 @@ access JWT** your services verify offline.
 
 ## Log in
 
-<APIEndpoint method="POST" path="/v1/auth/login" title="Password login → token pair" />
+<APIEndpoint
+  method="POST"
+  path="/v1/auth/login"
+  title="Password login → token pair"
+/>
 
 ```bash title="terminal"
 curl -X POST https://api.id.qeet.in/v1/auth/login \
@@ -31,7 +35,8 @@ curl -X POST https://api.id.qeet.in/v1/auth/login \
 
 <Callout type="info" title="MFA-gated accounts">
   If the tenant or user requires MFA, complete the appropriate factor before the
-  session is fully privileged. See [MFA](/docs/mfa) for the factor and step-up flows.
+  session is fully privileged. See [MFA](/id/mfa) for the factor and step-up
+  flows.
 </Callout>
 
 ## Verify the access token on your server
@@ -60,33 +65,34 @@ claims = qeetid.sessions.verify(access_token)
 </Tabs>
 
 <Callout type="warn" title="Bearer = the JWT, not the API key">
-  User access tokens use <code>Authorization: Bearer &lt;jwt&gt;</code>. Server-side
-  API keys use <code>Authorization: ApiKey qk_…</code>. They are different schemes —
-  don't put an API key behind <code>Bearer</code> or vice versa.
+  User access tokens use <code>Authorization: Bearer &lt;jwt&gt;</code>.
+  Server-side API keys use <code>Authorization: ApiKey qk_…</code>. They are
+  different schemes — don't put an API key behind <code>Bearer</code> or vice
+  versa.
 </Callout>
 
 ## Failure modes
 
-| Failure | HTTP | Notes |
-| --- | --- | --- |
-| Wrong email/password | `401` | Generic — never reveal which field. |
-| Too many attempts | `429` | Per-account lockout + IP rate limit kicked in. See [Sessions → Lockout](/docs/sessions#account-lockout). |
-| Validation error | `422` | Malformed body. |
+| Failure              | HTTP  | Notes                                                                                                  |
+| -------------------- | ----- | ------------------------------------------------------------------------------------------------------ |
+| Wrong email/password | `401` | Generic — never reveal which field.                                                                    |
+| Too many attempts    | `429` | Per-account lockout + IP rate limit kicked in. See [Sessions → Lockout](/id/sessions#account-lockout). |
+| Validation error     | `422` | Malformed body.                                                                                        |
 
 The error body always follows the `{ "error": { "code", "message" } }` envelope —
-see [API → Errors](/docs/api/errors).
+see [API → Errors](/id/api/errors).
 
 ## Hosted login
 
 To avoid building login UI at all, run the OAuth Authorization Code + PKCE flow
 against Qeet ID's hosted login with `@qeetid/nextjs`. The SDK handles the token pair,
 stores an encrypted HttpOnly cookie, and refreshes silently. See
-[SDKs → TypeScript & Next.js](/docs/sdks/typescript).
+[SDKs → TypeScript & Next.js](/id/sdks/typescript).
 
 ## Next
 
 <Cards>
-  <Card title="Sign-up & passwords" href="/docs/authentication/sign-up" />
-  <Card title="Passkeys" href="/docs/authentication/passkeys" />
-  <Card title="Sessions" href="/docs/sessions" />
+  <Card title="Sign-up & passwords" href="/id/authentication/sign-up" />
+  <Card title="Passkeys" href="/id/authentication/passkeys" />
+  <Card title="Sessions" href="/id/sessions" />
 </Cards>

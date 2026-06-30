@@ -1,0 +1,66 @@
+---
+title: Concepts
+description: The core model behind Qeet Notify — events, subscribers, templates, channels, workflows, preferences, and tenancy.
+icon: Compass
+---
+
+<Callout type="info" title="In active development">
+  Qeet Notify has an early implementation. The model below reflects the bounded
+  contexts that exist in code today; the public API exposed so far is small (see
+  [API](/notify/api)) and will grow.
+</Callout>
+
+Qeet Notify turns a single **event** into the right messages, on the right channels, for
+the right person — while honoring their preferences and your compliance obligations. These
+are the primitives you work with.
+
+## Events
+
+An **event** is the unit you send: a name plus a payload, tied to a subscriber.
+
+```json
+{ "event": "user.welcome", "subscriber_id": "…", "payload": { "name": "Asha" } }
+```
+
+You fire events at the API; everything downstream — channel selection, templating,
+delivery, retries — is the platform's job. See [API](/notify/api).
+
+## Subscribers
+
+A **subscriber** is a recipient. Subscribers are federated from [Qeet ID](/id): the
+`subscribers/federation` context syncs Qeet ID user events into Notify, so a user in your
+identity platform is a subscriber here without a separate sync job.
+
+## Templates
+
+Messages are rendered from **versioned templates** (Handlebars), with per-channel variants
+and locale support. The payload from the event fills the template variables.
+
+## Channels
+
+A **channel** is a delivery medium — **email, SMS, WhatsApp, in-app, or outbound webhook**.
+Each channel has provider implementations and a dedicated worker. See [Channels](/notify/channels).
+
+## Workflows
+
+A **workflow** is a DAG that decides what happens when an event fires: `trigger → channel
+step → delay step → condition branch`. The workflow engine consumes events from NATS and
+executes the graph. Digests, channel fallback, and a visual editor are planned (see the
+[roadmap](/notify/roadmap)).
+
+## Preferences & suppression
+
+Every subscriber has a **preference matrix** (category × channel opt-in/out). The
+`subscribers/preferences` context enforces it on every send and handles **DPDP erasure**.
+A hosted, embeddable preference center is on the roadmap.
+
+## Compliance
+
+For India, the `compliance/dlt` context enforces **TRAI DLT** rules — every outbound SMS
+must match a registered template, and promotional messages respect the 10:00–21:00 IST window.
+
+## Tenancy
+
+Notify is **multi-tenant** by default. Requests authenticate with an `X-Qeet-Api-Key`
+header that resolves to a `tenant_id`, which is enforced at the database layer with
+row-level security. PII (email, phone) is encrypted at rest.

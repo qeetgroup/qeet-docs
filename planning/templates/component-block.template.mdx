@@ -1,0 +1,25 @@
+<!--
+  The repeated per-component block used inside qeetrix category pages
+  (content/docs/qeetrix/components/*.mdx). One block per exported component.
+  Maintained by the `component-catalog-sync` agent. Source of truth for which
+  components exist = ../qeetrix/packages/ui/src/index.ts.
+-->
+
+### {{ComponentName}}
+
+{{One-line purpose — what it's for, in plain language.}}
+
+```tsx
+import { {{ComponentName}} } from "@qeetrix/ui";
+```
+
+{{If the component has sub-parts, list them: e.g. `Avatar`, `AvatarImage`,
+`AvatarFallback`, `AvatarGroup`. Pull the exact names from index.ts.}}
+
+```tsx
+<{{ComponentName}} {{key props}}>
+  {{minimal usage}}
+</{{ComponentName}}>
+```
+
+[View in Storybook →]({{storybook-url}}/?path=/docs/primitives-{{kebab-name}}--docs)

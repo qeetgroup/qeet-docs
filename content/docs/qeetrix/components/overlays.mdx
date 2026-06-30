@@ -1,0 +1,61 @@
+---
+title: Overlays & disclosure
+description: Dialogs, alert dialogs, sheets, drawers, popovers, tooltips, hover cards, accordions, and collapsibles from @qeetrix/ui.
+icon: Layers
+---
+
+```tsx
+import { Dialog, Sheet, Popover, Tooltip, Accordion } from "@qeetrix/ui";
+```
+
+## Modal surfaces
+
+### Dialog
+
+A modal dialog: `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`,
+`DialogDescription`, `DialogFooter`, `DialogClose`.
+
+### AlertDialog
+
+A confirmation dialog with required actions: `AlertDialogAction`, `AlertDialogCancel`, and the
+matching content/header/footer parts.
+
+### Sheet
+
+An edge-anchored panel (top/right/bottom/left): `Sheet`, `SheetTrigger`, `SheetContent`,
+`SheetHeader`, `SheetTitle`, `SheetDescription`, `SheetFooter`, `SheetClose`.
+
+### Drawer
+
+A draggable bottom/side drawer with the same part vocabulary as `Sheet`.
+
+### FloatingWindow
+
+A movable, resizable floating window; ships a `useFloatingWindow` hook. Props via
+`FloatingWindowProps`.
+
+## Anchored surfaces
+
+### Popover
+
+A trigger-anchored popover: `Popover`, `PopoverTrigger`, `PopoverContent`, `PopoverTitle`,
+`PopoverDescription`, `PopoverClose`.
+
+### Tooltip
+
+A hover/focus tooltip: `Tooltip`, `TooltipTrigger`, `TooltipContent`, and the
+`TooltipProvider` you mount once near the app root.
+
+### HoverCard
+
+A richer hover preview card: `HoverCard`, `HoverCardTrigger`, `HoverCardContent`.
+
+## Disclosure
+
+### Accordion
+
+Expandable sections: `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent`.
+
+### Collapsible
+
+A single show/hide region: `Collapsible`, `CollapsibleTrigger`, `CollapsibleContent`.

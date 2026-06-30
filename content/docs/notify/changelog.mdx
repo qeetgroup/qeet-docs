@@ -1,0 +1,31 @@
+---
+title: Changelog
+description: What's landed in Qeet Notify so far — honest milestones drawn from the implementation, not release tags.
+icon: Package
+---
+
+Qeet Notify is **in active development**. This changelog tracks what's actually
+implemented today; the public API surface is early and will grow. Dates are
+approximate milestone markers.
+
+<Callout type="info" title="In active development">
+  Only capabilities backed by code are listed here. Planned channels and
+  workflow features live on the [roadmap](/notify/roadmap) until they ship.
+</Callout>
+
+## Foundation (in progress)
+
+- **Event ingestion API** — `POST /v1/events` accepts a notification event; `/healthz`
+  for liveness. See [API](/notify/api).
+- **Multi-tenant core** — `tenant_id` is first-class across the data model.
+- **Provider layer** — a pluggable channel-provider abstraction (the engine behind
+  email/SMS/WhatsApp delivery as providers are wired in). See [Channels](/notify/channels).
+- **Workflows, subscribers & templates** — domain models for orchestration, recipients,
+  and message templates are in place. See [Concepts](/notify/concepts).
+- **Service topology** — server, worker, scheduler, workflow, analytics, and migrate
+  binaries. See [Architecture](/notify/architecture).
+
+## Not yet shipped
+
+- Full multi-channel fan-out (push/RCS), digests and fallback, the hosted preference
+  center, and India DLT/DND compliance automation — all on the [roadmap](/notify/roadmap).

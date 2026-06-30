@@ -3,5 +3,12 @@
   "description": "Log management — privacy-first, identity-aware observability",
   "icon": "ScrollText",
   "root": true,
-  "pages": ["index"]
+  "pages": [
+    "index",
+    "concepts",
+    "---Plan---",
+    "roadmap",
+    "---Updates---",
+    "changelog"
+  ]
 }

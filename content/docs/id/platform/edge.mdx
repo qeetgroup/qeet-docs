@@ -23,8 +23,8 @@ export default qeetidMiddleware({ publicRoutes: ["/", "/pricing"] });
 
 <Callout type="tip" title="Stateless reads, stateful revocation">
   Verifying a JWT offline is fast and global. For instant revocation, check the
-  server-side session (or short token lifetimes + refresh rotation). Pick the trade-off
-  per route.
+  server-side session (or short token lifetimes + refresh rotation). Pick the
+  trade-off per route.
 </Callout>
 
 ## Deploying Qeet ID
@@ -46,7 +46,8 @@ helm install qeetid ./charts/qeetid -f values.prod.yaml
 <APIEndpoint method="GET" path="/readyz" title="Readiness (DB ping)" />
 
 <Callout type="warn" title="Boot-gate in production">
-  Qeet ID refuses to start with insecure defaults (weak JWT secret, CSRF disabled,
-  dev-trust headers, missing allowed origins/keys). Configure secrets before deploying —
-  see [Secrets vault](/docs/platform/secrets) and [Observability](/docs/platform/observability).
+  Qeet ID refuses to start with insecure defaults (weak JWT secret, CSRF
+  disabled, dev-trust headers, missing allowed origins/keys). Configure secrets
+  before deploying — see [Secrets vault](/id/platform/secrets) and
+  [Observability](/id/platform/observability).
 </Callout>

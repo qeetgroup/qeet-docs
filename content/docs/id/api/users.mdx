@@ -25,7 +25,11 @@ Email is **globally unique**; a duplicate returns `409`.
 
 ## List users
 
-<APIEndpoint method="GET" path="/v1/users" title="List users (cursor paginated)" />
+<APIEndpoint
+  method="GET"
+  path="/v1/users"
+  title="List users (cursor paginated)"
+/>
 
 ```bash
 curl 'https://api.id.qeet.in/v1/users?limit=50' \
@@ -33,7 +37,7 @@ curl 'https://api.id.qeet.in/v1/users?limit=50' \
 # → { "items": [ … ], "next_cursor": "…" }
 ```
 
-See [Pagination](/docs/api/pagination) for the cursor loop.
+See [Pagination](/id/api/pagination) for the cursor loop.
 
 ## Update a user
 
@@ -41,14 +45,34 @@ See [Pagination](/docs/api/pagination) for the cursor loop.
 
 ## Set a password
 
-<APIEndpoint method="PUT" path="/v1/users/{id}/password" title="Set a user's password" />
+<APIEndpoint
+  method="PUT"
+  path="/v1/users/{id}/password"
+  title="Set a user's password"
+/>
 
 ## Verification
 
-<APIEndpoint method="POST" path="/v1/users/{id}/verify/email/start" title="Send email OTP" />
-<APIEndpoint method="POST" path="/v1/users/{id}/verify/email/confirm" title="Confirm email OTP" />
-<APIEndpoint method="POST" path="/v1/users/{id}/verify/phone/start" title="Send SMS OTP" />
-<APIEndpoint method="POST" path="/v1/users/{id}/verify/phone/confirm" title="Confirm phone OTP" />
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/verify/email/start"
+  title="Send email OTP"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/verify/email/confirm"
+  title="Confirm email OTP"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/verify/phone/start"
+  title="Send SMS OTP"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/verify/phone/confirm"
+  title="Confirm phone OTP"
+/>
 
 ## Soft-delete & recycle bin
 
@@ -56,17 +80,33 @@ Deleting a user is a **soft-delete** — the user is disabled and lands in a rec
 you can list, then either **restore** or **purge** (irreversible).
 
 <APIEndpoint method="DELETE" path="/v1/users/{id}" title="Soft-delete a user" />
-<APIEndpoint method="GET" path="/v1/users/deleted" title="List soft-deleted users" />
-<APIEndpoint method="POST" path="/v1/users/{id}/restore" title="Restore a user" />
-<APIEndpoint method="POST" path="/v1/users/{id}/purge" title="Permanently purge a user" />
+<APIEndpoint
+  method="GET"
+  path="/v1/users/deleted"
+  title="List soft-deleted users"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/restore"
+  title="Restore a user"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/purge"
+  title="Permanently purge a user"
+/>
 
 <Callout type="warn" title="Purge is irreversible">
-  Purge (and [GDPR erasure](/docs/platform/gdpr)) permanently removes personal data.
-  The audit record of the deletion survives with PII redacted.
+  Purge (and [GDPR erasure](/id/platform/gdpr)) permanently removes personal
+  data. The audit record of the deletion survives with PII redacted.
 </Callout>
 
 ## Linked identities
 
 A user's social/SAML/LDAP logins attach as **external identities**.
 
-<APIEndpoint method="GET" path="/v1/users/{userID}/social/identities" title="List linked identities" />
+<APIEndpoint
+  method="GET"
+  path="/v1/users/{userID}/social/identities"
+  title="List linked identities"
+/>

@@ -88,9 +88,9 @@ function Hero() {
         </h1>
 
         <p className="mt-6 max-w-2xl text-balance text-base text-fd-muted-foreground leading-8 sm:text-lg">
-          Identity, design, people, logs, notifications, and payments — one home for every
-          product. Guides, API reference, SDKs, and operational playbooks, all searchable in one
-          place.
+          Identity, design, people, logs, notifications, and payments — one home
+          for every product. Guides, API reference, SDKs, and operational
+          playbooks, all searchable in one place.
         </p>
 
         <div className="mt-9 grid w-full max-w-2xl gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
@@ -127,7 +127,9 @@ function Hero() {
               <p className="font-semibold text-fd-foreground text-lg">
                 <NumberTicker value={metric.value} suffix={metric.suffix} />
               </p>
-              <p className="mt-0.5 font-mono text-[11px] text-fd-muted-foreground">{metric.label}</p>
+              <p className="mt-0.5 font-mono text-[11px] text-fd-muted-foreground">
+                {metric.label}
+              </p>
             </div>
           ))}
         </div>
@@ -138,7 +140,10 @@ function Hero() {
 
 function HeroBackground() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+    >
       <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--color-fd-background)_0%,color-mix(in_oklab,var(--brand-500)_8%,var(--color-fd-background))_50%,var(--color-fd-background)_100%)]" />
       <div className="absolute inset-0 animate-hero-grid opacity-[0.22] [background-image:linear-gradient(to_right,color-mix(in_oklab,var(--color-fd-border)_70%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_oklab,var(--color-fd-border)_70%,transparent)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_at_center,black_0%,transparent_72%)]" />
       <div className="absolute top-1/3 left-1/2 size-[36rem] -translate-x-1/2 animate-aurora-slow rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--brand-500)_18%,transparent),transparent_62%)] blur-3xl dark:opacity-0" />
@@ -229,7 +234,10 @@ const products: Product[] = [
 
 function Products() {
   return (
-    <section aria-labelledby="products-heading" className="border-fd-border border-b bg-fd-muted/30">
+    <section
+      aria-labelledby="products-heading"
+      className="border-fd-border border-b bg-fd-muted/30"
+    >
       <div className="mx-auto max-w-7xl px-6 py-20 lg:py-24">
         <div className="mx-auto max-w-2xl text-center">
           <p className="font-semibold text-brand-text text-xs uppercase tracking-widest">
@@ -242,8 +250,8 @@ function Products() {
             Pick a product to dive in
           </h2>
           <p className="mt-4 text-balance text-fd-muted-foreground">
-            Two products are live today; the rest are in design. Each shares one identity graph,
-            one design system, and one set of docs.
+            Two products are live today; the rest are in design. Each shares one
+            identity graph, one design system, and one set of docs.
           </p>
         </div>
 
@@ -277,8 +285,12 @@ function Products() {
                 </span>
               </div>
               <div className="relative">
-                <h3 className="font-semibold text-xl tracking-tight">{p.name}</h3>
-                <p className="mt-2 text-fd-muted-foreground text-sm leading-relaxed">{p.body}</p>
+                <h3 className="font-semibold text-xl tracking-tight">
+                  {p.name}
+                </h3>
+                <p className="mt-2 text-fd-muted-foreground text-sm leading-relaxed">
+                  {p.body}
+                </p>
               </div>
               {p.links ? (
                 <div className="relative mt-auto flex flex-wrap gap-2">
@@ -338,7 +350,10 @@ const popularGuides: Guide[] = [
 
 function StartHere() {
   return (
-    <section aria-labelledby="start-heading" className="border-fd-border border-b bg-fd-background">
+    <section
+      aria-labelledby="start-heading"
+      className="border-fd-border border-b bg-fd-background"
+    >
       <div className="mx-auto max-w-7xl px-6 py-20 lg:py-24">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-xl">
@@ -378,7 +393,9 @@ function StartHere() {
                 {g.title}
                 <ArrowRightIcon className="size-3.5 text-fd-muted-foreground transition-transform group-hover:translate-x-0.5" />
               </span>
-              <span className="text-fd-muted-foreground text-sm leading-relaxed">{g.body}</span>
+              <span className="text-fd-muted-foreground text-sm leading-relaxed">
+                {g.body}
+              </span>
             </Link>
           ))}
         </div>
@@ -389,7 +406,12 @@ function StartHere() {
 
 /* ===== What you can build ===== */
 
-type Capability = { icon: LucideIcon; title: string; body: string; href: string };
+type Capability = {
+  icon: LucideIcon;
+  title: string;
+  body: string;
+  href: string;
+};
 
 const capabilities: Capability[] = [
   {
@@ -432,7 +454,10 @@ const capabilities: Capability[] = [
 
 function Build() {
   return (
-    <section aria-labelledby="build-heading" className="border-fd-border border-b bg-fd-muted/30">
+    <section
+      aria-labelledby="build-heading"
+      className="border-fd-border border-b bg-fd-muted/30"
+    >
       <div className="mx-auto max-w-7xl px-6 py-20 lg:py-24">
         <div className="mx-auto max-w-2xl text-center">
           <p className="font-semibold text-brand-text text-xs uppercase tracking-widest">
@@ -461,7 +486,9 @@ function Build() {
                   {c.title}
                   <ArrowRightIcon className="size-3.5 text-fd-muted-foreground transition-transform group-hover:translate-x-0.5" />
                 </span>
-                <span className="text-fd-muted-foreground text-sm leading-relaxed">{c.body}</span>
+                <span className="text-fd-muted-foreground text-sm leading-relaxed">
+                  {c.body}
+                </span>
               </span>
             </Link>
           ))}
@@ -498,7 +525,10 @@ const resources: Resource[] = [
 
 function ClosingCTA() {
   return (
-    <section aria-labelledby="cta-heading" className="relative isolate overflow-hidden bg-fd-background">
+    <section
+      aria-labelledby="cta-heading"
+      className="relative isolate overflow-hidden bg-fd-background"
+    >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 z-0 h-px bg-gradient-to-r from-transparent via-brand-500/40 to-transparent"
@@ -508,12 +538,15 @@ function ClosingCTA() {
           <p className="font-semibold text-brand-text text-xs uppercase tracking-widest">
             Get started
           </p>
-          <h2 id="cta-heading" className="font-semibold text-3xl tracking-tight">
+          <h2
+            id="cta-heading"
+            className="font-semibold text-3xl tracking-tight"
+          >
             From zero to shipped
           </h2>
           <p className="text-fd-muted-foreground">
-            Qeet ID and Qeetrix are live today. Start here, then bring People, Logs, Notify, and
-            Pay online as they ship.
+            Qeet ID and Qeetrix are live today. Start here, then bring People,
+            Logs, Notify, and Pay online as they ship.
           </p>
           <div className="mt-2 flex flex-wrap gap-3">
             <Link
@@ -551,7 +584,9 @@ function ClosingCTA() {
                 {r.title}
                 <ArrowRightIcon className="size-3 text-fd-muted-foreground transition-transform group-hover:translate-x-0.5" />
               </span>
-              <span className="text-fd-muted-foreground text-xs leading-relaxed">{r.body}</span>
+              <span className="text-fd-muted-foreground text-xs leading-relaxed">
+                {r.body}
+              </span>
             </Link>
           ))}
         </div>

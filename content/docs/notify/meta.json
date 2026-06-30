@@ -3,5 +3,16 @@
   "description": "Multi-channel notifications — email, SMS, WhatsApp, push, and in-app",
   "icon": "BellRing",
   "root": true,
-  "pages": ["index", "roadmap"]
+  "pages": [
+    "index",
+    "concepts",
+    "channels",
+    "---Build---",
+    "architecture",
+    "api",
+    "---Plan---",
+    "roadmap",
+    "---Updates---",
+    "changelog"
+  ]
 }

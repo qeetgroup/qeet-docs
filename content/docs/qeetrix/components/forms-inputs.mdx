@@ -1,0 +1,177 @@
+---
+title: Forms & inputs
+description: The @qeetrix/ui form layer — text and choice inputs, selects and pickers, and rich inputs, composed through a Field system.
+icon: TextCursorInput
+---
+
+The form layer is built on Base UI primitives and composes through a **`Field`** system. All
+components import from the package root:
+
+```tsx
+import { Field, FieldLabel, Input, Select, OTPInput } from "@qeetrix/ui";
+```
+
+## Field & form structure
+
+### Field
+
+The composition primitive for labeled, described, validated inputs. Parts: `Field`,
+`FieldLabel`, `FieldTitle`, `FieldDescription`, `FieldError`, `FieldContent`, `FieldGroup`,
+`FieldSet`, `FieldLegend`, `FieldSeparator`.
+
+### Form
+
+A form wrapper with `Form` and `FormActions` for consistent submit/cancel layout.
+
+### Label
+
+A standalone accessible label.
+
+### InputGroup
+
+Compose an input with leading/trailing addons: `InputGroup`, `InputGroupInput`, `InputGroupAddon`.
+
+## Text inputs
+
+### Input
+
+The base single-line text input.
+
+### Textarea
+
+Multi-line text input.
+
+### NumberField
+
+A numeric input with stepper controls.
+
+### CurrencyInput
+
+A money input with currency formatting. Props via `CurrencyInputProps`.
+
+### OTPInput
+
+One-time-code input for MFA and verification flows. Props via `OTPInputProps`.
+
+### PasswordStrengthMeter
+
+A password field strength indicator; ships with a `scorePassword` helper and
+`PasswordStrengthScore` type.
+
+### RichTextEditor
+
+A WYSIWYG rich-text editor. Props via `RichTextEditorProps`.
+
+### MentionInput
+
+Text input with `@mention` support; `MentionPerson` describes a mentionable entity.
+
+### TagInput
+
+Free-form tag entry. Props via `TagInputProps`.
+
+## Choice inputs
+
+### Checkbox
+
+`Checkbox` plus `CheckboxGroup` for grouped selection.
+
+### RadioGroup
+
+`Radio` and `RadioGroup`.
+
+### Switch
+
+A boolean toggle switch.
+
+### Toggle
+
+`Toggle` and `ToggleGroup` (with `toggleVariants`) for pressable on/off controls.
+
+### SegmentedControl
+
+A segmented single-select: `SegmentedControl`, `SegmentedControlItem`.
+
+### Slider
+
+A range slider.
+
+### AngleSlider
+
+A circular slider for selecting an angle. Props via `AngleSliderProps`.
+
+### Rating
+
+A star-style rating input. Props via `RatingProps`.
+
+## Selects & pickers
+
+### Select
+
+A styled select: `Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`,
+`SelectGroup`, `SelectLabel`, `SelectSeparator`, and scroll buttons.
+
+### Listbox
+
+A keyboard-navigable single/multi list. Types: `ListboxOption`, `ListboxProps`.
+
+### Combobox & MultiSelect
+
+Searchable single (`Combobox`) and multi (`MultiSelect`) selects. Types: `ComboboxOption`,
+`ComboboxProps`, `MultiSelectProps`.
+
+### Autocomplete
+
+Type-ahead text selection. Props via `AutocompleteProps`.
+
+### CountryPicker
+
+Country selector; ships `COUNTRY_CODES`. Props via `CountryPickerProps`.
+
+### TimezonePicker
+
+Timezone selector; ships a `getTimezones` helper. Props via `TimezonePickerProps`.
+
+### ColorPicker
+
+A color selector. Props via `ColorPickerProps`.
+
+## Date & time
+
+### DatePicker & DateRangePicker
+
+Single date and range pickers. Types: `DatePickerProps`, `DateRangePickerProps`, `DateRange`.
+
+### DateTimePicker
+
+Combined date + time selection. Props via `DateTimePickerProps`.
+
+### TimePicker
+
+Time-of-day selection; ships a `parseTime` helper. Props via `TimePickerProps`.
+
+### TimeRangePicker
+
+A from/to time range with presets. Types: `TimeRangeValue`, `TimeRangePreset`.
+
+### AvailabilityGrid
+
+A weekly availability/scheduling grid input. Props via `AvailabilityGridProps`.
+
+## Uploads
+
+### Dropzone & file upload
+
+File-drop and list primitives: `Dropzone`, `FileList`, `FileUploadItem`, with `formatBytes`
+and `isFileAccepted` helpers and `FileRejection` / `FileUploadStatus` types.
+
+### LogoUploader
+
+A purpose-built brand/tenant logo uploader for settings screens. Props via `LogoUploaderProps`.
+
+## Specialized
+
+### NotificationPreferenceMatrix
+
+A category × channel opt-in/out matrix — the preference-center control. Types:
+`PreferenceMatrix`, `PrefCategory`, `PrefChannel`.

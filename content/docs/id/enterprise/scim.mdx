@@ -8,9 +8,9 @@ membership sync — the Okta/Entra-style protocol that keeps directories in step
 authenticate with a **per-tenant bearer token** distinct from user JWTs.
 
 <Callout type="tip" title="Users AND Groups">
-  SCIM Users alone is common; SCIM <em>Groups</em> with PatchOp membership is the part
-  that drives [group-level RBAC](/docs/authorization#group-level-roles). Both are
-  implemented.
+  SCIM Users alone is common; SCIM <em>Groups</em> with PatchOp membership is
+  the part that drives [group-level RBAC](/id/authorization#group-level-roles).
+  Both are implemented.
 </Callout>
 
 ## Per-tenant SCIM token
@@ -18,17 +18,37 @@ authenticate with a **per-tenant bearer token** distinct from user JWTs.
 Provision a token in the tenant, set it in your IdP's SCIM connector, and rotate as
 needed. The IdP sends it as `Authorization: Bearer <scim-token>`.
 
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/scim" title="SCIM config / status" />
-<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/scim/token" title="Rotate the SCIM token" />
-<APIEndpoint method="DELETE" path="/v1/tenants/{tenantID}/scim/token" title="Revoke the SCIM token" />
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/scim"
+  title="SCIM config / status"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/tenants/{tenantID}/scim/token"
+  title="Rotate the SCIM token"
+/>
+<APIEndpoint
+  method="DELETE"
+  path="/v1/tenants/{tenantID}/scim/token"
+  title="Revoke the SCIM token"
+/>
 
 ## Discovery
 
 Standard SCIM service-discovery endpoints let the IdP introspect capabilities.
 
-<APIEndpoint method="GET" path="/scim/v2/ServiceProviderConfig" title="Provider config" />
+<APIEndpoint
+  method="GET"
+  path="/scim/v2/ServiceProviderConfig"
+  title="Provider config"
+/>
 <APIEndpoint method="GET" path="/scim/v2/Schemas" title="Schemas" />
-<APIEndpoint method="GET" path="/scim/v2/ResourceTypes" title="Resource types" />
+<APIEndpoint
+  method="GET"
+  path="/scim/v2/ResourceTypes"
+  title="Resource types"
+/>
 
 ## Users
 
@@ -36,7 +56,11 @@ Full CRUD and filtering; bodies use `application/scim+json`.
 
 <APIEndpoint method="GET" path="/scim/v2/Users" title="List / filter users" />
 <APIEndpoint method="POST" path="/scim/v2/Users" title="Provision a user" />
-<APIEndpoint method="PATCH" path="/scim/v2/Users/{id}" title="Patch a user (e.g. deactivate)" />
+<APIEndpoint
+  method="PATCH"
+  path="/scim/v2/Users/{id}"
+  title="Patch a user (e.g. deactivate)"
+/>
 
 ```bash
 curl https://api.id.qeet.in/scim/v2/Users \
@@ -53,7 +77,11 @@ group membership in sync without resending the full group.
 
 <APIEndpoint method="GET" path="/scim/v2/Groups" title="List groups" />
 <APIEndpoint method="POST" path="/scim/v2/Groups" title="Create a group" />
-<APIEndpoint method="PATCH" path="/scim/v2/Groups/{id}" title="PatchOp — add/remove members" />
+<APIEndpoint
+  method="PATCH"
+  path="/scim/v2/Groups/{id}"
+  title="PatchOp — add/remove members"
+/>
 
 ```json title="PatchOp — add a member"
 {
@@ -66,6 +94,6 @@ group membership in sync without resending the full group.
 
 <Callout type="info">
   Synced groups map to Qeet ID groups, so assigning a role to a group
-  ([Authorization → Group roles](/docs/authorization#group-level-roles)) means
+  ([Authorization → Group roles](/id/authorization#group-level-roles)) means
   directory membership changes flow straight through to access.
 </Callout>

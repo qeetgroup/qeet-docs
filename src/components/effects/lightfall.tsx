@@ -15,13 +15,13 @@ function hexToRGB(hex: string): [number, number, number] {
 }
 
 function prepColors(input?: string[]) {
-  const base = (input && input.length ? input : ["#A6C8FF", "#5227FF", "#FF9FFC"]).slice(
-    0,
-    MAX_COLORS,
-  );
+  const base = (
+    input && input.length ? input : ["#A6C8FF", "#5227FF", "#FF9FFC"]
+  ).slice(0, MAX_COLORS);
   const count = base.length;
   const arr: [number, number, number][] = [];
-  for (let i = 0; i < MAX_COLORS; i++) arr.push(hexToRGB(base[Math.min(i, base.length - 1)]));
+  for (let i = 0; i < MAX_COLORS; i++)
+    arr.push(hexToRGB(base[Math.min(i, base.length - 1)]));
   const avg: [number, number, number] = [0, 0, 0];
   for (let i = 0; i < count; i++) {
     avg[0] += arr[i][0];
@@ -230,7 +230,9 @@ export default function Lightfall({
     if (!container) return;
 
     const renderer = new Renderer({
-      dpr: dpr ?? (typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1),
+      dpr:
+        dpr ??
+        (typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1),
       alpha: true,
       antialias: true,
     });
@@ -246,7 +248,9 @@ export default function Lightfall({
     const { arr, count, avg } = prepColors(colors);
 
     const uniforms = {
-      iResolution: { value: [gl.drawingBufferWidth, gl.drawingBufferHeight, 1] },
+      iResolution: {
+        value: [gl.drawingBufferWidth, gl.drawingBufferHeight, 1],
+      },
       iMouse: { value: [0, 0] },
       iTime: { value: 0 },
       uColor0: { value: arr[0] },
@@ -261,7 +265,9 @@ export default function Lightfall({
       uBgColor: { value: hexToRGB(backgroundColor) },
       uMouseColor: { value: avg },
       uSpeed: { value: speed },
-      uStreakCount: { value: Math.max(1, Math.min(16, Math.round(streakCount))) },
+      uStreakCount: {
+        value: Math.max(1, Math.min(16, Math.round(streakCount))),
+      },
       uStreakWidth: { value: streakWidth },
       uStreakLength: { value: streakLength },
       uGlow: { value: glow },
@@ -286,7 +292,11 @@ export default function Lightfall({
     const resize = () => {
       const rect = container.getBoundingClientRect();
       renderer.setSize(rect.width, rect.height);
-      uniforms.iResolution.value = [gl.drawingBufferWidth, gl.drawingBufferHeight, 1];
+      uniforms.iResolution.value = [
+        gl.drawingBufferWidth,
+        gl.drawingBufferHeight,
+        1,
+      ];
     };
 
     resize();
@@ -336,7 +346,8 @@ export default function Lightfall({
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      if (mouseInteraction) canvas.removeEventListener("pointermove", onPointerMove);
+      if (mouseInteraction)
+        canvas.removeEventListener("pointermove", onPointerMove);
       ro.disconnect();
       if (canvas.parentElement === container) {
         container.removeChild(canvas);
@@ -345,10 +356,22 @@ export default function Lightfall({
         const fn = obj?.[key];
         if (typeof fn === "function") (fn as () => void).call(obj);
       };
-      callIfFn(programRef.current as unknown as Record<string, unknown> | null, "remove");
-      callIfFn(geometryRef.current as unknown as Record<string, unknown> | null, "remove");
-      callIfFn(meshRef.current as unknown as Record<string, unknown> | null, "remove");
-      callIfFn(rendererRef.current as unknown as Record<string, unknown> | null, "destroy");
+      callIfFn(
+        programRef.current as unknown as Record<string, unknown> | null,
+        "remove",
+      );
+      callIfFn(
+        geometryRef.current as unknown as Record<string, unknown> | null,
+        "remove",
+      );
+      callIfFn(
+        meshRef.current as unknown as Record<string, unknown> | null,
+        "remove",
+      );
+      callIfFn(
+        rendererRef.current as unknown as Record<string, unknown> | null,
+        "destroy",
+      );
       programRef.current = null;
       geometryRef.current = null;
       meshRef.current = null;
@@ -379,7 +402,11 @@ export default function Lightfall({
     <div
       ref={containerRef}
       className={`relative h-full w-full overflow-hidden ${className ?? ""}`}
-      style={mixBlendMode ? { mixBlendMode: mixBlendMode as CSSProperties["mixBlendMode"] } : undefined}
+      style={
+        mixBlendMode
+          ? { mixBlendMode: mixBlendMode as CSSProperties["mixBlendMode"] }
+          : undefined
+      }
     />
   );
 }

@@ -15,25 +15,28 @@ https://api.id.qeet.in   (or your self-hosted base URL)
 <Callout type="info" title="Self-hosted base URL">
   Qeet ID is self-hostable, so the base URL is whatever you deploy. Examples use
   <code>https://api.id.qeet.in</code>; substitute your own host. The OpenAPI
-  <code>servers</code> list also includes local dev (<code>:4000</code>/<code>:4001</code>).
+  <code>servers</code> list also includes local dev (<code>:4000</code>/
+  <code>:4001</code>).
 </Callout>
 
 ## Authentication schemes
 
 There are several auth modes — use the right one per route:
 
-| Scheme | Header | Used by |
-| --- | --- | --- |
-| **`apiKeyAuth`** | `Authorization: ApiKey qk_…` | Server-side API access. |
-| **`bearerAuth`** | `Authorization: Bearer <jwt>` | User / service **ES256 JWTs**. |
-| **`scimBearer`** | `Authorization: Bearer <scim-token>` | Per-tenant SCIM provisioning. |
+| Scheme                  | Header                                         | Used by                            |
+| ----------------------- | ---------------------------------------------- | ---------------------------------- |
+| **`apiKeyAuth`**        | `Authorization: ApiKey qk_…`                   | Server-side API access.            |
+| **`bearerAuth`**        | `Authorization: Bearer <jwt>`                  | User / service **ES256 JWTs**.     |
+| **`scimBearer`**        | `Authorization: Bearer <scim-token>`           | Per-tenant SCIM provisioning.      |
 | **`clientCredentials`** | form `client_id`/`client_secret` or HTTP Basic | OAuth M2M token/revoke/introspect. |
-| **`ssoCookie`** | `qe_ls` cookie (HttpOnly) | Hosted-login SSO session flows. |
+| **`ssoCookie`**         | `qe_ls` cookie (HttpOnly)                      | Hosted-login SSO session flows.    |
 
 <Callout type="danger" title="ApiKey ≠ Bearer">
-  The API-key scheme is literally <code>Authorization: ApiKey &lt;key&gt;</code> — not
-  <code>Bearer</code>. The <code>Bearer</code> scheme on the same authenticated routes
-  is for user/service JWTs. Don't send a <code>qk_…</code> key as a Bearer token.
+  The API-key scheme is literally <code>Authorization: ApiKey &lt;key&gt;</code>{" "}
+  — not
+  <code>Bearer</code>. The <code>Bearer</code> scheme on the same authenticated
+  routes is for user/service JWTs. Don't send a <code>qk_…</code> key as a
+  Bearer token.
 </Callout>
 
 ```bash title="API key (server)"
@@ -49,23 +52,35 @@ curl https://api.id.qeet.in/v1/auth/me \
 ## Endpoint groups
 
 <Cards>
-  <Card title="Users" href="/docs/api/users">CRUD, pagination, soft-delete & recycle bin.</Card>
-  <Card title="Tenants" href="/docs/api/tenants">Workspace lifecycle + per-tenant config.</Card>
-  <Card title="Roles & checks" href="/docs/api/roles">Roles, permissions, and <code>/check</code>.</Card>
-  <Card title="Sessions" href="/docs/api/sessions">Login, refresh, list, revoke.</Card>
-  <Card title="Errors" href="/docs/api/errors">The error envelope and codes.</Card>
-  <Card title="Pagination" href="/docs/api/pagination">Cursor-based list pagination.</Card>
+  <Card title="Users" href="/id/api/users">
+    CRUD, pagination, soft-delete & recycle bin.
+  </Card>
+  <Card title="Tenants" href="/id/api/tenants">
+    Workspace lifecycle + per-tenant config.
+  </Card>
+  <Card title="Roles & checks" href="/id/api/roles">
+    Roles, permissions, and <code>/check</code>.
+  </Card>
+  <Card title="Sessions" href="/id/api/sessions">
+    Login, refresh, list, revoke.
+  </Card>
+  <Card title="Errors" href="/id/api/errors">
+    The error envelope and codes.
+  </Card>
+  <Card title="Pagination" href="/id/api/pagination">
+    Cursor-based list pagination.
+  </Card>
 </Cards>
 
 The protocol-level groups (OIDC/OAuth, SAML, SCIM, MFA, webhooks, audit, secrets,
-GDPR) are documented in their product sections — [OIDC](/docs/oidc),
-[Enterprise](/docs/enterprise), [MFA](/docs/mfa), and [Platform](/docs/platform).
+GDPR) are documented in their product sections — [OIDC](/id/oidc),
+[Enterprise](/id/enterprise), [MFA](/id/mfa), and [Platform](/id/platform).
 
 ## Conventions
 
 - **Tokens** are ES256 JWTs verified against `/.well-known/jwks.json`.
 - **Errors** use a stable `{ "error": { "code", "message", … } }` envelope — see
-  [Errors](/docs/api/errors).
+  [Errors](/id/api/errors).
 - **Lists** are cursor-paginated (`items` + `next_cursor`) — see
-  [Pagination](/docs/api/pagination).
+  [Pagination](/id/api/pagination).
 - **Request IDs** are returned in the `X-Request-Id` header and echoed in error bodies.

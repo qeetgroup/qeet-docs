@@ -1,0 +1,80 @@
+---
+title: Actions & navigation
+description: Buttons, menus, command palette, breadcrumbs, pagination, sidebar, toolbars, and app shells from @qeetrix/ui.
+icon: MousePointerClick
+---
+
+```tsx
+import { Button, DropdownMenu, CommandPalette, Sidebar } from "@qeetrix/ui";
+```
+
+## Actions
+
+### Button
+
+The primary action element; ships `buttonVariants` for styling other elements as buttons.
+
+### Stepper
+
+A multi-step progress/navigation control. Types: `StepperStep`, `StepperProps`.
+
+## Menus
+
+### DropdownMenu
+
+A trigger-anchored menu with items, checkboxes, radios, sub-menus, labels, separators, and
+shortcuts (`DropdownMenuItem`, `DropdownMenuCheckboxItem`, `DropdownMenuRadioGroup`,
+`DropdownMenuSub*`, `DropdownMenuShortcut`, …).
+
+### ContextMenu
+
+A right-click menu with the same item vocabulary as `DropdownMenu`.
+
+### Menubar
+
+An application menu bar (`MenubarMenu`, `MenubarItem`, `MenubarSub*`, …).
+
+### NavigationMenu
+
+A site/app navigation menu with `NavigationMenuTrigger`, `NavigationMenuContent`,
+`NavigationMenuLink`, and `navigationMenuTriggerStyle`.
+
+## Navigation
+
+### CommandPalette
+
+A ⌘K command palette. Types: `CommandPaletteItem`, `CommandPaletteProps`.
+
+### Breadcrumb
+
+Breadcrumb trail: `Breadcrumb`, `BreadcrumbList`, `BreadcrumbItem`, `BreadcrumbLink`,
+`BreadcrumbPage`, `BreadcrumbSeparator`, `BreadcrumbEllipsis`.
+
+### PaginationBar
+
+A page navigation control. Props via `PaginationBarProps`.
+
+### FilterBar
+
+A composable filter/search bar. Types: `FilterField`, `ActiveFilter`, `FilterBarProps`.
+
+## Layout & chrome
+
+### Sidebar
+
+A complete collapsible sidebar system: `SidebarProvider`, `Sidebar`, `SidebarHeader`,
+`SidebarContent`, `SidebarFooter`, `SidebarGroup*`, `SidebarMenu*`, `SidebarTrigger`,
+`SidebarRail`, `SidebarInset`, and the `useSidebar` hook.
+
+### AppShell
+
+A page scaffold: `AppShell`, `AppShellHeader`, `AppShellMain`, `AppShellContent`.
+
+### PageHeader
+
+A standardized page title/description/actions header. Props via `PageHeaderProps`.
+
+### Toolbar
+
+A horizontal action bar: `Toolbar`, `ToolbarButton`, `ToolbarGroup`, `ToolbarLink`,
+`ToolbarSeparator`.

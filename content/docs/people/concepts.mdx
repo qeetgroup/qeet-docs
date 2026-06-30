@@ -1,0 +1,50 @@
+---
+title: Concepts
+description: The planned model behind Qeet People — the directory, employment records, org structure, lifecycle, and its shared identity graph with Qeet ID.
+icon: Compass
+---
+
+<Callout type="info" title="In design">
+  Qeet People is documented from its product requirements. There's no public API
+  yet — these are the concepts the product is being built around, and they may
+  change before release.
+</Callout>
+
+Qeet People models your organization as data — the people in it, how they're employed, and
+how they relate — on top of the same identity graph as [Qeet ID](/id).
+
+## Directory & profiles
+
+The **directory** is the searchable record of everyone in the organization: people,
+employment records, and the attributes HR and managers need. A person here corresponds to a
+[Qeet ID](/id) user, so identity and HR data share one graph rather than two synced copies.
+
+## Employment records
+
+An **employment record** captures the relationship between a person and the organization —
+role, manager, status, and the dates that drive lifecycle events. It's the unit lifecycle
+and payroll logic operate on.
+
+## Org structure
+
+**Teams, reporting lines, and cost centers** are first-class data, not tags. This lets the
+platform answer structural questions (who reports to whom, which cost center owns a role) and
+drive approvals and analytics.
+
+## Lifecycle
+
+**Onboarding and offboarding** are modeled as flows that drive provisioning: a hire creates
+the person and their Qeet ID access; an exit revokes it. The goal is that HR actions and
+identity provisioning stay in lockstep automatically.
+
+## Shared identity graph
+
+Because People builds on [Qeet ID](/id), there's no separate user-sync job — a hire in
+People _is_ a user in ID. RBAC, tenancy, and audit come from the identity layer rather than
+being reinvented here.
+
+## Where this is heading
+
+The full HCM scope (attendance, payroll, performance, learning, and India statutory
+compliance) is laid out on the [roadmap](/people/roadmap). The [planned
+architecture](/people/planned-architecture) describes how it will be built.

@@ -8,7 +8,8 @@ TVs, IoT — authenticate without a browser on the device itself. The device dis
 short **user code**; the user enters it on a phone or laptop to approve.
 
 <Callout type="tip" title="Implemented">
-  Device grant is fully implemented, including the hosted-login <code>/device</code>
+  Device grant is fully implemented, including the hosted-login{" "}
+  <code>/device</code>
   page (user-code entry → approve/deny) and admin management of pending device
   authorizations.
 </Callout>
@@ -23,7 +24,11 @@ short **user code**; the user enters it on a phone or laptop to approve.
 The (client-authenticated) device calls the device authorization endpoint and gets a
 `device_code`, a human-friendly `user_code` (e.g. `BCDF-GHJK`), and verification URIs.
 
-<APIEndpoint method="POST" path="/v1/oauth/device_authorization" title="Start device authorization" />
+<APIEndpoint
+  method="POST"
+  path="/v1/oauth/device_authorization"
+  title="Start device authorization"
+/>
 
 ```bash
 curl -X POST https://api.id.qeet.in/v1/oauth/device_authorization \
@@ -41,6 +46,7 @@ curl -X POST https://api.id.qeet.in/v1/oauth/device_authorization \
   "interval": 5
 }
 ```
+
 </Step>
 
 <Step>
@@ -48,7 +54,8 @@ curl -X POST https://api.id.qeet.in/v1/oauth/device_authorization \
 
 "Go to **login.id.qeet.in/device** and enter **BCDF-GHJK**." The user opens the URL
 on another device. The hosted `/device` page fetches the request context (client name
-+ scopes) and renders an approve/deny screen.
+
+- scopes) and renders an approve/deny screen.
 
 <APIEndpoint method="GET" path="/v1/oauth/device" title="Device verification context" />
 <APIEndpoint method="POST" path="/v1/oauth/device/decision" title="Approve / deny" />
@@ -60,7 +67,11 @@ on another device. The hosted `/device` page fetches the request context (client
 Meanwhile the device polls the token endpoint with the device-code grant type,
 respecting `interval`.
 
-<APIEndpoint method="POST" path="/v1/oauth/token-code" title="grant_type=device_code" />
+<APIEndpoint
+  method="POST"
+  path="/v1/oauth/token-code"
+  title="grant_type=device_code"
+/>
 
 ```bash
 curl -X POST https://api.id.qeet.in/v1/oauth/token-code \
@@ -71,7 +82,8 @@ curl -X POST https://api.id.qeet.in/v1/oauth/token-code \
 ```
 
 Until approval, the endpoint returns `authorization_pending` (or `slow_down`). After
-approval it returns the [token response](/docs/oidc/tokens#token-response).
+approval it returns the [token response](/id/oidc/tokens#token-response).
+
 </Step>
 
 </Steps>
@@ -80,5 +92,13 @@ approval it returns the [token response](/docs/oidc/tokens#token-response).
 
 Tenant admins can list and inspect pending device authorizations.
 
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/oauth/devices" title="List device authorizations" />
-<APIEndpoint method="GET" path="/v1/tenants/{tenantID}/oauth/devices/{id}" title="Inspect one" />
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/oauth/devices"
+  title="List device authorizations"
+/>
+<APIEndpoint
+  method="GET"
+  path="/v1/tenants/{tenantID}/oauth/devices/{id}"
+  title="Inspect one"
+/>

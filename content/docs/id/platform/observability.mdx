@@ -22,14 +22,18 @@ turn it on. The SDKs propagate context so traces span your services and Qeet ID.
 ## Health probes
 
 <APIEndpoint method="GET" path="/healthz" title="Liveness" />
-<APIEndpoint method="GET" path="/readyz" title="Readiness (includes a DB ping)" />
+<APIEndpoint
+  method="GET"
+  path="/readyz"
+  title="Readiness (includes a DB ping)"
+/>
 
 Wire `/healthz` to your orchestrator's liveness probe and `/readyz` to readiness — the
 latter fails until the database is reachable, so traffic isn't routed to a pod that
 can't serve.
 
 <Callout type="info">
-  Combine these with the per-tenant [analytics overview](/docs/platform/multi-tenancy#analytics)
-  for product KPIs (MAU/DAU, login/MFA/failed-login, method mix) alongside the
-  operational metrics.
+  Combine these with the per-tenant [analytics
+  overview](/id/platform/multi-tenancy#analytics) for product KPIs (MAU/DAU,
+  login/MFA/failed-login, method mix) alongside the operational metrics.
 </Callout>

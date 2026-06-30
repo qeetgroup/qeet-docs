@@ -1,0 +1,99 @@
+---
+title: Utilities & hooks
+description: Theme and direction providers, layout helpers, typography, formatting components, and React hooks from @qeetrix/ui.
+icon: Wrench
+---
+
+```tsx
+import { ThemeProvider, cn, Typography, useIsMobile } from "@qeetrix/ui";
+```
+
+## Providers
+
+### ThemeProvider
+
+Light/dark management via the `.dark` class; pairs with the `useTheme` hook. See
+[Theming](/qeetrix/theming).
+
+### DirectionProvider
+
+LTR/RTL direction context; pairs with the `useDirection` hook. Types: `Direction`,
+`DirectionProviderProps`.
+
+## Layout helpers
+
+### AspectRatio
+
+Constrain content to a ratio. Props via `AspectRatioProps`.
+
+### Separator
+
+A horizontal/vertical divider.
+
+### ScrollArea
+
+A styled scroll container: `ScrollArea`, `ScrollBar`.
+
+### Resizable
+
+Resizable panels: `ResizablePanelGroup`, `ResizablePanel`, `ResizableHandle`.
+
+### OverflowList
+
+A list that collapses overflowing items into a "+N" affordance. Props via `OverflowListProps`.
+
+### TableOfContents
+
+An on-page TOC with scroll-spy; ships the `useScrollSpy` hook. Types: `TocItem`,
+`TableOfContentsProps`.
+
+## Typography
+
+### Typography & Prose
+
+`Typography` (with `typographyVariants`) for headings/text and `Prose` (with `proseClassName`)
+for long-form/markdown content. Types: `TypographyVariant`, `TypographyProps`.
+
+## Display & formatting
+
+### Kbd
+
+Keyboard key hints: `Kbd`, `KbdGroup`.
+
+### Highlight
+
+Highlight matched substrings (e.g. search results). Props via `HighlightProps`.
+
+### Spoiler
+
+Blur-to-reveal content. Props via `SpoilerProps`.
+
+### Marquee
+
+A scrolling marquee. Props via `MarqueeProps`.
+
+### RollingNumber
+
+An animated number roll. Props via `RollingNumberProps`.
+
+### NumberFormatter
+
+Locale-aware number/currency formatting. Props via `NumberFormatterProps`.
+
+### TimeSince
+
+A relative "time ago" label. Props via `TimeSinceProps`.
+
+## Hooks & helpers
+
+### useIsMobile
+
+Responsive breakpoint hook.
+
+### usePrefersReducedMotion
+
+Respects the user's reduced-motion preference.
+
+### cn
+
+The `clsx` + `tailwind-merge` class combiner used throughout the system.

@@ -1,0 +1,50 @@
+---
+title: Concepts
+description: The planned model behind Qeet Logs — ingest, query, identity-aware attribution, tenant isolation, and privacy-by-design.
+icon: Compass
+---
+
+<Callout type="info" title="In design">
+  Qeet Logs is documented from its product requirements — there's no code or
+  public API yet. These are the concepts the platform is being built around and
+  may change before release.
+</Callout>
+
+Qeet Logs is log management for teams that take privacy seriously: high-volume ingest, fast
+queries, and **identity-aware** attribution through [Qeet ID](/id).
+
+## Ingest
+
+Logs arrive over standard protocols — **OTLP/HTTP** and an HTTP ingest API, with SDK and
+log-shipper adapters planned (syslog, Vector, Fluent Bit, and language loggers). Structured
+and unstructured logs are both first-class. Storage is planned on a **column store
+(ClickHouse)** with partitioning and TTL for cost control.
+
+## Query
+
+A LogQL-style query engine with a REST query API powers **sub-second search across tenants**,
+live tail, and service-overview dashboards. The design targets P90 query latency under
+300 ms at 1 TB stored.
+
+## Identity-aware attribution
+
+Every log line is attributable through [Qeet ID](/id) — **user, tenant, and session** — so
+you can answer "who did what" without bolting on a separate audit pipeline. A Qeet ID
+auth-event stream enriches logs with identity context.
+
+## Tenant isolation
+
+Multi-tenancy is foundational: strict **tenant isolation**, admin/tenant RBAC, scoped API
+keys, and a query audit log so access to logs is itself auditable.
+
+## Privacy by design
+
+PII is handled at **ingestion time** rather than after the fact, with GDPR erasure (and
+erasure receipts) and **data-residency** controls. Privacy is a platform property, not an
+add-on.
+
+## Where this is heading
+
+The phased plan — from an ingest/query MVP to a privacy-native, Qeet ID-integrated GA and
+then AI-assisted analysis — is on the [roadmap](/logs/roadmap). Until Logs ships, [Qeet ID's
+tamper-evident audit](/id/audit) covers identity-event logging today.

@@ -1,5 +1,11 @@
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { convertToModelMessages, stepCountIs, streamText, tool, type UIMessage } from "ai";
+import {
+  convertToModelMessages,
+  stepCountIs,
+  streamText,
+  tool,
+  type UIMessage,
+} from "ai";
 import { z } from "zod";
 import { source } from "@/lib/source";
 import { Document, type DocumentData } from "flexsearch";
@@ -76,7 +82,12 @@ export async function POST(req: Request, ctx: RouteContext<"/api/chat">) {
   const reqJson = await req.json();
 
   const result = streamText({
-    model: openrouter.chat(process.env.OPENROUTER_MODEL ?? "anthropic/claude-3.5-sonnet"),
+    // Default upgraded from claude-3.5-sonnet. Sonnet 4.6 is the right tier for
+    // RAG-grounded doc Q&A (cheap, fast); set OPENROUTER_MODEL=anthropic/claude-opus-4-8
+    // in .env.local to run the most capable model instead.
+    model: openrouter.chat(
+      process.env.OPENROUTER_MODEL ?? "anthropic/claude-sonnet-4-6",
+    ),
     stopWhen: stepCountIs(5),
     tools: {
       search: searchTool,
@@ -109,6 +120,10 @@ const searchTool = tool({
   }),
   async execute({ query, limit }) {
     const search = await searchServer;
-    return await search.searchAsync(query, { limit, merge: true, enrich: true });
+    return await search.searchAsync(query, {
+      limit,
+      merge: true,
+      enrich: true,
+    });
   },
 });

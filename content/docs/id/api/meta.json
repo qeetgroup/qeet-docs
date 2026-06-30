@@ -1,5 +1,13 @@
 {
   "title": "API reference",
   "icon": "Code",
-  "pages": ["index", "users", "tenants", "roles", "sessions", "errors", "pagination"]
+  "pages": [
+    "index",
+    "users",
+    "tenants",
+    "roles",
+    "sessions",
+    "errors",
+    "pagination"
+  ]
 }

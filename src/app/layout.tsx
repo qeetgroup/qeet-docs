@@ -18,8 +18,16 @@ export const metadata: Metadata = {
     "Guides, API reference, SDKs, and operational playbooks for every Qeet product — identity, design system, people, logs, notifications, and payments.",
   icons: {
     icon: [
-      { url: "/icon-light.svg", type: "image/svg+xml", media: "(prefers-color-scheme: light)" },
-      { url: "/icon-dark.svg", type: "image/svg+xml", media: "(prefers-color-scheme: dark)" },
+      {
+        url: "/icon-light.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/icon-dark.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: dark)",
+      },
       { url: "/icon-light.svg", type: "image/svg+xml" },
     ],
     apple: { url: "/icon-light.svg", type: "image/svg+xml" },

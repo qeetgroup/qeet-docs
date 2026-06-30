@@ -19,16 +19,24 @@ A user can belong to **multiple tenants**. `switch-tenant` re-mints a scoped acc
 token for a different tenant the user is a member of.
 
 <APIEndpoint method="POST" path="/v1/tenants" title="Create a tenant" />
-<APIEndpoint method="POST" path="/v1/auth/switch-tenant" title="Switch active tenant" />
+<APIEndpoint
+  method="POST"
+  path="/v1/auth/switch-tenant"
+  title="Switch active tenant"
+/>
 
 ```ts
 const tenant = await qeetid.tenants.create({ name: "Acme, Inc." });
 ```
 
 <Callout type="info">
-  Tenant configuration lives under <code>/v1/tenants/{'{'}tenantID{'}'}</code> — auth
-  policy, branding, email templates, IP rules, retention, and SSO connections are all
-  per-tenant. See [Multi-tenancy](/docs/platform/multi-tenancy).
+  Tenant configuration lives under{" "}
+  <code>
+    /v1/tenants/{"{"}tenantID{"}"}
+  </code>{" "}
+  — auth policy, branding, email templates, IP rules, retention, and SSO
+  connections are all per-tenant. See
+  [Multi-tenancy](/id/platform/multi-tenancy).
 </Callout>
 
 ## Users
@@ -41,11 +49,22 @@ verified contact methods (email, phone). Email is **globally unique**. Users sup
   (social / SAML / LDAP).
 - Free-form metadata you control.
 
-<APIEndpoint method="GET" path="/v1/users" title="List users (cursor paginated)" />
-<APIEndpoint method="POST" path="/v1/users/{id}/restore" title="Restore a soft-deleted user" />
+<APIEndpoint
+  method="GET"
+  path="/v1/users"
+  title="List users (cursor paginated)"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/users/{id}/restore"
+  title="Restore a soft-deleted user"
+/>
 
 ```ts
-const user = await qeetid.users.create({ email: "alex@acme.com", display_name: "Alex Chen" });
+const user = await qeetid.users.create({
+  email: "alex@acme.com",
+  display_name: "Alex Chen",
+});
 ```
 
 ## Principals & machine identities
@@ -59,7 +78,7 @@ ships two machine-identity models:
   an access token via the OAuth token endpoint.
 
 This shared principal model is what makes scoped, auditable non-human access (and,
-ahead, AI-agent delegation) first-class. See [API keys & service principals](/docs/platform/api-keys).
+ahead, AI-agent delegation) first-class. See [API keys & service principals](/id/platform/api-keys).
 
 ## Sessions & tokens
 
@@ -73,7 +92,7 @@ A **session** represents an authenticated client. Authentication issues a
   **rotation + theft detection**: replaying a rotated refresh token revokes the whole
   chain and audits it.
 
-Sessions can be listed and revoked individually. See [Sessions](/docs/sessions).
+Sessions can be listed and revoked individually. See [Sessions](/id/sessions).
 
 ```json title="token pair"
 {
@@ -102,7 +121,7 @@ curl "https://api.id.qeet.in/v1/check?user_id=$U&tenant_id=$T&permission=billing
 ```
 
 Add `?explain=true` to get the **grant-path trace** (which role/group allowed it, or
-why it was denied). See [Authorization](/docs/authorization).
+why it was denied). See [Authorization](/id/authorization).
 
 ## How it fits together
 
@@ -129,10 +148,10 @@ why it was denied). See [Authorization](/docs/authorization).
 ## Next steps
 
 <Cards>
-  <Card icon="Zap" title="Quickstart" href="/docs/quickstart">
+  <Card icon="Zap" title="Quickstart" href="/id/quickstart">
     Wire a server SDK and protect a route.
   </Card>
-  <Card icon="Code" title="API reference" href="/docs/api">
+  <Card icon="Code" title="API reference" href="/id/api">
     Auth schemes, errors, pagination, and every endpoint group.
   </Card>
 </Cards>

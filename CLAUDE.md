@@ -1,6 +1,6 @@
 # qeet-docs — CLAUDE.md
 
-**qeet-docs** — the Qeet Group documentation platform served at `docs.qeet.in`. One site documents every product: `/id`, `/logs`, `/notify`, `/pay`, `/people`, `/qeetrix`. Next.js 16 App Router + [Fumadocs](https://fumadocs.dev) v16, React 19, Tailwind v4, with an AI doc-chat via the Vercel AI SDK + OpenRouter. Consumes the shared `@qeetrix/ui` + `@qeetrix/brand` design system.
+**qeet-docs** — the Qeet Group documentation platform served at `docs.qeet.in`. One site documents every product: `/id`, `/logs`, `/notify`, `/pay`, `/people`, `/qeetrix` (all six sections have live content under `content/docs/`). Next.js 16.2.6 App Router + [Fumadocs](https://fumadocs.dev) 16 (core 16.9.3 / mdx 15.0.10 / ui 16.9.3), React 19.2.6, Tailwind 4.3.0, with an AI doc-chat via the Vercel AI SDK + OpenRouter. Consumes the shared `@qeetrix/ui` + `@qeetrix/brand` design system.
 
 ## Commands (`cd qeet-docs`)
 
@@ -26,3 +26,4 @@ Fumadocs site. Documentation is **MDX under [content/docs/](content/docs/)**, on
 
 - **Secrets on disk — never read, print, or commit:** `.env.local` (gitignored) and a live private key `qeet-id_backend_api_key.pem` at the repo root (gitignored via `*.pem`). Copy `.env.example` for new keys.
 - **Next.js 16 / Fumadocs 16 are newer than training data** — verify App Router + Fumadocs APIs against installed `node_modules` before writing code, don't assume older patterns.
+- **Design-system deps are pre-consolidation:** still on `@qeetrix/ui@^0.1.0` + separate `@qeetrix/brand@^0.0.1` (plus `@qeetrix/eslint-config`, `@qeetrix/tsconfig`). Both old npm packages stay installable, so this is **not** broken today. When Qeetrix publishes `@qeetrix/ui@0.4.0` (brand folded into `@qeetrix/ui/brand`), bump `@qeetrix/ui` and drop the standalone `@qeetrix/brand` — best run via the **release-coordinator** agent.

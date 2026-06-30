@@ -1,0 +1,42 @@
+---
+title: Brand
+description: Qeet logos and custom product icons — theme-adaptive brand assets shipped with the design system.
+icon: Sparkles
+---
+
+The brand layer ships the Qeet **logos** and a set of custom **product icons** as React
+components. They're available from the brand barrel:
+
+```tsx
+import { QeetLogo, QeetLogoMark, IconPasskey } from "@qeetrix/ui/brand";
+```
+
+<Callout type="info">
+  Brand assets are also published as the standalone <code>@qeetrix/brand</code>{" "}
+  package, which some consumers still import directly. On the consolidated{" "}
+  <code>@qeetrix/ui</code> (0.4.0+) they live at the{" "}
+  <code>@qeetrix/ui/brand</code> subpath and the package root.
+</Callout>
+
+## Logos
+
+- **`QeetLogo`** — the full Qeet wordmark + mark. Props via `QeetLogoProps`.
+- **`QeetLogoMark`** — the standalone mark (no wordmark).
+- **`QeetLogoOnLight`** / **`QeetLogoOnDark`** — variants locked to a light or dark surface.
+  Props via `QeetLogoVariantProps`.
+
+The default logo is theme-adaptive — the wordmark follows the current text color while the
+brand-orange accent stays constant across light and dark.
+
+## Product icons
+
+A custom icon set for identity and platform concepts, sharing a `QeetIconProps` shape and a
+`QEET_ICON_MIRROR` helper for RTL:
+
+`IconApiKey`, `IconAuditLog`, `IconCrossDevice`, `IconMfaShield`, `IconOidcConnector`,
+`IconPasskey`, `IconSamlConnector`, `IconScimSync`, `IconTenant`, `IconWebhook`.
+
+<Callout type="info" title="Starter set">
+  The product-icon set is an evolving starter collection; expect it to grow as
+  products need new glyphs.
+</Callout>

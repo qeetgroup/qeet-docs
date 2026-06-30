@@ -15,7 +15,12 @@ type CyclingTextProps = {
  * Rotates through a list of strings with a crossfade.
  * Used inside the docs hero search bar to suggest queries.
  */
-export function CyclingText({ items, interval = 2800, fadeMs = 280, className }: CyclingTextProps) {
+export function CyclingText({
+  items,
+  interval = 2800,
+  fadeMs = 280,
+  className,
+}: CyclingTextProps) {
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
 

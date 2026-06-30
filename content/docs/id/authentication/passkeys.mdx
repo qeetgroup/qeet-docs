@@ -9,8 +9,8 @@ device or synced credential manager. Qeet ID implements passkeys with
 and **login**, plus credential management.
 
 <Callout type="tip" title="This is fully implemented">
-  Earlier docs claimed passkeys returned <code>501 Not Implemented</code>. That is no
-  longer true — registration and passwordless login both work today.
+  Earlier docs claimed passkeys returned <code>501 Not Implemented</code>. That
+  is no longer true — registration and passwordless login both work today.
 </Callout>
 
 ## How it works
@@ -34,7 +34,7 @@ The user must be signed in. `register/begin` returns
 <Step>
 ### Sign in with a passkey (passwordless)
 
-These endpoints are unauthenticated — they *are* the authentication. `login/begin`
+These endpoints are unauthenticated — they _are_ the authentication. `login/begin`
 returns `publicKeyCredentialRequestOptions`; pass them to
 `navigator.credentials.get()` and post the assertion to `login/finish`, which returns
 a token pair.
@@ -49,25 +49,37 @@ a token pair.
 
 ```ts title="register (browser)"
 // 1. Ask Qeet ID for creation options
-const options = await fetch("/api/passkeys/register/begin", { method: "POST" }).then((r) => r.json());
+const options = await fetch("/api/passkeys/register/begin", {
+  method: "POST",
+}).then((r) => r.json());
 
 // 2. Create the credential with the platform authenticator
 const cred = await navigator.credentials.create({ publicKey: decode(options) });
 
 // 3. Send the attestation back to finish registration
-await fetch("/api/passkeys/register/finish", { method: "POST", body: encode(cred) });
+await fetch("/api/passkeys/register/finish", {
+  method: "POST",
+  body: encode(cred),
+});
 ```
 
 ```ts title="login (browser)"
-const options = await fetch("/api/passkeys/login/begin", { method: "POST" }).then((r) => r.json());
-const assertion = await navigator.credentials.get({ publicKey: decode(options) });
-const tokens = await fetch("/api/passkeys/login/finish", { method: "POST", body: encode(assertion) }).then((r) => r.json());
+const options = await fetch("/api/passkeys/login/begin", {
+  method: "POST",
+}).then((r) => r.json());
+const assertion = await navigator.credentials.get({
+  publicKey: decode(options),
+});
+const tokens = await fetch("/api/passkeys/login/finish", {
+  method: "POST",
+  body: encode(assertion),
+}).then((r) => r.json());
 // tokens = TokenPair
 ```
 
 <Callout type="warn" title="HTTPS required">
-  WebAuthn requires a secure context. Passkeys silently fail on plain HTTP origins;
-  `localhost` is exempt for development.
+  WebAuthn requires a secure context. Passkeys silently fail on plain HTTP
+  origins; `localhost` is exempt for development.
 </Callout>
 
 ## Manage credentials
@@ -75,9 +87,13 @@ const tokens = await fetch("/api/passkeys/login/finish", { method: "POST", body:
 Users can list and revoke their registered passkeys.
 
 <APIEndpoint method="GET" path="/v1/passkeys" title="List a user's passkeys" />
-<APIEndpoint method="DELETE" path="/v1/passkeys/{id}" title="Revoke a passkey" />
+<APIEndpoint
+  method="DELETE"
+  path="/v1/passkeys/{id}"
+  title="Revoke a passkey"
+/>
 
 ## Passkeys as a second factor
 
 The same registered passkeys can be reused as a **WebAuthn second factor** during
-step-up MFA — see [MFA → WebAuthn as a second factor](/docs/mfa#webauthn-as-a-second-factor).
+step-up MFA — see [MFA → WebAuthn as a second factor](/id/mfa#webauthn-as-a-second-factor).

@@ -9,8 +9,8 @@ document (Google, Microsoft, GitHub via OIDC, Okta, Auth0, and more) can be wire
 without provider-specific code.
 
 <Callout type="tip" title="This is fully implemented">
-  Social login is live — not a stub. First-time sign-ins are JIT-provisioned and can be
-  linked to existing users by verified email.
+  Social login is live — not a stub. First-time sign-ins are JIT-provisioned and
+  can be linked to existing users by verified email.
 </Callout>
 
 ## Configure a provider
@@ -18,8 +18,16 @@ without provider-specific code.
 Register a provider on a tenant with its OIDC issuer/discovery URL plus the OAuth
 client credentials you obtained from that provider.
 
-<APIEndpoint method="POST" path="/v1/social/providers" title="Add a provider to the caller's tenant" />
-<APIEndpoint method="POST" path="/v1/tenants/{tenantID}/social/providers" title="Add a provider (tenant-scoped)" />
+<APIEndpoint
+  method="POST"
+  path="/v1/social/providers"
+  title="Add a provider to the caller's tenant"
+/>
+<APIEndpoint
+  method="POST"
+  path="/v1/tenants/{tenantID}/social/providers"
+  title="Add a provider (tenant-scoped)"
+/>
 
 ## Sign-in flow
 
@@ -52,10 +60,19 @@ and records an **external identity** linking that provider account to the Qeet I
 user. If a user with the same verified email already exists, the identity is linked to
 them. Users (and admins) can list and unlink identities.
 
-<APIEndpoint method="GET" path="/v1/users/{userID}/social/identities" title="List a user's linked identities" />
-<APIEndpoint method="DELETE" path="/v1/social/identities/{id}" title="Unlink an external identity" />
+<APIEndpoint
+  method="GET"
+  path="/v1/users/{userID}/social/identities"
+  title="List a user's linked identities"
+/>
+<APIEndpoint
+  method="DELETE"
+  path="/v1/social/identities/{id}"
+  title="Unlink an external identity"
+/>
 
 <Callout type="info">
-  Social providers, SAML connections, and LDAP all attach to the user through the same
-  external-identity model — see [Core concepts → Users](/docs/concepts#users).
+  Social providers, SAML connections, and LDAP all attach to the user through
+  the same external-identity model — see [Core concepts →
+  Users](/id/concepts#users).
 </Callout>

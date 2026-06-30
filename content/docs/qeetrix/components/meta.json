@@ -1,0 +1,14 @@
+{
+  "title": "Components",
+  "icon": "Blocks",
+  "pages": [
+    "index",
+    "forms-inputs",
+    "actions-nav",
+    "overlays",
+    "data-display",
+    "feedback-status",
+    "charts",
+    "utilities-hooks"
+  ]
+}

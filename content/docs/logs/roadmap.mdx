@@ -1,0 +1,44 @@
+---
+title: Roadmap
+description: The phased plan for Qeet Logs — from an ingest/query MVP to a privacy-native GA and AI-assisted analysis. Subject to change.
+icon: Map
+---
+
+<Callout type="warn" title="Planning artifact">
+  This roadmap reflects current planning from the product requirements and is
+  not a commitment. Scope, ordering, and timing will move as the product takes
+  shape.
+</Callout>
+
+Three phases of roughly six months each, each with an explicit exit gate.
+
+## Phase 1 — Foundation (MVP) · Q3–Q4 2026
+
+Ingest, store, and query logs for internal use plus five design partners: the **storage
+layer** (schema, partitioning, TTL), **OTLP/HTTP + HTTP ingest** with a Go SDK, the
+**query engine + REST API**, a **search UI with live tail** and a service-overview
+dashboard, **multi-tenancy isolation + RBAC**, threshold/absence **alerts**, and Docker
+Compose + Helm. _Exit gate: 5 design partners using Logs as their system of record;
+sub-5-minute time-to-first-query._
+
+## Phase 2 — General Availability · Q1–Q2 2027
+
+Public, privacy-native launch: an **ingestion-time PII pipeline**, the **Qeet ID auth-event
+stream + enrichment + auth dashboard**, **GDPR erasure with receipts**, TypeScript/Python
+SDKs and logger adapters, syslog + Vector/Fluent Bit, scoped API keys + query audit log,
+cost-attribution dashboards, custom dashboards and saved searches, and Slack/PagerDuty
+alerting. _Exit gate: public pricing, onboarding, and docs live; SOC 2 controls audit-ready;
+first paying customers._
+
+## Phase 3 — AI & Enterprise · Q3–Q4 2027
+
+AI-differentiated and enterprise-ready: **statistical + auth anomaly detection**, **natural-
+language query** (via Claude), log summarization, advanced GDPR tooling, a **self-hosted /
+private-cloud mode**, and enterprise controls (SSO, HIPAA BAA, PCI-DSS segregation, custom
+residency, SLAs). _Exit gate: 2+ enterprise contracts; validated self-hosted deployment._
+
+<Card
+  title="Back to overview"
+  href="/logs"
+  description="What Qeet Logs is, and where it fits."
+/>

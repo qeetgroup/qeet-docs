@@ -7,50 +7,62 @@ icon: Building
 Qeet ID is **both an OIDC provider and a SAML provider**, and it consumes external
 IdPs too. That gives you the full enterprise federation story — **open-source and not
 behind an SSO tax**. This page is the map; the deep dives live in
-[Enterprise](/docs/enterprise) and [OIDC/OAuth provider](/docs/oidc).
+[Enterprise](/id/enterprise) and [OIDC/OAuth provider](/id/oidc).
 
 ## The two directions of SSO
 
 <Cards>
-  <Card icon="LogIn" title="Consume external IdPs (SAML SP)" href="/docs/enterprise/saml-sp">
-    Let your customers' employees sign in with their own Okta / Entra ID / Google
-    Workspace via SAML, with JIT provisioning.
+  <Card
+    icon="LogIn"
+    title="Consume external IdPs (SAML SP)"
+    href="/id/enterprise/saml-sp"
+  >
+    Let your customers' employees sign in with their own Okta / Entra ID /
+    Google Workspace via SAML, with JIT provisioning.
   </Card>
-  <Card icon="LogOut" title="Be an SSO source (SAML IdP)" href="/docs/enterprise/saml-idp">
-    Qeet ID acts as the IdP: register downstream SPs, publish metadata, and serve
-    SP-initiated and IdP-initiated SSO from the hosted-login session.
+  <Card
+    icon="LogOut"
+    title="Be an SSO source (SAML IdP)"
+    href="/id/enterprise/saml-idp"
+  >
+    Qeet ID acts as the IdP: register downstream SPs, publish metadata, and
+    serve SP-initiated and IdP-initiated SSO from the hosted-login session.
   </Card>
-  <Card icon="Network" title="OIDC provider" href="/docs/oidc">
-    Discovery, dynamic client registration, Authorization Code + PKCE, hosted login &
-    consent, and ES256 ID tokens.
+  <Card icon="Network" title="OIDC provider" href="/id/oidc">
+    Discovery, dynamic client registration, Authorization Code + PKCE, hosted
+    login & consent, and ES256 ID tokens.
   </Card>
 </Cards>
 
 ## Provisioning & directories
 
 <Cards>
-  <Card icon="RefreshCw" title="SCIM 2.0 (Users + Groups)" href="/docs/enterprise/scim">
-    Okta/Entra-style provisioning, deprovisioning, and PatchOp group-membership sync,
-    with per-tenant bearer tokens.
+  <Card
+    icon="RefreshCw"
+    title="SCIM 2.0 (Users + Groups)"
+    href="/id/enterprise/scim"
+  >
+    Okta/Entra-style provisioning, deprovisioning, and PatchOp group-membership
+    sync, with per-tenant bearer tokens.
   </Card>
-  <Card icon="Server" title="LDAP / AD" href="/docs/enterprise/ldap">
+  <Card icon="Server" title="LDAP / AD" href="/id/enterprise/ldap">
     Bind-based login plus connection CRUD and test-bind.
   </Card>
 </Cards>
 
 <Callout type="tip" title="No SSO tax">
-  SAML (both directions), SCIM Users + Groups, and LDAP are part of the platform — not
-  paywalled behind an "enterprise" tier. Earlier docs implied SAML/SCIM weren't
-  available; both are fully implemented today.
+  SAML (both directions), SCIM Users + Groups, and LDAP are part of the platform
+  — not paywalled behind an "enterprise" tier. Earlier docs implied SAML/SCIM
+  weren't available; both are fully implemented today.
 </Callout>
 
 ## Where the pieces live
 
-| Capability | Section |
-| --- | --- |
-| SAML SP (consume IdPs) | [Enterprise → SAML SP](/docs/enterprise/saml-sp) |
-| SAML IdP (be a source) | [Enterprise → SAML IdP](/docs/enterprise/saml-idp) |
-| SCIM Users + Groups | [Enterprise → SCIM](/docs/enterprise/scim) |
-| LDAP / AD | [Enterprise → LDAP](/docs/enterprise/ldap) |
-| OIDC/OAuth provider | [OIDC/OAuth provider](/docs/oidc) |
-| Org-level roles & groups | [Authorization → Group roles](/docs/authorization#group-level-roles) |
+| Capability               | Section                                                            |
+| ------------------------ | ------------------------------------------------------------------ |
+| SAML SP (consume IdPs)   | [Enterprise → SAML SP](/id/enterprise/saml-sp)                     |
+| SAML IdP (be a source)   | [Enterprise → SAML IdP](/id/enterprise/saml-idp)                   |
+| SCIM Users + Groups      | [Enterprise → SCIM](/id/enterprise/scim)                           |
+| LDAP / AD                | [Enterprise → LDAP](/id/enterprise/ldap)                           |
+| OIDC/OAuth provider      | [OIDC/OAuth provider](/id/oidc)                                    |
+| Org-level roles & groups | [Authorization → Group roles](/id/authorization#group-level-roles) |
