@@ -9,29 +9,33 @@ dependencies** — you bring them, Qeetrix builds on top.
 
 ## Published packages
 
-<Callout type="info" title="Versions">
-  Qeetrix is pre-1.0. The versions below are current at the time of writing;
-  check npm for the latest before pinning.
+<Callout type="info" title="One package now">
+  As of `@qeetrix/ui@0.4.0`, the design system ships as a **single package** —
+  the former `@qeetrix/tokens` and `@qeetrix/brand` packages are folded into
+  `@qeetrix/ui` and exposed as subpaths. Qeetrix is still pre-1.0; check npm for
+  the latest before pinning.
 </Callout>
 
-| Package                  | Version | What it is                                 |
-| ------------------------ | ------- | ------------------------------------------ |
-| `@qeetrix/ui`            | `0.1.0` | React component library (shadcn + Base UI) |
-| `@qeetrix/tokens`        | `0.0.2` | Design tokens (CSS + JSON)                 |
-| `@qeetrix/brand`         | `0.0.1` | Theme-adaptive logos + Qeet icons          |
-| `@qeetrix/eslint-config` | `0.0.1` | Shared ESLint flat config                  |
-| `@qeetrix/tsconfig`      | `0.0.1` | Shared TypeScript configs                  |
+| Package                  | Version | What it is                                          |
+| ------------------------ | ------- | --------------------------------------------------- |
+| `@qeetrix/ui`            | `0.4.0` | The whole design system — components, tokens, brand |
+| `@qeetrix/eslint-config` | `0.0.1` | Shared ESLint flat config                           |
+| `@qeetrix/tsconfig`      | `0.0.1` | Shared TypeScript configs                           |
+
+Everything is reachable from `@qeetrix/ui` via subpaths: `/styles.css` (themed CSS),
+`/tokens.css` + `/tokens.json` (raw `--qx-*` tokens), `/qeetrix.css` (semantic tokens),
+`/brand` (logos + icons), `/blocks` (composed patterns), and deep `/components/*`, `/hooks/*`,
+`/lib/*`, `/fonts/*`.
 
 ## Install
 
 ```bash
-pnpm add @qeetrix/ui @qeetrix/tokens @qeetrix/brand
+pnpm add @qeetrix/ui
 pnpm add react react-dom   # peers (>=19)
 ```
 
-`@qeetrix/ui` already depends on `@qeetrix/tokens`, but installing it explicitly lets you
-consume the raw tokens directly. Tailwind CSS v4 is also a peer of the consumer build — install
-it if your app doesn't already have it.
+That single install brings the components, design tokens, and brand assets. Tailwind CSS v4 is
+also a peer of the consumer build — install it if your app doesn't already have it.
 
 ## Wire up Tailwind v4
 
@@ -56,7 +60,7 @@ Wrap your app in `ThemeProvider` (it manages the `.dark` class) and start using 
 
 ```tsx title="app.tsx"
 import { ThemeProvider, Button } from "@qeetrix/ui";
-import { QeetLogo } from "@qeetrix/brand";
+import { QeetLogo } from "@qeetrix/ui/brand";
 
 export function App() {
   return (

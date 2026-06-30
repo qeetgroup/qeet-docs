@@ -14,6 +14,12 @@ changesets in the qeetrix repo.
   published surface.
 </Callout>
 
+## 0.4.0 — single-package consolidation
+
+- **One package.** `@qeetrix/tokens` and `@qeetrix/brand` are folded into `@qeetrix/ui` and
+  exposed as subpaths (`/tokens.css`, `/tokens.json`, `/qeetrix.css`, `/brand`, `/blocks`).
+  Install is now just `pnpm add @qeetrix/ui`. The old standalone packages are retired.
+
 ## Current
 
 - **~114 components** across forms, actions, overlays, data display, feedback, charts,
@@ -22,9 +28,4 @@ changesets in the qeetrix repo.
   table, settings layout. See [Blocks](/qeetrix/blocks).
 - **Design tokens + theming** on Tailwind CSS v4 with light/dark support. See
   [Theming](/qeetrix/theming).
-- **Brand assets** — logos and product icons via `@qeetrix/brand`. See [Brand](/qeetrix/brand).
-
-## In progress
-
-- Package consolidation: folding `@qeetrix/brand` into `@qeetrix/ui` (a `@qeetrix/ui/brand`
-  subpath) on the way to a unified `@qeetrix/ui` install.
+- **Brand assets** — logos and product icons via `@qeetrix/ui/brand`. See [Brand](/qeetrix/brand).

@@ -2,5 +2,4 @@ allowBuilds:
   esbuild: true
   msw: true
   sharp: true
-minimumReleaseAgeExclude:
-  - portless@0.14.0
+minimumReleaseAge: 0

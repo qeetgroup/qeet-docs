@@ -4,39 +4,40 @@ description: The shared design system behind every Qeet product — design token
 icon: Component
 ---
 
-<Callout type="info" title="Pre-1.0">
-  Qeetrix is published and in production across Qeet ID, but the packages are
-  still pre-1.0 (`@qeetrix/ui` is at `0.1.0`). APIs are stable enough to build
-  on, but minor versions may contain breaking changes until 1.0.
+<Callout type="info" title="Pre-1.0 · single package">
+  Qeetrix is published and in production across Qeet ID, but it's still pre-1.0
+  (`@qeetrix/ui` is at `0.4.0`). As of 0.4.0 it ships as **one package** —
+  design tokens and brand assets are folded into `@qeetrix/ui`. APIs are stable
+  enough to build on, but minor versions may contain breaking changes until 1.0.
 </Callout>
 
 ## What is Qeetrix?
 
 Qeetrix is the **shared design system** for Qeet Group products. It's a pnpm + Turborepo
-monorepo of versioned, npm-publishable `@qeetrix/*` packages built on **Tailwind CSS v4** and
-**shadcn/ui with the Base UI registry**. It's already a live dependency of [Qeet ID](/id) —
-both the admin console and the web app render Qeetrix components.
+monorepo built on **Tailwind CSS v4** and **shadcn/ui with the Base UI registry**, shipping as
+the single `@qeetrix/ui` package. It's already a live dependency of [Qeet ID](/id) — both the
+admin console and the web app render Qeetrix components.
 
 It gives every Qeet app one source of truth for color, typography, spacing, components, and
 logos — so the products look and behave like one platform without each team rebuilding the
 basics.
 
-## The pipeline
+## What's in the package
 
-Qeetrix is a small set of packages that feed each other:
+`@qeetrix/ui` is everything, exposed through subpaths:
 
 <Cards>
   <Card
-    title="@qeetrix/tokens"
-    description="A single W3C-format token source, built to CSS + JSON via Style Dictionary. The root of the system."
+    title="Components"
+    description="The React component library — ~114 shadcn + Base UI primitives, plus composed blocks at @qeetrix/ui/blocks."
   />
   <Card
-    title="@qeetrix/ui"
-    description="The React component library — shadcn + Base UI primitives, themed by the tokens."
+    title="Design tokens"
+    description="A W3C-format token source built via Style Dictionary, baked into the styles and exposed at /tokens.css, /tokens.json, and /qeetrix.css."
   />
   <Card
-    title="@qeetrix/brand"
-    description="Theme-adaptive Qeet logos and a set of custom product icons."
+    title="Brand"
+    description="Theme-adaptive Qeet logos and custom product icons at @qeetrix/ui/brand."
   />
   <Card
     title="Shared configs"
@@ -44,9 +45,9 @@ Qeetrix is a small set of packages that feed each other:
   />
 </Cards>
 
-Tokens build first; `@qeetrix/ui` and `@qeetrix/brand` consume them. Consumers import one
-stylesheet (`@qeetrix/ui/styles.css`) and drive light/dark through the `.dark` class managed
-by [`ThemeProvider`](/qeetrix/theming).
+Consumers import one stylesheet (`@qeetrix/ui/styles.css`) — which bundles the tokens and Cal
+Sans fonts — and drive light/dark through the `.dark` class managed by
+[`ThemeProvider`](/qeetrix/theming).
 
 ## Why it exists
 
@@ -63,7 +64,7 @@ by [`ThemeProvider`](/qeetrix/theming).
   <Card
     title="Installation"
     href="/qeetrix/installation"
-    description="Add the packages and wire up Tailwind."
+    description="Add the package and wire up Tailwind."
   />
   <Card
     title="Components"

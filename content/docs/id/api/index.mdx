@@ -1,12 +1,14 @@
 ---
-title: API reference
-description: The Qeet ID REST API — 142 paths over JSON/HTTPS, with ApiKey and Bearer-JWT auth schemes, a stable error envelope, and cursor pagination.
-icon: Code
+title: API conventions
+description: How the Qeet ID REST API works across every endpoint — base URL, ApiKey and Bearer-JWT auth schemes, the error envelope, and cursor pagination.
+icon: BookMarked
 ---
 
-The Qeet ID REST API is **JSON over HTTPS**, versioned under `/v1/`. The OpenAPI spec
-covers **142 paths** with **100% route coverage**, guarded in CI — it's the source of
-truth for every SDK.
+The Qeet ID REST API is **JSON over HTTPS**, versioned under `/v1/`. This page covers the
+conventions that apply to every endpoint; for the endpoints themselves, see the
+**[interactive API reference at apis.qeet.in](https://apis.qeet.in)** — the full OpenAPI
+surface in Swagger UI, with request/response schemas and a "Try it out" console (switchable
+across local / staging / production).
 
 ```text
 https://api.id.qeet.in   (or your self-hosted base URL)
@@ -49,20 +51,15 @@ curl https://api.id.qeet.in/v1/auth/me \
   -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
 
-## Endpoint groups
+## Endpoints
+
+Every endpoint lives in the **[Qeet API portal at apis.qeet.in](https://apis.qeet.in)** —
+the full OpenAPI surface in Swagger UI, grouped by bounded context, with request/response
+schemas and a "Try it out" console (local / staging / production selectable per request).
 
 <Cards>
-  <Card title="Users" href="/id/api/users">
-    CRUD, pagination, soft-delete & recycle bin.
-  </Card>
-  <Card title="Tenants" href="/id/api/tenants">
-    Workspace lifecycle + per-tenant config.
-  </Card>
-  <Card title="Roles & checks" href="/id/api/roles">
-    Roles, permissions, and <code>/check</code>.
-  </Card>
-  <Card title="Sessions" href="/id/api/sessions">
-    Login, refresh, list, revoke.
+  <Card title="Open the API portal" href="https://apis.qeet.in">
+    All endpoints, schemas, and a Try-it-out console at apis.qeet.in.
   </Card>
   <Card title="Errors" href="/id/api/errors">
     The error envelope and codes.
@@ -73,7 +70,7 @@ curl https://api.id.qeet.in/v1/auth/me \
 </Cards>
 
 The protocol-level groups (OIDC/OAuth, SAML, SCIM, MFA, webhooks, audit, secrets,
-GDPR) are documented in their product sections — [OIDC](/id/oidc),
+GDPR) are also documented as guides in their product sections — [OIDC](/id/oidc),
 [Enterprise](/id/enterprise), [MFA](/id/mfa), and [Platform](/id/platform).
 
 ## Conventions

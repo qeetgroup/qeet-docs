@@ -1,8 +1,5 @@
-# Vendored OpenAPI specs (copied from ../qeet-id — keep byte-faithful, don't reformat)
-content/specs/
-
 # Generated content
 .source/
 
-# Generated OpenAPI reference MDX (emitted by scripts/generate-openapi.mjs)
-content/docs/id/api-reference/
+# Generated lockfile (pnpm owns its format)
+pnpm-lock.yaml

@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
  * The bowl is painted with `currentColor`, so it follows the rendered text
  * color (dark on light surfaces, light on dark surfaces) and is always visible
  * regardless of how the `dark:` Tailwind variant is configured. The orange "Q"
- * tail keeps the brand color in both themes. (The `@qeetrix/brand` `QeetLogo`
+ * tail keeps the brand color in both themes. (The `@qeetrix/ui/brand` `QeetLogo`
  * relies on the class-based `dark:` variant, which doesn't track fumadocs'
  * theme toggle here — hence this local copy, matching qeet-in's `Logo`.)
  *

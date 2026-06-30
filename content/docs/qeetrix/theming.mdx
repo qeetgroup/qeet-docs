@@ -9,24 +9,25 @@ overriding tokens, not by patching component internals.
 
 ## Design tokens
 
-`@qeetrix/tokens` is the root of the system. A single W3C-format token source is compiled with
+Tokens are the root of the system. A single W3C-format token source is compiled with
 **Style Dictionary** into CSS and JSON, exported under the `--qx-` prefix. Token pairs are
 **contrast-checked against WCAG AA** at build time (`pnpm tokens:validate`), so the semantic
-foreground/background combinations are accessible by construction.
+foreground/background combinations are accessible by construction. They ship inside
+`@qeetrix/ui` (the former `@qeetrix/tokens` package is folded in).
 
 You can consume tokens directly when you need raw values:
 
 ```css
 /* The full theme, including semantic color roles: */
-@import "@qeetrix/tokens/qeetrix.css";
+@import "@qeetrix/ui/qeetrix.css";
 
 /* Or just the raw --qx-* variables: */
-@import "@qeetrix/tokens/tokens.css";
+@import "@qeetrix/ui/tokens.css";
 ```
 
 ```ts
 // JSON form, for tooling or design integrations:
-import tokens from "@qeetrix/tokens/tokens.json";
+import tokens from "@qeetrix/ui/tokens.json";
 ```
 
 In most apps you don't import these directly — `@qeetrix/ui/styles.css` already bundles the
@@ -64,7 +65,7 @@ per-component dark styles required.
 
 ## Brand
 
-`@qeetrix/brand` carries the visual identity:
+The `@qeetrix/ui/brand` subpath carries the visual identity:
 
 - **Logos** — `QeetLogo` / `QeetLogoMark`, plus the fixed-tone `QeetLogoOnLight` and
   `QeetLogoOnDark` for when you control the background.
@@ -72,7 +73,7 @@ per-component dark styles required.
   `IconWebhook`, `IconTenant`, `IconApiKey`, `IconAuditLog`, and more).
 
 ```tsx
-import { QeetLogo, IconPasskey } from "@qeetrix/brand";
+import { QeetLogo, IconPasskey } from "@qeetrix/ui/brand";
 
 <QeetLogo size={28} />
 <IconPasskey className="size-5" />
