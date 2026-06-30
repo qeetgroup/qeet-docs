@@ -145,11 +145,11 @@ function HeroBackground() {
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
     >
       <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--color-fd-background)_0%,color-mix(in_oklab,var(--brand-500)_8%,var(--color-fd-background))_50%,var(--color-fd-background)_100%)]" />
-      <div className="absolute inset-0 animate-hero-grid opacity-[0.22] [background-image:linear-gradient(to_right,color-mix(in_oklab,var(--color-fd-border)_70%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_oklab,var(--color-fd-border)_70%,transparent)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_at_center,black_0%,transparent_72%)]" />
-      <div className="absolute top-1/3 left-1/2 size-[36rem] -translate-x-1/2 animate-aurora-slow rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--brand-500)_18%,transparent),transparent_62%)] blur-3xl dark:opacity-0" />
+      <div className="absolute inset-0 animate-hero-grid opacity-[0.22] bg-[linear-gradient(to_right,color-mix(in_oklab,var(--color-fd-border)_70%,transparent)_1px,transparent_1px),linear-gradient(to_bottom,color-mix(in_oklab,var(--color-fd-border)_70%,transparent)_1px,transparent_1px)] bg-size-[56px_56px] mask-[radial-gradient(ellipse_at_center,black_0%,transparent_72%)]" />
+      <div className="absolute top-1/3 left-1/2 size-144 -translate-x-1/2 animate-aurora-slow rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--brand-500)_18%,transparent),transparent_62%)] blur-3xl dark:opacity-0" />
       {/* Ripple — light mode only (Lightfall takes over in dark mode). */}
       <Ripple
-        className="opacity-90 dark:hidden [mask-image:radial-gradient(ellipse_at_center,black_24%,transparent_72%)]"
+        className="opacity-90 dark:hidden mask-[radial-gradient(ellipse_at_center,black_24%,transparent_72%)]"
         mainCircleOpacity={0.3}
         mainCircleSize={320}
         numCircles={9}
@@ -269,7 +269,7 @@ function Products() {
               {p.live && <BorderBeam size={220} duration={8} />}
               <span
                 aria-hidden
-                className="pointer-events-none absolute -top-16 -right-16 size-48 rounded-full bg-gradient-to-br from-brand-500/30 to-transparent opacity-25 blur-3xl transition-opacity duration-500 group-hover:opacity-90"
+                className="pointer-events-none absolute -top-16 -right-16 size-48 rounded-full bg-linear-to-br from-brand-500/30 to-transparent opacity-25 blur-3xl transition-opacity duration-500 group-hover:opacity-90"
               />
               <div className="relative flex items-center justify-between">
                 <span className="grid size-12 place-items-center rounded-xl bg-brand-500/10 text-brand-text">
@@ -531,7 +531,7 @@ function ClosingCTA() {
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-px bg-gradient-to-r from-transparent via-brand-500/40 to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-px bg-linear-to-r from-transparent via-brand-500/40 to-transparent"
       />
       <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-[1fr_2fr] lg:py-24">
         <div className="flex flex-col gap-3">

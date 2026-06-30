@@ -1,20 +1,23 @@
 ---
 title: Planned architecture
-description: How Qeet People is intended to be built — a Go backend on the Qeet platform, API-first, sharing identity with Qeet ID.
+description: How Qeet People is built — a Kotlin/Spring Boot backend on the Qeet platform, API-first, sharing identity with Qeet ID.
 icon: Boxes
 ---
 
-<Callout type="info" title="In design — skeleton repo">
-  The Qeet People backend today is a skeleton. This page describes the intended
-  architecture from the technical design, not shipped code; specifics will
-  change.
+<Callout type="info" title="Phase 0 — foundation in place">
+  The Qeet People backend is at its Phase 0 foundation: a Kotlin/Spring Boot
+  modular-monolith skeleton with multi-tenant Row-Level Security and Qeet ID
+  OIDC wiring. No HCM domain logic ships yet; this page describes the intended
+  architecture from the technical design, and specifics may change.
 </Callout>
 
 ## Platform foundation
 
-Qeet People is planned as a **Go backend** built on the shared Qeet platform. Rather than
-standing up its own identity, tenancy, and audit, it builds on [Qeet ID](/id): authentication,
-RBAC, multi-tenancy, and the tamper-evident audit trail come from the identity layer.
+Qeet People is built as a **Kotlin / Spring Boot backend** (modular monolith) on the shared
+Qeet platform — the JVM is chosen so the India statutory payroll engine can use the official
+EPFO/ESIC/TRACES libraries and `BigDecimal` precision. Rather than standing up its own
+identity, tenancy, and audit, it builds on [Qeet ID](/id): authentication, RBAC,
+multi-tenancy, and the tamper-evident audit trail come from the identity layer.
 
 ## Identity graph
 
@@ -35,5 +38,7 @@ support as core requirements, not add-ons — see the [roadmap](/people/roadmap)
 
 ## What exists today
 
-A backend skeleton and the product/technical design. There are no public endpoints or SDKs
-yet; follow the [changelog](/people/changelog) for the first shipped milestones.
+A Phase 0 foundation — a Kotlin/Spring Boot modular-monolith skeleton with multi-tenant
+Row-Level Security and Qeet ID OIDC wiring, plus two frontend shells (admin + ESS/MSS) — and
+the product/technical design. There are no HCM domain endpoints or SDKs yet; follow the
+[changelog](/people/changelog) for the first shipped milestones.
